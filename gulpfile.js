@@ -5,11 +5,14 @@ var gulp = require('gulp'),
 
 var path  = {
 	"app": {
-		"src": "app/*"
+		"src": "app/**"
 	},
 	"build": {
-		"src": "build/*",
+		"src": "build/**",
 		"target": "build"
+	},
+	"dependencies": {
+		"src": "bower_components/**/*min*.+(js|map)"
 	}
 }
 
@@ -18,12 +21,14 @@ gulp.task('clean', function(cb) {
   del([path.build.target], cb);
 });
 
-gulp.task('package', function(cb) {
-	return gulp.src(path.app.src)
-			   .pipe(gulp.dest(path.build.target));
+gulp.task('dist', function() {
+	gulp.src(path.app.src)
+		.pipe(gulp.dest(path.build.target));
+	gulp.src(path.dependencies.src)
+		.pipe(gulp.dest(path.build.target));
 });
 
-gulp.task('deploy', ['package'], function () {
+gulp.task('deploy', ['dist'], function () {
 	var config = require('./deploy-config.json');
     gulp.src(path.build.src)
         .pipe(scp({ host: config.host,
@@ -32,13 +37,19 @@ gulp.task('deploy', ['package'], function () {
 		        }));
 });
 
+var bower = require('gulp-bower');
+ 
+gulp.task('bower', function() {
+  return bower({ cmd: 'update'});
+});
+
 gulp.task('watch', function () {
     gulp.watch(path.app.src, ['deploy']);
+    gulp.watch('bower.json', ['bower']);
 });
 
 
-gulp.task('default', function(callback){
+gulp.task('default', function(){
 	runSequence('clean',
-				'package',
-				callback);
+				'dist');
 });
