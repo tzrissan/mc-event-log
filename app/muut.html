@@ -1,0 +1,28 @@
+<table class="data"><tbody>
+	<tr>
+		<th summerize-by-day-cell/>
+		<th summerize-by-month-cell/>
+		<th summerize-by-year-cell/>
+		<th ng-class="isOrderedBy('odo')?'selected':''" ng-click="orderBy('odo')">odo</th>
+		<th ng-class="isOrderedBy('dist')?'selected':''" ng-click="orderBy('dist')">matka</th>
+		<th ng-class="isOrderedBy('info')?'selected':''" ng-click="orderBy('info')">info</th>
+	</tr>
+	<tr ng-repeat="line in lines.Muut">
+		<td select-day-cell/>
+		<td select-month-cell/>
+		<td select-year-cell/>
+		<td>{{line.odo | number:0 }}</td>
+		<td>{{line.dist | number:0 }}</td>
+		<td class="text" ng-click="toggleDetails(line)" >{{line.info}}
+			<pre class="details" ng-show="line.showDetailedInfo">{{line.detailedInfo}}</pre>
+		</td>
+	</tr>
+	<tr class="clear">
+		<td selected-day-cell />
+		<td selected-month-cell />
+		<td selected-year-cell />
+		<td/>
+		<td/>
+		<td/>
+	</tr>
+</tbody><table>

@@ -1,0 +1,42 @@
+<table class="data"><tbody>
+	<tr>
+		<th summerize-by-day-cell/>
+		<th summerize-by-month-cell/>
+		<th summerize-by-year-cell/>
+		<th ng-class="isOrderedBy('odo')?'selected':''" ng-click="orderBy('odo')">odo</th>
+		<th ng-class="isOrderedBy('dist')?'selected':''" ng-click="orderBy('dist')">matka</th>
+		<th>etu</th>
+		<th>taka</th>
+		<th ng-class="isOrderedBy('info')?'selected':''" ng-click="orderBy('info')">info</th>
+	</tr>
+
+	<tr class="stats" ng-repeat="stat in stats.Renkaat" >
+		<td colspan="3"> {{stat.date | date: 'dd.MM.yyyy' }}</td>
+		<td>{{stat.odo | number:0 }}</td>
+		<td/>
+		<td>{{stat.front | number:0 }}</td>
+		<td>{{stat.rear | number:0 }}</td>
+		<td class="text" >{{stat.info}}</td>
+	</tr>
+
+	<tr ng-repeat="line in lines.Renkaat">
+		<td select-day-cell/>
+		<td select-month-cell/>
+		<td select-year-cell/>
+		<td>{{line.odo | number:0 }}</td>
+		<td>{{line.dist | number:0 }}</td>
+		<td><span ng-show="line.type=='TYRE_FRONT'">X</span></td>
+		<td><span ng-show="line.type=='TYRE_REAR'"/>X</span></td>
+		<td class="text" >{{line.info}}</td>
+	</tr>
+	<tr class="clear">
+		<td selected-day-cell />
+		<td selected-month-cell />
+		<td selected-year-cell />
+		<td/>
+		<td/>
+		<td/>
+		<td/>
+		<td/>
+	</tr>
+</tbody><table>

@@ -26,7 +26,7 @@ var InputFormCtrl = function($scope, Data, DataTable, Utils) {
 
 };
 
-/*var DataTableCtrl = function($scope, DataTable, LocalStorage, Data, Utils, StatisticsUtil) {
+var DataTableCtrl = function($scope, DataTable, LocalStorage, Data, Utils, StatisticsUtil) {
 
 	'use strict';
 
@@ -212,4 +212,3 @@ var InputFormCtrl = function($scope, Data, DataTable, Utils) {
 		updateLines();
 	});
 };
-*/

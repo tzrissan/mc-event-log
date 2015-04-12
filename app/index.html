@@ -2,14 +2,16 @@
 <html>
 <head>
 	<title>MC event log</title>
-	<script src="require.js"></script>
-	<script src="underscore-min.js"></script>
-	<script src="angular.min.js"></script>
-	<script src="app.js"></script>
-	<script src="controller.js"></script>
-	<script src="data.js"></script>
-	<script src="datatable.js"></script>
-	<script src="utils.js"></script>
+	<script type="text/javascript" src="require.js"></script>
+	<script type="text/javascript" src="underscore-min.js"></script>
+	<script type="text/javascript" src="angular.min.js"></script>
+	<script type="text/javascript" src="app.js"></script>
+	<script type="text/javascript" src="controller.js"></script>
+	<script type="text/javascript" src="data.js"></script>
+	<script type="text/javascript" src="datatable.js"></script>
+	<script type="text/javascript" src="utils.js"></script>
+	<script type="text/javascript" src="statistics.js"></script>
+	<script type="text/javascript" src="data-columns.js"></script>
 	<link rel="stylesheet" href="style.css" type="text/css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -24,6 +26,22 @@
 		    	<button type="submit">L&auml;het&auml;</button>
 		    </fieldset>
 		</form>
+	</div>
+	<div ng-controller="DataTableCtrl">
+		<ul class="tabs">
+			<li ng-repeat="current in tabs" ng-class="isTab(current)?'activeTab':'passiveTab'" ng-click="selectTab(current)">{{current}}</li>
+		</ul>
+		
+		<ng-include src="'tankkaukset.html'" ng-show="isTab('Tankkaukset')" ></ng-include>
+		<ng-include src="'renkaat.html'" ng-show="isTab('Renkaat')" ></ng-include>
+		<ng-include src="'huollot.html'" ng-show="isTab('Huollot')" ></ng-include>
+		<ng-include src="'kaudet.html'" ng-show="isTab('Kaudet')" ></ng-include>
+		<ng-include src="'muut.html'" ng-show="isTab('Muut')" ></ng-include>
+
+		<div>
+			<span ng-class="bike=='versys'?'selected':''" ng-click="selectBike('versys')">Versys</span> |
+			<span ng-class="bike=='vstrom'?'selected':''" ng-click="selectBike('vstrom')">VStrom</span>
+		</div>
 	</div>
 </body>
 </html>
