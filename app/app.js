@@ -1,2 +1,2 @@
-'use strict';
-var mcEventLog = angular.module('mcEventLog', [])
+var angular = require('angular');
+var mcEventLog = angular.module('mcEventLog', []);
