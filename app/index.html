@@ -2,11 +2,29 @@
 <html>
 <head>
 	<title>MC event log</title>
-	<script type="text/javascript" src="angular.min.js"></script>
-	<script type="text/javascript" src="app.js"></script> 
+	<script src="require.js"></script>
+	<script src="underscore-min.js"></script>
+	<script src="angular.min.js"></script>
+	<script src="app.js"></script>
+	<script src="controller.js"></script>
+	<script src="data.js"></script>
+	<script src="datatable.js"></script>
+	<script src="utils.js"></script>
+	<link rel="stylesheet" href="style.css" type="text/css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body ng-app="mcEventLog">
-	Placeholder. Contents will be added here.
+	<div ng-controller="InputFormCtrl" ng-submit="sendForm(line)" >
+		<form name="newLineForm">
+			<fieldset ng-disabled="isSaving">
+				<input type="date" ng-model="line.date" required/>
+				<input placeholder="litraa" type="number" ng-model="line.fuel" min=0 max=22 step=0.01>
+				<input placeholder="matkamittarin lukema" type="number" ng-model="line.odo" min=3000 max=99999 step=1 required/>
+				<input type="text" ng-model="line.info" />
+		    	<button type="submit">L&auml;het&auml;</button>
+		    </fieldset>
+		</form>
+	</div>
 </body>
 </html>
 
