@@ -1,11 +1,14 @@
 var gulp = require('gulp'),
     runSequence = require('run-sequence'),
     del = require('del'),
-    scp = require('gulp-scp');
+    scp = require('gulp-scp'),
+    jshint = require('gulp-jshint'),
+    bower = require('gulp-bower');
 
 var path  = {
 	"app": {
-		"src": "app/**"
+		"src": "app/**",
+		"js": "app/**/*.js"
 	},
 	"build": {
 		"src": "build/**",
@@ -21,7 +24,7 @@ gulp.task('clean', function(cb) {
   del([path.build.target], cb);
 });
 
-gulp.task('dist', function() {
+gulp.task('dist', ['jshint'], function() {
 	gulp.src(path.app.src)
 		.pipe(gulp.dest(path.build.target));
 	gulp.src(path.dependencies.src)
@@ -37,7 +40,11 @@ gulp.task('deploy', ['dist'], function () {
 		        }));
 });
 
-var bower = require('gulp-bower');
+gulp.task('jshint', function() {
+  return gulp.src(path.app.js)
+    .pipe(jshint())
+    .pipe(jshint.reporter('default'));
+});
  
 gulp.task('bower', function() {
   return bower({ cmd: 'update'});
