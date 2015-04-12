@@ -1,2 +1,2 @@
 'use strict';
-var gasLog = angular.module('mcEvantLog', [])
+var mcEventLog = angular.module('mcEventLog', [])
