@@ -5,7 +5,7 @@ var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     bower = require('gulp-bower');
 
-var path  = {
+var path = {
 	"app": {
 		"src": "app/**",
 		"js": "app/**/*.js"
@@ -15,7 +15,7 @@ var path  = {
 		"target": "build"
 	},
 	"dependencies": {
-		"src": "bower_components/**/*min*.+(js|map)"
+		"src": "bower_components/**/+(require|*min).+(js|map)"
 	}
 }
 
@@ -31,7 +31,11 @@ gulp.task('dist', ['jshint'], function() {
 		.pipe(gulp.dest(path.build.target));
 });
 
-gulp.task('deploy', ['dist'], function () {
+gulp.task('deploy', function () {
+	runSequence('clean', 'dist', 'scp');
+});
+
+gulp.task('scp', function () {
 	var config = require('./deploy-config.json');
     gulp.src(path.build.src)
         .pipe(scp({ host: config.host,
@@ -51,10 +55,10 @@ gulp.task('bower', function() {
 });
 
 gulp.task('watch', function () {
-    gulp.watch(path.app.src, ['deploy']);
-    gulp.watch('bower.json', ['bower']);
+    gulp.watch(path.app.src, ['dist', 'scp']);
+    gulp.watch(path.dependencies.src, ['dist', 'scp']);
+    gulp.watch('bower.json', ['bower', 'scp']);
 });
-
 
 gulp.task('default', function(){
 	runSequence('clean',
