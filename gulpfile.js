@@ -3,12 +3,16 @@ var gulp = require('gulp'),
     del = require('del'),
     scp = require('gulp-scp'),
     jshint = require('gulp-jshint'),
-    bower = require('gulp-bower');
+    bower = require('gulp-bower'),
+    concat = require('gulp-concat'),
+    gulpFilter = require('gulp-filter');
 
 var path = {
 	"app": {
-		"src": "app/**",
-		"js": "app/**/*.js"
+		"html": "app/**/*.html",
+		"css": "app/**/*.css",
+		"js": "app/**/*.js",
+		"test": "app/**/*-test.js",
 	},
 	"build": {
 		"src": "build/**",
@@ -24,15 +28,31 @@ gulp.task('clean', function(cb) {
   del([path.build.target], cb);
 });
 
-gulp.task('dist', ['jshint'], function() {
-	gulp.src(path.app.src)
+gulp.task('dist-html', function() {
+	gulp.src(path.app.html)
 		.pipe(gulp.dest(path.build.target));
+});
+
+gulp.task('dist-css', function() {
+	gulp.src(path.app.css)
+		.pipe(gulp.dest(path.build.target));
+});
+
+gulp.task('dist-js', ['jshint'], function() {
+	gulp.src(path.app.js)
+		.pipe(concat('bundle.js'))
+		.pipe(gulp.dest(path.build.target));
+});
+
+gulp.task('dist-deps', ['jshint'], function() {
 	gulp.src(path.dependencies.src)
 		.pipe(gulp.dest(path.build.target));
 });
 
+gulp.task('dist', ['dist-html', 'dist-css', 'dist-js', 'dist-deps']);
+
 gulp.task('deploy', function () {
-	runSequence('clean', 'dist', 'scp');
+	runSequence('dist', 'scp');
 });
 
 gulp.task('scp', function () {
@@ -55,12 +75,13 @@ gulp.task('bower', function() {
 });
 
 gulp.task('watch', function () {
-    gulp.watch(path.app.src, ['dist', 'scp']);
-    gulp.watch(path.dependencies.src, ['dist', 'scp']);
+    gulp.watch(path.app.html, ['dist-html', 'scp']);
+    gulp.watch(path.app.css, ['dist-css', 'scp']);
+    gulp.watch(path.app.js, ['dist-js', 'scp']);
+    gulp.watch(path.dependencies.src, ['dist-deps', 'scp']);
     gulp.watch('bower.json', ['bower', 'scp']);
 });
 
 gulp.task('default', function(){
-	runSequence('clean',
-				'dist');
+	runSequence('watch');
 });
