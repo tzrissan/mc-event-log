@@ -5,7 +5,7 @@ var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     bower = require('gulp-bower'),
     concat = require('gulp-concat'),
-    gulpFilter = require('gulp-filter');
+    browserify = require('gulp-browserify');
 
 var path = {
 	"app": {
@@ -40,7 +40,8 @@ gulp.task('dist-css', function() {
 
 gulp.task('dist-js', ['jshint'], function() {
 	gulp.src(path.app.js)
-		.pipe(concat('bundle.js'))
+		.pipe(concat())
+		.pipe(browserify())
 		.pipe(gulp.dest(path.build.target));
 });
 
