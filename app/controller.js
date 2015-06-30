@@ -19,7 +19,6 @@ angular.module('mcEventLog', [])
 	$scope.sendForm = function(line) {
 		$scope.isSaving = true;
 		Data.addLine(line, function() {
-			DataTable.updateLines();
 			resetForm();
 			$scope.isSaving = false;
 		});
@@ -36,7 +35,6 @@ angular.module('mcEventLog', [])
 
 	var updateLines = function() {
 		DataTable.setRawData(Data.getItems($scope.bike));
-		DataTable.updateLines();
 		$scope.lines = DataTable.lines();
 		$scope.stats = { 
 			Tankkaukset: StatisticsUtil.countFuelStats($scope.lines.Tankkaukset),
@@ -46,7 +44,7 @@ angular.module('mcEventLog', [])
 		};
 	};
 
-	$rootScope.$on('raw-data-was-updated', function() {
+	$scope.$on('raw-data-was-updated', function() {
 		console.log('on raw-data-was-updated');
 		updateLines();
 	});

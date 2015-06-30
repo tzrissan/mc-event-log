@@ -154,11 +154,24 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 		return today.getFullYear() + "-" + (today.getMonth()+1) + "-" + today.getDate() + " " + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 	};
 
+	var loadNewData = function(callback) {
+		var onUpdate = function(data) {
+			updateDataTimestamp();
+			update(data);
+			if (callback) callback();
+		};
+
+		if (data.lastUpdate) {
+			RestBack.loadLatestItems(data.lastUpdate, onUpdate);
+		} else {
+			RestBack.loadAllData(onUpdate);
+		}
+	};
+
 	return {
 		addLine: function(newLine, callback) {
 			RestBack.saveLine(newLine, function() {
-				update([newLine]);
-				callback();
+				loadNewData(callback);
 			});
 		},
 		addLines: function(newLines) {
@@ -173,24 +186,12 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 		getYearSummary: function() {
 			return years;
 		},
-		loadNewData: function(callback) {
-			var onUpdate = function(data) {
-				updateDataTimestamp();
-				update(data);
-				if (callback) callback();
-			};
-
-			if (data.lastUpdate) {
-				RestBack.loadLatestItems(data.lastUpdate, onUpdate);
-			} else {
-				RestBack.loadAllData(onUpdate);
-			}
-		},
+		loadNewData: loadNewData,
 		loadAllData: function(callback) {
 			RestBack.loadAllData(function(data){
 				data.lastUpdate = currentTimestamp();
 				update(data);
-				callback();
+				if (callback) callback();
 			});
  		},
 		maxValues: {
