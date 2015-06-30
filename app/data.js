@@ -1,4 +1,6 @@
-angular.module('mcEventLog').factory('Data', function(LocalStorage, RestBack, Utils) {
+var _ = require('../bower_components/underscore/underscore-min.js');
+
+angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, RestBack, Utils) {
 
   'use strict';
 
@@ -128,6 +130,8 @@ angular.module('mcEventLog').factory('Data', function(LocalStorage, RestBack, Ut
 
 		
 		LocalStorage.store(data);
+		console.log('Broadcast raw-data-was-updated');
+		$rootScope.$broadcast('raw-data-was-updated');
 	};
 
 	var initData = function() {
@@ -173,7 +177,7 @@ angular.module('mcEventLog').factory('Data', function(LocalStorage, RestBack, Ut
 			var onUpdate = function(data) {
 				updateDataTimestamp();
 				update(data);
-				callback();
+				if (callback) callback();
 			};
 
 			if (data.lastUpdate) {
@@ -194,9 +198,9 @@ angular.module('mcEventLog').factory('Data', function(LocalStorage, RestBack, Ut
 			lastUpdate: data.lastUpdate
 		}
 	};
-});
+})
 
-mcEventLog.factory('RestBack', function($http) {
+.factory('RestBack', function($http) {
 
 	'use strict';
 	
@@ -211,9 +215,9 @@ mcEventLog.factory('RestBack', function($http) {
 			$http.post('/data', line).success(callback);
 		}
 	};
-});
+})
 
-mcEventLog.factory('LocalStorage', function() {
+.factory('LocalStorage', function() {
 
 	'use strict';
 	

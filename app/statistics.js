@@ -1,3 +1,5 @@
+var _ = require('../bower_components/underscore/underscore-min.js');
+
 angular.module('mcEventLog').factory('StatisticsUtil', function(Utils) {
 
 	'use strict';

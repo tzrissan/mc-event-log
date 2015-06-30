@@ -1,3 +1,5 @@
+var _ = require('../bower_components/underscore/underscore-min.js');
+
 angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 
 	'use strict';
@@ -134,9 +136,9 @@ angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 		}
 	};
 
-});
+})
 
-mcEventLog.factory('DataTable', function(DataTableSummaryUtils, Utils) {
+.factory('DataTable', function(DataTableSummaryUtils, Utils) {
 
 	'use strict';
 

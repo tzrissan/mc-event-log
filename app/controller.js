@@ -1,3 +1,4 @@
+var _ = require('../bower_components/underscore/underscore-min.js');
 
 angular.module('mcEventLog', [])
 .controller('InputFormCtrl', function($scope, Data, DataTable, Utils) {
@@ -9,7 +10,7 @@ angular.module('mcEventLog', [])
 	var resetForm = function() {
 		$scope.line = {
 			date: Utils.date2str(new Date()),
-			info: "Knummi-Hki"
+			info: "Hki kaupunkiajoa"
 		};
 	};
 
@@ -25,7 +26,7 @@ angular.module('mcEventLog', [])
 	};
 
 })
-.controller('DataTableCtrl', function($scope, DataTable, LocalStorage, Data, Utils, StatisticsUtil) {
+.controller('DataTableCtrl', function($scope, $rootScope, DataTable, LocalStorage, Data, Utils, StatisticsUtil) {
 
 	'use strict';
 
@@ -44,6 +45,11 @@ angular.module('mcEventLog', [])
 			Kaudet: StatisticsUtil.countSeasonStats(DataTable.getRawData().seasons)
 		};
 	};
+
+	$rootScope.$on('raw-data-was-updated', function() {
+		console.log('on raw-data-was-updated');
+		updateLines();
+	});
 
 	var updateVisibilities = function(level) {
 		switch (level) {
@@ -210,4 +216,6 @@ angular.module('mcEventLog', [])
 	Data.loadNewData(function() {
 		updateLines();
 	});
+
+
 });

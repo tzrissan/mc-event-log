@@ -3,6 +3,7 @@
 	<script type="text/javascript" src="bundle.js"></script>
 	<link rel="stylesheet" href="style.css" type="text/css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Bensatilastot</title>
 </head>
 <body ng-app="mcEventLog">
 	<div ng-controller="InputFormCtrl" ng-submit="sendForm(line)" >
@@ -28,8 +29,10 @@
 		<ng-include src="'muut.html'" ng-show="isTab('Muut')" ></ng-include>
 
 		<div>
-			<span ng-class="bike=='versys'?'selected':''" ng-click="selectBike('versys')">Versys</span> |
-			<span ng-class="bike=='vstrom'?'selected':''" ng-click="selectBike('vstrom')">VStrom</span>
+			<div>
+				<span ng-class="bike=='versys'?'selected':''" ng-click="selectBike('versys')">Versys</span> |
+				<span ng-class="bike=='vstrom'?'selected':''" ng-click="selectBike('vstrom')">VStrom</span> 
+			</div>
 		</div>
 	</div>
 </body>

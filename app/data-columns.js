@@ -21,6 +21,9 @@ return '<td> \
   };
 })();
 
+
+var mcEventLog = angular.module('mcEventLog');
+
 //-----------------------------------
 
 mcEventLog.directive('selectDayCell', function() {
