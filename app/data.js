@@ -1,4 +1,4 @@
-mcEventLog.factory('Data', function(LocalStorage, RestBack, Utils) {
+angular.module('mcEventLog').factory('Data', function(LocalStorage, RestBack, Utils) {
 
   'use strict';
 

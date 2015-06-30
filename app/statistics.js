@@ -1,6 +1,4 @@
-
-
-mcEventLog.factory('StatisticsUtil', function(Utils) {
+angular.module('mcEventLog').factory('StatisticsUtil', function(Utils) {
 
 	'use strict';
 

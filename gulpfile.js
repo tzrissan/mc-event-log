@@ -5,7 +5,7 @@ var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     bower = require('gulp-bower'),
     concat = require('gulp-concat'),
-    browserify = require('gulp-browserify');
+    shell = require('gulp-shell');
 
 var path = {
 	"app": {
@@ -38,19 +38,14 @@ gulp.task('dist-css', function() {
 		.pipe(gulp.dest(path.build.target));
 });
 
-gulp.task('dist-js', ['jshint'], function() {
-	gulp.src(path.app.js)
-		.pipe(concat())
-		.pipe(browserify())
-		.pipe(gulp.dest(path.build.target));
-});
+gulp.task('dist-js', ['jshint'], shell.task('browserify ./app/app.js -o ./build/bundle.js'));
 
-gulp.task('dist-deps', ['jshint'], function() {
+/*gulp.task('dist-deps', ['jshint'], function() {
 	gulp.src(path.dependencies.src)
 		.pipe(gulp.dest(path.build.target));
-});
+});*/
 
-gulp.task('dist', ['dist-html', 'dist-css', 'dist-js', 'dist-deps']);
+gulp.task('dist', ['dist-html', 'dist-css', 'dist-js' /*, 'dist-deps'*/]);
 
 gulp.task('deploy', function () {
 	runSequence('dist', 'scp');
@@ -80,7 +75,7 @@ gulp.task('watch', function () {
     gulp.watch(path.app.html, ['dist-html', 'scp']);
     gulp.watch(path.app.css, ['dist-css', 'scp']);
     gulp.watch(path.app.js, ['dist-js', 'scp']);
-    gulp.watch(path.dependencies.src, ['dist-deps', 'scp']);
+    //gulp.watch(path.dependencies.src, ['dist-deps', 'scp']);
     gulp.watch('bower.json', ['bower', 'scp']);
 });
 

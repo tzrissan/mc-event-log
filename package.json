@@ -13,6 +13,7 @@
     "gulp-browserify": "^0.5.1",
     "gulp-concat": "^2.5.2",
     "gulp-jshint": "^1.10.0",
+    "gulp-shell": "^0.4.0",
     "gulp-scp": "0.0.3",
     "run-sequence": "^1.0.2"
   },

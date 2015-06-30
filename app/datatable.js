@@ -1,4 +1,4 @@
-mcEventLog.factory('DataTableSummaryUtils', function(Utils) {
+angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 
 	'use strict';
 
