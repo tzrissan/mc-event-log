@@ -59,10 +59,11 @@ gulp.task('deploy', function () {
 gulp.task('scp', function () {
 	var config = require('./deploy-config.json');
     gulp.src(path.build.src)
-        .pipe(scp({ host: config.host,
-		            user: config.user,
-		            path: config.targetdir
-		        }));
+        .pipe(scp({ 
+            host: config.host,
+            user: config.user,
+            path: config.targetdir
+        }));
 });
 
 gulp.task('jshint', function() {

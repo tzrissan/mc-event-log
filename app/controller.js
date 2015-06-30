@@ -1,6 +1,6 @@
 
-
-var InputFormCtrl = function($scope, Data, DataTable, Utils) {
+angular.module('mcEventLog', [])
+.controller('InputFormCtrl', function($scope, Data, DataTable, Utils) {
 
 	'use strict';
 
@@ -24,9 +24,8 @@ var InputFormCtrl = function($scope, Data, DataTable, Utils) {
 		});
 	};
 
-};
-
-var DataTableCtrl = function($scope, DataTable, LocalStorage, Data, Utils, StatisticsUtil) {
+})
+.controller('DataTableCtrl', function($scope, DataTable, LocalStorage, Data, Utils, StatisticsUtil) {
 
 	'use strict';
 
@@ -211,4 +210,4 @@ var DataTableCtrl = function($scope, DataTable, LocalStorage, Data, Utils, Stati
 	Data.loadNewData(function() {
 		updateLines();
 	});
-};
+});
