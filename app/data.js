@@ -4,23 +4,31 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 
   'use strict';
 
-  var data = {
-		lastUpdate: undefined,
-		raw: [],
-		bikes: ['versys', 'vstrom', 'bandit'],
-		seasons: { }
-	};
+  var data;
 
-	var initBikeData = function(bike) {
-		data[bike] = {
-			fuel: [],
-			maintenance: [],
-			tyreFront: [],
-			tyreRear: [],
-			other: [],
-			seasons: data.seasons
+  var initializeData = function () {
+
+  	data = {
+			lastUpdate: undefined,
+			raw: [],
+			bikes: ['versys', 'vstrom', 'bandit'],
+			seasons: { }
 		};
-	};
+
+		_.each(data.bikes, function(bike) {
+			data[bike] = {
+				fuel: [],
+				maintenance: [],
+				tyreFront: [],
+				tyreRear: [],
+				other: [],
+				seasons: data.seasons
+			};
+		});
+
+  };
+
+  initializeData();
 
 	var sortByOdo = function(list) {
 		return _.sortBy(list, 'odo').reverse();
@@ -130,20 +138,8 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 
 		
 		LocalStorage.store(data);
-		console.log('Broadcast raw-data-was-updated');
 		$rootScope.$broadcast('raw-data-was-updated');
 	};
-
-	var initData = function() {
-		_.each(data.bikes, initBikeData);
-		var localData = LocalStorage.load();
-		if (localData) {
-			update(localData.lines);
-			data.lastUpdate = localData.lastUpdate;
-		}
-	};
-
-	initData();
 
 	var updateDataTimestamp = function() {
 		data.lastUpdate = currentTimestamp();
@@ -167,6 +163,22 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 			RestBack.loadAllData(onUpdate);
 		}
 	};
+
+	var reload = function(callback) {
+		initializeData();
+		LocalStorage.clear();
+		loadNewData(callback);
+	};
+
+	var loadDataFromLocalStorage = function() {
+			var localData = LocalStorage.load();
+			if (localData) {
+				update(localData.lines);
+				data.lastUpdate = localData.lastUpdate;
+			}
+	};
+
+	loadDataFromLocalStorage();
 
 	return {
 		addLine: function(newLine, callback) {
@@ -197,7 +209,8 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 		maxValues: {
 			odo: data.maxOdo,
 			lastUpdate: data.lastUpdate
-		}
+		},
+		reload: reload
 	};
 })
 

@@ -45,7 +45,6 @@ angular.module('mcEventLog', [])
 	};
 
 	$scope.$on('raw-data-was-updated', function() {
-		console.log('on raw-data-was-updated');
 		updateLines();
 	});
 
@@ -207,6 +206,10 @@ angular.module('mcEventLog', [])
 	$scope.selectBike = function(bike) {
 		$scope.bike = bike;
 		updateLines();
+	};
+
+	$scope.reload = function() {
+		Data.reload();
 	};
 
 	updateLines();
