@@ -105,16 +105,36 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 			}
 		};
 
+		var countDistance = function(year, d) {
+			var itemsWithOdoThisYear = _.filter(d, function(l) { return _.isFinite(l.odo) && ""+year===Utils.str2year(l.date); } );
+			var bikes = _.chain(itemsWithOdoThisYear).pluck('bike').uniq().value();
+
+			return _.chain(bikes).map(function(bike) {
+				return {
+					bike: bike,
+					odos: _.chain(itemsWithOdoThisYear).filter(function(b) { return b.bike===bike; }).pluck('odo').value()
+				};
+			}).map(function(bike) {
+				return {
+					bike: bike.bike,
+					distance: _.max(bike.odos) - _.min(bike.odos)
+				};
+			}).reduce(function(a,b) { return a+b.distance; }, 0).value();
+		};
+
 		var seasonStarts = _.map(filterByType(d, 'SEASON_START'), getSeasonDates);
 		var seasonEnds = _.map(filterByType(d, 'SEASON_END'), getSeasonDates);
 
 		var seasons = _.map(seasonStarts, function(start) {
-			return {
-				year: start.year, 
-				date: Utils.str2date(start.date),
-				start: Utils.str2date(start.date),
-				end: getEndDate(seasonEnds, start.year)
-			};
+			var season = { };
+		  season.year=start.year;
+			season.start=Utils.str2date(start.date);
+			season.end=getEndDate(seasonEnds, start.year);
+			season.distance=countDistance(start.year, d);
+			season.date=season.start;
+			season.length=(season.end-season.start)/(1000*60*60*24);
+			season.distancePerDay=season.distance/season.length;
+			return season;
 		});
 
 		return _.sortBy(seasons, 'year').reverse();

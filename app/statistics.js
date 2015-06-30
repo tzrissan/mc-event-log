@@ -95,11 +95,14 @@ angular.module('mcEventLog').factory('StatisticsUtil', function(Utils) {
 		return _.average(findSeasonDates(d, field));
 	};
 
-	var seasonStatLine = function(info, start, end) {
+	var seasonStatLine = function(info, start, end, length, distance, distancePerDay) {
 		return {
 				info: info,
 				start: start,
-				end: end
+				end: end,
+				length: length,
+				distance: distance,
+				distancePerDay: distancePerDay
 		};
 	};
 
@@ -130,9 +133,22 @@ angular.module('mcEventLog').factory('StatisticsUtil', function(Utils) {
 			}];
 		},
 		countSeasonStats: function(rawData) {
+			var lengths = pluckNumbers(rawData, 'length');
+			var distances = pluckNumbers(rawData, 'distance');
+			var distancesPerDay = pluckNumbers(rawData, 'distancePerDay');
 			return [
-				seasonStatLine('max', findMaxDate(rawData, 'start'), findMaxDate(rawData, 'end')),
-				seasonStatLine('min', findMinDate(rawData, 'start'), findMinDate(rawData, 'end'))
+				seasonStatLine('max', findMaxDate(rawData, 'start'),
+				                      findMaxDate(rawData, 'end'),
+				                      _.max(lengths),
+				                      _.max(distances),
+				                      _.max(distancesPerDay)),
+				seasonStatLine('avg', null, null, avg(lengths), avg(distances), avg(distancesPerDay)),
+				seasonStatLine('min', findMinDate(rawData, 'start'),
+				                      findMinDate(rawData, 'end'),
+				                      _.min(lengths),
+				                      _.min(distances),
+				                      _.min(distancesPerDay)),
+				seasonStatLine('sum', null, null, sum(lengths), sum(distances), null)
 			];
 		}
 
