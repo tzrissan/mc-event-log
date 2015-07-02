@@ -124,6 +124,15 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 			}).reduce(function(a,b) { return a+b.distance; }, 0).value();
 		};
 
+		var countFuelused = function(year, d) {
+			return _.chain(d)
+              .filter(function(l) { return ""+year===Utils.str2year(l.date); })
+              .map(function(l) { return l.fuelused; } )
+              .filter(function(f) { return _.isFinite(f); } )
+              .reduce(function(a, b) { return a + b; })
+              .value();
+		};
+
 		var seasonStarts = _.map(filterByType(d, 'SEASON_START'), getSeasonDates);
 		var seasonEnds = _.map(filterByType(d, 'SEASON_END'), getSeasonDates);
 
@@ -133,6 +142,7 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 			season.start=Utils.str2date(start.date);
 			season.end=getEndDate(seasonEnds, start.year);
 			season.distance=countDistance(start.year, d);
+			season.fuelused=countFuelused(start.year, d);
 			season.date=season.start;
 			season.length=(season.end-season.start)/(1000*60*60*24);
 			season.distancePerDay=season.distance/season.length;

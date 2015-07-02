@@ -29,7 +29,6 @@ angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 
 	var copyData = function(data) {
 		return _.map(data, function(line) {
-			console.log(line);
 			return {
 				date:        line.date, 
 				odo:         line.odo,

@@ -10,8 +10,8 @@
 		<form name="newLineForm">
 			<fieldset ng-disabled="isSaving">
 				<input type="date" ng-model="line.date" required/>
-				<input placeholder="litraa" type="number" ng-model="line.fuel" min=0 max=22 step=0.01>
-				<input placeholder="matkamittarin lukema" type="number" ng-model="line.odo" min=3000 max=99999 step=1 required/>
+				<input placeholder="litraa" type="number" ng-model="line.fuel" min=0 max=21 step=0.01>
+				<input placeholder="matkamittarin lukema" type="number" ng-model="line.odo" min=5000 max=99999 step=1 required/>
 				<input type="text" ng-model="line.info" />
 		    	<button type="submit">L&auml;het&auml;</button>
 		    </fieldset>

@@ -136,18 +136,21 @@ angular.module('mcEventLog').factory('StatisticsUtil', function(Utils) {
 			var lengths = pluckNumbers(rawData, 'length');
 			var distances = pluckNumbers(rawData, 'distance');
 			var distancesPerDay = pluckNumbers(rawData, 'distancePerDay');
+			var fuelused = pluckNumbers(rawData, 'fuelused');
 			return [
 				seasonStatLine('max', findMaxDate(rawData, 'start'),
 				                      findMaxDate(rawData, 'end'),
 				                      _.max(lengths),
 				                      _.max(distances),
-				                      _.max(distancesPerDay)),
-				seasonStatLine('avg', null, null, avg(lengths), avg(distances), avg(distancesPerDay)),
+				                      _.max(distancesPerDay),
+				                      _.max(fuelused)),
+				seasonStatLine('avg', null, null, avg(lengths), avg(distances), avg(distancesPerDay), avg(fuelused)),
 				seasonStatLine('min', findMinDate(rawData, 'start'),
 				                      findMinDate(rawData, 'end'),
 				                      _.min(lengths),
 				                      _.min(distances),
-				                      _.min(distancesPerDay)),
+				                      _.min(distancesPerDay),
+				                      _.min(fuelused)),
 				seasonStatLine('sum', null, null, sum(lengths), sum(distances), null)
 			];
 		}
