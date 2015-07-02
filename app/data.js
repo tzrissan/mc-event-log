@@ -237,7 +237,7 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 .factory('RestBack', function($http) {
 
 	'use strict';
-	
+
 	return {
 		loadAllData: function(callback) {
 			$http.get('/data').success(callback);
@@ -272,7 +272,7 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 		store: function(data) {
 			try {
 				if (data.lastUpdate) { 
-					localStorage.setItem('lastUpdate', JSON.stringify(data.lastUpdate));
+					localStorage.setItem('lastUpdate', data.lastUpdate);
 				}
 				localStorage.setItem('lines', JSON.stringify(filterValuesForStorage(data.raw)));
 			  localStorage.setItem('lines-size', JSON.stringify(data.raw.length));
