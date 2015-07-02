@@ -5,7 +5,7 @@
 		<th summerize-by-year-cell/>
 		<th ng-class="isOrderedBy('odo')?'selected':''" ng-click="orderBy('odo')">odo</th>
 		<th ng-class="isOrderedBy('dist')?'selected':''" ng-click="orderBy('dist')">matka</th>
-		<th ng-class="isOrderedBy('fuel')?'selected':''" ng-click="orderBy('fuel')">ltr</th>
+		<th ng-class="isOrderedBy('fuelused')?'selected':''" ng-click="orderBy('fuelused')">ltr</th>
 		<th ng-class="isOrderedBy('milage')?'selected':''" ng-click="orderBy('milage')">ltr/100km</th>
 		<th ng-class="isOrderedBy('info')?'selected':''" ng-click="orderBy('info')">info</th>
 	</tr>
@@ -13,21 +13,21 @@
 		<td class="text" >{{stat.info}}</td>
 		<td colspan="2"> {{stat.date | date: 'dd.MM.yyyy' }}</td>
 		<td>{{stat.odo | number:0 }}</td>
-		<td>{{stat.dist | number:0 }}</td>
-		<td>{{stat.fuel | number:2 }}</td>
+		<td>{{stat.dist | number:0 }} km</td>
+		<td>{{stat.fuelused | number:2 }} l</td>
 		<td>{{stat.milage | number:2 }}</td>
 		<td class="text" >{{stat.info}}</td>
 	</tr>
 	<tr class="statsActivation" ng-hide="showStats" ng-click="setShowStats(true)">
-		<td colspan="8">-- Näytä statistiikat--</td>
+		<td colspan="9">-- Näytä statistiikat--</td>
 	</tr>
 	<tr ng-repeat="line in lines.Tankkaukset">
 		<td select-day-cell/>
 		<td select-month-cell/>
 		<td select-year-cell/>
 		<td>{{line.odo | number:0 }}</td>
-		<td>{{line.dist | number:0 }}</td>
-		<td>{{line.fuel | number:2 }}</td>
+		<td>{{line.dist | number:0 }} km</td>
+		<td>{{line.fuelused | number:2 }} l <span ng-show="line.fuelused !== line.fuelfilled ">(Tankattu {{line.fuelfilled | number:2 }} l )</span></td>
 		<td>{{line.milage | number:2 }}</td>
 		<td class="text" ng-click="toggleDetails(line)" >{{line.info}}
 			<pre class="details" ng-show="line.showDetailedInfo">{{line.detailedInfo}}</pre>

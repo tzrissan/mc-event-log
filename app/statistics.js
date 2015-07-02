@@ -26,7 +26,7 @@ angular.module('mcEventLog').factory('StatisticsUtil', function(Utils) {
 			date: func(pluckDates(lines, 'date')),
 			odo: func(pluckNumbers(lines, 'odo')),
 			dist: func(pluckNumbers(lines, 'dist')),
-			fuel: func(pluckNumbers(lines, 'fuel')),
+			fuelused: func(pluckNumbers(lines, 'fuelused')),
 			milage: func(pluckNumbers(lines, 'milage'))
 		};
 	};
@@ -41,24 +41,24 @@ angular.module('mcEventLog').factory('StatisticsUtil', function(Utils) {
 
 	var fuelStatLineAvg = function(info, lines) {
 		var dists = pluckNumbers(lines, 'dist');
-		var fuels = pluckNumbers(lines, 'fuel');
+		var fuels = pluckNumbers(lines, 'fuelused');
 
 		return {
 			info: info,
 			dist: avg(dists),
-			fuel: avg(fuels),
+			fuelused: avg(fuels),
 			milage: Utils.milage(sum(fuels), sum(dists))
 		};
 	};
 
 	var fuelStatLineTotal = function(info, lines) {
 		var dists = pluckNumbers(lines, 'dist');
-		var fuels = pluckNumbers(lines, 'fuel');
+		var fuels = pluckNumbers(lines, 'fuelused');
 
 		return {
 			info: info,
 			dist: sum(dists),
-			fuel: sum(fuels)
+			fuelused: sum(fuels)
 		};
 	};
 

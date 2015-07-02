@@ -17,7 +17,8 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 
 		_.each(data.bikes, function(bike) {
 			data[bike] = {
-				fuel: [],
+				fuelused: [],
+				fuelfilled: [],
 				maintenance: [],
 				tyreFront: [],
 				tyreRear: [],
@@ -40,10 +41,11 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 			if (prev) {
 				prev.prevOdo = current.odo;
 				prev.dist = prev.odo - current.odo;
-				prev.milage = Utils.milage(prev.fuel, prev.dist);
+				prev.milage = Utils.milage(prev.fuelused, prev.dist);
 			}
 			prev=current;
-			current.fuel = parseFloat(current.fuel);
+			current.fuelused = parseFloat(current.fuelused);
+			current.fuelfilled = parseFloat(current.fuelfilled);
 			current.odo = parseInt(current.odo);
 		});
 		return list;
@@ -259,7 +261,8 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 		return _.map(data, function(item) {
 			return {
 				'odo': item.odo,
-				'fuel': item.fuel,
+				'fuelfilled': item.fuelfilled,
+				'fuelused': item.fuelused,
 				'info': item.info,
 				'type': item.type,
 				'date': item.date,

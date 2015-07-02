@@ -29,15 +29,17 @@ angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 
 	var copyData = function(data) {
 		return _.map(data, function(line) {
+			console.log(line);
 			return {
-				date:		line.date, 
-				odo:		line.odo,
-				prevOdo:	line.prevOdo,
-				dist:		line.dist,
-				fuel:		line.fuel,
-				milage:		line.milage,
-				type:		line.type,
-				info:		line.info
+				date:        line.date, 
+				odo:         line.odo,
+				prevOdo:     line.prevOdo,
+				dist:        line.dist,
+				fuelfilled:  line.fuelfilled,
+				fuelused:    line.fuelused,
+				milage:      line.milage,
+				type:        line.type,
+				info:        line.info
 			};
 		});
 	};
@@ -62,8 +64,9 @@ angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 				memo.odo = _.max([memo.odo, parseInt(line.odo)]);
 				memo.prevOdo = _.min([memo.odo, memo.prevOdo, parseInt(line.prevOdo)]);
 				memo.dist = Utils.nullSafeSum(memo.dist, parseInt(line.dist));
-				memo.fuel = Utils.nullSafeSum(memo.fuel, parseFloat(line.fuel));
-				memo.milage = Utils.milage(memo.fuel, memo.dist);
+				memo.fuelfilled = Utils.nullSafeSum(memo.fuelfilled, parseFloat(line.fuelfilled));
+				memo.fuelused = Utils.nullSafeSum(memo.fuelused, parseFloat(line.fuelused));
+				memo.milage = Utils.milage(memo.fuelused, memo.dist);
 				memo.detailedInfo = memo.detailedInfo + line.info + '\n';
 				return memo;
 			}, {
@@ -146,7 +149,7 @@ angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 
 	var updateLines = function() {
 		_lines = DataTableSummaryUtils.calculateLines(_data, _summaryLevel, _dateSelection, _orderBy);
-		_maxOdo = _.chain([_data.fuel, _data.tyres, _data.maintenance, _data.other]).flatten(true).pluck('odo').max().value();
+		_maxOdo = _.chain([_data.fuelfilled, _data.fuelused, _data.tyres, _data.maintenance, _data.other]).flatten(true).pluck('odo').max().value();
 	};
 
 	var setSummmaryLevel = function(level) {
