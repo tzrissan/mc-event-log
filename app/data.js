@@ -15,29 +15,14 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 			seasons: { }
 		};
 
-		_.each(data.bikes, function(bike) {
-			data[bike] = {
-				fuelused: [],
-				fuelfilled: [],
-				maintenance: [],
-				tyreFront: [],
-				tyreRear: [],
-				other: [],
-				seasons: data.seasons
-			};
-		});
-
   };
 
   initializeData();
 
-	var sortByOdo = function(list) {
-		return _.sortBy(list, 'odo').reverse();
-	};
-
 	var calculate = function(list) {
 		var prev;
-		_.each(list, function(current) {
+		var sortedList = _.sortBy(list, 'odo').reverse();
+		_.each(sortedList, function(current) {
 			if (prev) {
 				prev.prevOdo = current.odo;
 				prev.dist = prev.odo - current.odo;
@@ -73,21 +58,6 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 
 	var filterByType = function(d, t) {
 		return _.filter(d, function(line) { return line.type===t; } );
-	};
-
-	var categorizeBikeData = function(d, b) {
-		var newData = filterByBike(d, b);
-		return {
-			fuel: filterByType(newData, 'FUEL'),
-			tyreFront: filterByType(newData, 'TYRE_FRONT'),
-			tyreRear: filterByType(newData, 'TYRE_REAR'),
-			maintenance: filterByType(newData, 'MAINTENANCE'),
-			other: filterByType(newData, 'OTHER')
-		};
-	};
-
-	var mergeNewDataToOld = function(bikeData, newBikeData, field) {
-		bikeData[field] = calculate(sortByOdo(merge(bikeData[field], newBikeData[field])));
 	};
 
 	var calculateSeasons = function(d) {
@@ -156,19 +126,24 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 		data.raw=merge(data.raw, newData);
 		data.seasons=calculateSeasons(data.raw);
 
-		_.each(data.bikes, function(bike) {
-			var categorizedNewData = categorizeBikeData(newData, bike);
-			mergeNewDataToOld(data[bike], categorizedNewData, 'fuel');
-			mergeNewDataToOld(data[bike], categorizedNewData, 'tyreFront');
-			mergeNewDataToOld(data[bike], categorizedNewData, 'tyreRear');
-			mergeNewDataToOld(data[bike], categorizedNewData, 'maintenance');
-			mergeNewDataToOld(data[bike], categorizedNewData, 'other');
+		var bikes = _.chain(data.raw)
+		             .pluck('bike')
+		             .uniq()
+		             .value();
+		var eventTypes = _.chain(data.raw)
+		             .pluck('type')
+		             .uniq()
+		             .value();
 
-			data[bike].tyres = sortByOdo(_.flatten([data[bike].tyreFront, data[bike].tyreRear]));
-			data[bike].seasons = data.seasons;
+		_.each(bikes, function(bike) {
+			_.each(eventTypes, function (eventType) {
+				calculate(_.chain(data.raw)
+					         .filter(function(line) { return line.bike===bike; } )
+					         .filter(function(line) { return line.type===eventType; } )
+					         .value());
+			});
 		});
 
-		
 		LocalStorage.store(data);
 		$rootScope.$broadcast('raw-data-was-updated');
 	};
@@ -221,8 +196,8 @@ angular.module('mcEventLog').factory('Data', function($rootScope, LocalStorage, 
 		addLines: function(newLines) {
 			update(newLines);
 		},
-		getItems: function(bike) {
-			return data[bike];
+		getItems: function() {
+			return data.raw;
 		},
 		getMonthSummary: function() {
 			return months;

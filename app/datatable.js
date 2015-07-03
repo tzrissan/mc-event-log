@@ -59,11 +59,10 @@ angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 	var createLines = function(groupedData) {
 		var results = [];
 		_.each(groupedData, function(lines) {
-			console.log(lines.data);
 			var bikes = _.chain(lines.data)
 			             .pluck('bike')
 			             .uniq()
-			             .foldl(function(a,b) { return a + ', ' + b})
+			             .foldl(function(a,b) { return a + ', ' + b; })
 			             .value();
 			results.push(_.foldl(lines.data, function(memo, line) {
 				memo.date = _.max([memo.date, Utils.str2date(line.date)]);
@@ -134,14 +133,22 @@ angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 		);
 	};
 
+	var filterByBike = function(d, b) {
+		return _.filter(d, function(line) { return line.bike===b; } );
+	};
+
+	var filterByType = function(d, t1, t2) {
+		return _.filter(d, function(line) { return line.type===t1 || ( t2 && line.type===t2 ); } );
+	};
+
 	return {
 		calculateLines: function(data, level, selectedDate, orderBy) {
 			return {
-				Tankkaukset: calculateLines(data.fuel, level, selectedDate, orderBy),
-				Renkaat: calculateLines(data.tyres, level, selectedDate, orderBy),
-				Huollot: calculateLines(data.maintenance, level, selectedDate, orderBy),
+				Tankkaukset: calculateLines(filterByType(data, 'FUEL'), level, selectedDate, orderBy),
+				Renkaat: calculateLines(filterByType(data, 'TYRE_FRONT', 'TYRE_REAR'), level, selectedDate, orderBy),
+				Huollot: calculateLines(filterByType(data, 'MAINTENANCE'), level, selectedDate, orderBy),
 				Kaudet: data.seasons,
-				Muut: calculateLines(data.other, level, selectedDate, orderBy)
+				Muut: calculateLines(filterByType(data, 'OTHER'), level, selectedDate, orderBy)
 			};
 		}
 	};

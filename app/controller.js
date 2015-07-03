@@ -183,30 +183,23 @@ angular.module('mcEventLog', [])
 		return $scope.tab == tab;
 	};
 
-	$scope.bike = 'versys';
 	$scope.maxodo=Data.maxValues.odo;
-	$scope.lastfront=_.chain(Data.getItems($scope.bike).renkaat)
+	$scope.lastfront=_.chain(Data.getItems())
 										.filter(function(item) { return item.type=='TYRE_FRONT'; })
 										.pluck('odo')
 										.max()
 										.value();
-	$scope.lastrear= _.chain(Data.getItems($scope.bike).renkaat)
+	$scope.lastrear= _.chain(Data.getItems())
 										.filter(function(item) { return item.type=='TYRE_REAR'; })
 										.pluck('odo')
 										.max()
 										.value();
 
-	$scope.lastmaintenance = _.chain(Data.getItems($scope.bike).huollot)
+	$scope.lastmaintenance = _.chain(Data.getItems())
+														.filter(function(item) { return item.type=='MAINTENANCE'; } )
                             .pluck('odo')
                             .max()
                             .value();
-
-  
-
-	$scope.selectBike = function(bike) {
-		$scope.bike = bike;
-		updateLines();
-	};
 
 	$scope.reload = function() {
 		Data.reload();
