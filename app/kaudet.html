@@ -7,6 +7,7 @@
 		<th>matka</th>
 		<th>päivän pituus</th>
 		<th>kulutus</th>
+		<th>pyörä</th>
 	</tr>
 	<tr class="stats" ng-repeat="stat in stats.Kaudet">
 		<td class="text" >{{stat.info}}</td>
@@ -16,6 +17,7 @@
 		<td>{{stat.distance | number: 0}} km</td>
 		<td>{{stat.distancePerDay | number: 1}}<span ng-show="{{stat.distancePerDay}}">km/pv<span></td>
 		<td>{{stat.fuelused}}<span ng-show="{{stat.fuelused}}">km/pv<span></td>
+		<td/>
 	</tr>
 	<tr ng-repeat="line in lines.Kaudet">
 		<td>{{ line.year }}</td>
@@ -25,8 +27,9 @@
 		<td>{{ line.distance | number: 0 }} km</td>
 		<td>{{ line.distancePerDay | number: 1 }} km/pv</td>
 		<td>{{ line.fuelused | number:2 }}<span ng-show="{{ line.fuelused }}"> l<span></td>
+		<td>{{ line.bike }}</td>
 	</tr>
 	<tr class="clear">
-		<td colspan="7"/>
+		<td colspan="8"/>
 	</tr>
 </tbody><table>

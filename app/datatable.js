@@ -32,6 +32,7 @@ angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 			return {
 				date:        line.date, 
 				odo:         line.odo,
+				bike:        line.bike,
 				prevOdo:     line.prevOdo,
 				dist:        line.dist,
 				fuelfilled:  line.fuelfilled,
@@ -58,10 +59,17 @@ angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 	var createLines = function(groupedData) {
 		var results = [];
 		_.each(groupedData, function(lines) {
+			console.log(lines.data);
+			var bikes = _.chain(lines.data)
+			             .pluck('bike')
+			             .uniq()
+			             .foldl(function(a,b) { return a + ', ' + b})
+			             .value();
 			results.push(_.foldl(lines.data, function(memo, line) {
 				memo.date = _.max([memo.date, Utils.str2date(line.date)]);
 				memo.odo = _.max([memo.odo, parseInt(line.odo)]);
 				memo.prevOdo = _.min([memo.odo, memo.prevOdo, parseInt(line.prevOdo)]);
+				memo.bike = bikes;
 				memo.dist = Utils.nullSafeSum(memo.dist, parseInt(line.dist));
 				memo.fuelfilled = Utils.nullSafeSum(memo.fuelfilled, parseFloat(line.fuelfilled));
 				memo.fuelused = Utils.nullSafeSum(memo.fuelused, parseFloat(line.fuelused));
@@ -70,7 +78,7 @@ angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 				return memo;
 			}, {
 				'date': '1970-01-01',
-				'info': _.size(lines.data) + ' tankkausta',
+				'info': _.size(lines.data) + ' riviä',
 				'detailedInfo': "",
 				'type': 'its complicated',
 				'showDetailedInfo': false 
