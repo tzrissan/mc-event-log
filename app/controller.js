@@ -25,7 +25,7 @@ angular.module('mcEventLog', [])
 	};
 
 })
-.controller('DataTableCtrl', function($scope, $rootScope, DataTable, LocalStorage, Data, Utils, StatisticsUtil) {
+.controller('DataTableCtrl', function($scope, $rootScope, DataTable, LocalStorage, Data, Utils, SeasonUtil, StatisticsUtil) {
 
 	'use strict';
 
@@ -34,13 +34,14 @@ angular.module('mcEventLog', [])
 	$scope.showYear = true;
 
 	var updateLines = function() {
-		DataTable.setRawData(Data.getItems($scope.bike));
+		DataTable.setRawData(Data.getItems());
 		$scope.lines = DataTable.lines();
+		$scope.seasons = SeasonUtil.calculateSeasons(DataTable.getRawData());
 		$scope.stats = { 
 			Tankkaukset: StatisticsUtil.countFuelStats($scope.lines.Tankkaukset),
-			Renkaat: StatisticsUtil.countTyreStats(DataTable.getRawData().tyres, DataTable.maxOdo()),
-			Huollot: StatisticsUtil.countMaintenanceStats(DataTable.getRawData().maintenance, DataTable.maxOdo()),
-			Kaudet: StatisticsUtil.countSeasonStats(DataTable.getRawData().seasons)
+			Renkaat: StatisticsUtil.countTyreStats(DataTable.getRawData(), DataTable.maxOdo()),
+			Huollot: StatisticsUtil.countMaintenanceStats(DataTable.getRawData(), DataTable.maxOdo()),
+			Kaudet: StatisticsUtil.countSeasonStats($scope.seasons)
 		};
 	};
 

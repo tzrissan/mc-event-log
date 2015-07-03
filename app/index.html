@@ -19,7 +19,7 @@
 	</div>
 	<div ng-controller="DataTableCtrl">
 		<ul class="tabs">
-			<li ng-repeat="current in tabs" ng-class="isTab(current)?'activeTab':'passiveTab'" ng-click="selectTab(current)">{{current}}</li>
+			<li ng-repeat="current in tabs" ng-class="isTab(current)?'activeTab':'passiveTab'" ng-click="selectTab(current)">{{ current }}</li>
 		</ul>
 		
 		<ng-include src="'tankkaukset.html'" ng-show="isTab('Tankkaukset')" ></ng-include>
@@ -30,7 +30,7 @@
 
 		<div>
 			<div>
-				<span ng-click="reload()">Reload</span>
+				{{ valinnat }} | <span ng-click="reload()">Reload</span>
 			</div>
 		</div>
 	</div>

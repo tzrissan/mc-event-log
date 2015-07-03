@@ -7,5 +7,6 @@ require('./controller.js');
 require('./data-columns.js');
 require('./data.js');
 require('./datatable.js');
+require('./seasons.js');
 require('./statistics.js');
 require('./utils.js');

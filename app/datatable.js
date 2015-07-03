@@ -223,7 +223,7 @@ angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 				_orderBy = {
 					field: 'date',
 					descending: true
-				}
+				};
 			}
 		}
 		updateLines();
