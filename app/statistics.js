@@ -15,7 +15,7 @@ angular.module('mcEventLog').factory('StatisticsUtil', function(Utils) {
 	var pluckDates = function(lines, field) {
 		return _.chain(lines)
 				.pluck(field)
-				.filter(function(val) { return val; })
+				.map(function(val) { return _.isDate(val) ? val : Utils.str2date(val); })
 				.value();
 	};
 
