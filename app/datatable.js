@@ -203,16 +203,6 @@ angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 		return _orderBy.field == field;
 	};
 
-	var orderBy = function(field) {
-		if (!isOrderedBy(field)) {
-			_orderBy.field = field;
-			_orderBy.descending = defaultOrderForField(field);
-		} else {
-			_orderBy.descending = !_orderBy.descending;
-		}
-		updateLines();
-	};
-
 	var defaultOrderForField = function(field)  {
 		switch (field) {
 			case 'milage': 
@@ -222,10 +212,27 @@ angular.module('mcEventLog').factory('DataTableSummaryUtils', function(Utils) {
 		}
 	};
 
+	var orderBy = function(field) {
+		if (!isOrderedBy(field)) {
+			_orderBy.field = field;
+			_orderBy.descending = defaultOrderForField(field);
+		} else {
+			if (_orderBy.descending === defaultOrderForField(field)) {
+				_orderBy.descending = !_orderBy.descending;
+			} else {
+				_orderBy = {
+					field: 'date',
+					descending: true
+				}
+			}
+		}
+		updateLines();
+	};
+
 	var setDefaultValues = function() {
 		_summaryLevel = 'items';
 		_orderBy = {
-			field: 'odo',
+			field: 'date',
 			descending: true
 		};
 		_dateSelection =  {
