@@ -10,7 +10,7 @@ angular.module('mcEventLog', [])
 	var resetForm = function() {
 		$scope.line = {
 			date: Utils.date2str(new Date()),
-			info: "Hki kaupunkiajoa"
+			info: "Malmi-Hki"
 		};
 	};
 
@@ -37,7 +37,7 @@ angular.module('mcEventLog', [])
 		DataTable.setRawData(Data.getItems());
 		$scope.lines = DataTable.lines();
 		$scope.seasons = SeasonUtil.calculateSeasons(DataTable.getRawData());
-		$scope.stats = { 
+		$scope.stats = {
 			Tankkaukset: StatisticsUtil.countFuelStats($scope.lines.Tankkaukset),
 			Renkaat: StatisticsUtil.countTyreStats(DataTable.getRawData(), DataTable.maxOdo()),
 			Huollot: StatisticsUtil.countMaintenanceStats(DataTable.getRawData(), DataTable.maxOdo()),
@@ -51,24 +51,24 @@ angular.module('mcEventLog', [])
 
 	var updateVisibilities = function(level) {
 		switch (level) {
-			case undefined: 
-			case 'items': 
-			case 'days': 
+			case undefined:
+			case 'items':
+			case 'days':
 				$scope.showDate = true;
 				$scope.showMonth = true;
 				$scope.showYear = true;
 				break;
-			case 'months': 
+			case 'months':
 				$scope.showDate = false;
 				$scope.showMonth = true;
 				$scope.showYear = true;
 				break;
-			case 'years': 
+			case 'years':
 				$scope.showDate = false;
 				$scope.showMonth = false;
 				$scope.showYear = true;
 				break;
-			default: 
+			default:
 				alert('Err: unknown level: ' + level);
 		}
 	};
@@ -76,26 +76,26 @@ angular.module('mcEventLog', [])
 	var toDateSelector = function(level, date) {
 		var dateStr = Utils.toDateString(date);
 		switch (level) {
-			case 'day': 
+			case 'day':
 				return parseInt(Utils.str2day(dateStr));
-			case 'month': 
+			case 'month':
 				return parseInt(Utils.str2month(dateStr));
-			case 'year': 
+			case 'year':
 				return parseInt(Utils.str2year(dateStr));
-			default: 
+			default:
 				return undefined;
-		}	
+		}
 	};
 
 	var modifySelected = function(level, originalValue, delta) {
 		switch (level) {
-			case 'day': 
+			case 'day':
 				return ((30 + originalValue + delta) % 31) + 1;
-			case 'month': 
+			case 'month':
 				return ((11 + originalValue + delta) % 12) + 1;
-			case 'year': 
+			case 'year':
 				return (originalValue + delta);
-			default: 
+			default:
 		}
 	};
 
@@ -106,8 +106,8 @@ angular.module('mcEventLog', [])
 	};
 
 	$scope.showStats=false;
-	$scope.setShowStats=function(val) { 
-		$scope.showStats = val; 
+	$scope.setShowStats=function(val) {
+		$scope.showStats = val;
 	};
 
 	$scope.summarize = function(level) {
