@@ -4,7 +4,8 @@
   "description": "Motorcycle event log",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vue": "vue"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/tzrissan/mc-event-log/issues"
   },
-  "homepage": "https://github.com/tzrissan/mc-event-log#readme"
+  "homepage": "https://github.com/tzrissan/mc-event-log#readme",
+  "devDependencies": {
+    "@vue/cli": "^3.0.0-rc.5"
+  }
 }
