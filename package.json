@@ -1,0 +1,19 @@
+{
+  "name": "mc-event-log",
+  "version": "2.0.0",
+  "description": "Motorcycle event log",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tzrissan/mc-event-log.git"
+  },
+  "author": "Tuomo Rissanen",
+  "license": "Apache",
+  "bugs": {
+    "url": "https://github.com/tzrissan/mc-event-log/issues"
+  },
+  "homepage": "https://github.com/tzrissan/mc-event-log#readme"
+}
