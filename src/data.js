@@ -10,7 +10,7 @@ var _data = {
             "type": "FUEL",
             "bike": "versys"
         }, {
-            "info": "Hki-Jotseno (Mari)",
+            "info": "Hki-Joutseno (Mari)",
             "fuel": "FUEL",
             "fuelused": 16.09,
             "fuelfilled": 16.09,

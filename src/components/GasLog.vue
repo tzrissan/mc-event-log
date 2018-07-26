@@ -11,7 +11,7 @@
             </thead>
             <tbody>
             <tr v-for="line in demo" v-bind:key="line.odo">
-                <td>{{ line.date }}</td>
+                <td>{{ line.date | moment("d.M.YYYY") }}</td>
                 <td>{{ line.odo }} <small>km</small></td>
                 <td>{{ line.fuelused }} <small>ltr</small></td>
                 <td class="info">{{ line.info }}</td>
