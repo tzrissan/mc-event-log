@@ -1,5 +1,4 @@
 <template>
-    <div class="gaslog">
         <table>
             <thead>
             <tr>
@@ -7,12 +6,12 @@
                 <th>odo</th>
                 <th>fuel</th>
                 <th>bike</th>
-                <th>info</th>
+                <th class="info">info</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="event in events" v-bind:key="event.bike + event.odo + event.type">
-                <td>{{ event.date | moment("d.M.YYYY") }}</td>
+            <tr v-for="event in sortEvents(fuelEvents(events))" v-bind:key="event.bike + event.odo">
+                <td>{{ event.date | moment("D.M.YYYY") }}</td>
                 <td>{{ event.odo }} <small>km</small></td>
                 <td v-if="event.fuelused === event.fuelfilled">{{ event.fuelused }} <small>ltr</small></td>
                 <td v-if="event.fuelused !== event.fuelfilled">
@@ -23,17 +22,23 @@
             </tr>
             </tbody>
         </table>
-    </div>
 </template>
 
 <script>
+    import _ from 'lodash';
     import GasLogData from '../data.js'
+
     export default {
         name: 'GasLog',
         data: function() {
-            return {
-                events: GasLogData.get().events.filter(event => event.type === 'FUEL')
-            };
+            return GasLogData.get();
+        },
+        methods: {
+            fuelEvents: (events) => events.filter(event => event.type === 'FUEL'),
+            sortEvents: (events, sort='date', asc=false) => {
+                const sorted = _.sortBy(events, sort);
+                return asc ? sorted : sorted.reverse();
+            }
         }
     }
 </script>
@@ -44,6 +49,7 @@
         margin: 0;
         border-collapse: collapse;
         text-align: right;
+        width: 100%;
     }
     tr:nth-child(even) {
         background: #EEE;
@@ -65,10 +71,5 @@
     .info {
         white-space: pre-wrap;
         text-align: left;
-    }
-    .gaslog {
-        border: 1px solid black;
-        overflow-x: scroll;
-        padding: 10px;
     }
 </style>
