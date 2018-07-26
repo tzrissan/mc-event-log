@@ -10,11 +10,11 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="line in demo" v-bind:key="line.odo">
-                <td>{{ line.date | moment("d.M.YYYY") }}</td>
-                <td>{{ line.odo }} <small>km</small></td>
-                <td>{{ line.fuelused }} <small>ltr</small></td>
-                <td class="info">{{ line.info }}</td>
+            <tr v-for="event in events" v-bind:key="event.bike + event.odo + event.type">
+                <td>{{ event.date | moment("d.M.YYYY") }}</td>
+                <td>{{ event.odo }} <small>km</small></td>
+                <td>{{ event.fuelused }} <small>ltr</small></td>
+                <td class="info">{{ events.info }}</td>
             </tr>
             </tbody>
         </table>
