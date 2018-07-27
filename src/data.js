@@ -3572,12 +3572,8 @@ const _data = {
 
 const countMilages = (events) => {
     const fuelEvents = _.filter(events, { type: 'FUEL'});
-
-    _data.bikes = _.chain(events).map(e => e.bike).uniq().value();
-
     const countDistances = (events, bike) => {
         const bikeFuelEvents = _.chain(fuelEvents).filter({ bike: bike }).value();
-
         var prev;
         var sortedList = _.sortBy(bikeFuelEvents, 'odo').reverse();
         _.each(sortedList, function(current) {
@@ -3595,20 +3591,30 @@ const countMilages = (events) => {
     };
 
     _data.bikes.forEach(bike => countDistances(events, bike));
+};
+
+const dateRegex = /(\d{4})-(\d{2})-(\d{2})/;
+const countExtrainformationFromData = () => {
+    _data.bikes = _.chain(_data.events).map(e => e.bike).uniq().sort().value();
+    _data.years = _.chain(_data.events).map(e => e.date).map(d => d.replace(dateRegex, '$1')).uniq().sort().reverse().value();
+    _data.months = _.chain(_data.events).map(e => e.date).map(d => d.replace(dateRegex, '$2')).uniq().sort().value();
+    countMilages(_data.events);
 }
 
-!PROD && countMilages(_data.events);
+!PROD && countExtrainformationFromData();
 
 PROD && axios.create().get('/data')
     .then((response) => {
         _data.events = response.data;
-        countMilages(_data.events);
+        countExtrainformationFromData();
     });
 
-var GasLogData = {
+const GasLogData = {
     get: function () {
         return _data;
     }
 };
+
+export const MONTH_NAMES = ['Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu'];
 
 export default GasLogData;

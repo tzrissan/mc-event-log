@@ -4,11 +4,11 @@
             <div class="selectedFilters">{{ titles(filters) }}</div>
             <filter-glyph class="hamburger"></filter-glyph>
         </div>
-        <div class="filter-modal" v-if="showFilterDialog" v-on:click="toggleShowFilters">
+        <div class="filter-modal" v-if="local.showFilterDialog" v-on:click="toggleShowFilters">
             <h1>Suodata vuodella</h1>
             <div class="grid-container">
                 <div class="grid-item"
-                     v-for="month in months"
+                     v-for="month in decorateMonths(global.months)"
                      v-bind:key="month.month"
                      v-bind:class="{selected: month.selected}"
                      v-on:click="selectMonth(filters, month)">{{ month.month }}</div>
@@ -16,7 +16,7 @@
             <h1>Suodata kuukaudella</h1>
             <div class="grid-container">
                 <div class="grid-item"
-                     v-for="year in years"
+                     v-for="year in decorateYears(global.years)"
                      v-bind:key="year.year"
                      v-bind:class="{selected: year.selected}"
                      v-on:click="selectYear(filters, year)">{{ year.year }}</div>
@@ -24,7 +24,7 @@
             <h1>Suodata pyörällä</h1>
             <div class="grid-container">
                 <div class="grid-item"
-                     v-for="bike in bikes"
+                     v-for="bike in decorateBikes(global.bikes)"
                      v-bind:key="bike.name"
                      v-bind:class="{selected: bike.selected}"
                      v-on:click="selectBike(filters, bike)">{{ bike.name }}</div>
@@ -36,16 +36,12 @@
 <script>
     import _ from 'lodash';
     import GasLogData from '../data.js'
+    import { MONTH_NAMES } from '../data.js'
     import FilterGlyph from "./FilterGlyph";
 
-    const data = {
-        showFilterDialog: false,
-        years: [],
-        months: [],
-        bikes: []
+    const local = {
+        showFilterDialog: false
     };
-
-    const dateRegex = /(\d{4})-(\d{2})-(\d{2})/;
 
     export default {
         name: 'GasLogFilterSelector',
@@ -57,47 +53,28 @@
             }
         },
         data: function () {
-            const selectedFilterYear = _.get(this.filters.find(e => e.date && e.date.year), 'date.year');
-            const selectedFilterMonth = _.get(this.filters.find(e => e.date && e.date.month), 'date.month');
-            const selectedFilterBike = _.get(this.filters.find(e => e.bike), 'bike');
-            const monthNames = ['Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu'];
-            const allEvents = GasLogData.get().events;
-            data.years = _.chain(allEvents).map(e => e.date)
-                .map(d => d.replace(dateRegex, '$1'))
-                .uniq().sort().reverse()
-                .map(year => {
-                    return {
-                        year: year,
-                        selected: (selectedFilterYear === year)
-                    }
-                })
-                .value();
-            data.months = _.chain(allEvents).map(e => e.date)
-                .map(d => d.replace(dateRegex, '$2'))
-                .uniq().sort()
-                .map(month => {
-                    return {
-                        num: month,
-                        month: monthNames[parseInt(month)-1],
-                        selected: (selectedFilterMonth === month)
-                    }
-                })
-                .value();
-            data.bikes = _.chain(allEvents).map(e => e.bike)
-                .uniq().sort()
-                .map(bike => {
-                    return {
-                        name: bike,
-                        selected: (selectedFilterBike === bike)
-                    }
-                })
-                .value();
-            return data;
+            local.selectedFilterYear = _.get(this.filters.find(e => e.date && e.date.year), 'date.year');
+            local.selectedFilterMonth = _.get(this.filters.find(e => e.date && e.date.month), 'date.month');
+            local.selectedFilterBike = _.get(this.filters.find(e => e.bike), 'bike');
+            return { local, global: GasLogData.get() };
         },
         methods: {
             toggleShowFilters: () => {
-                data.showFilterDialog = !data.showFilterDialog;
+                local.showFilterDialog = !local.showFilterDialog;
             },
+            decorateMonths: (months) => months.map(month => ({
+                num: month,
+                month: MONTH_NAMES[parseInt(month)-1],
+                selected: (local.selectedFilterMonth === month)
+            })),
+            decorateYears: (years) => years.map(year => ({
+                year: year,
+                selected: (local.selectedFilterYear === year)
+            })),
+            decorateBikes: (bikes) => bikes.map(bike => ({
+                name: bike,
+                selected: (local.selectedFilterBike === bike)
+            })),
             selectYear: (filters, year) => {
                 let yearFilter = filters.find(e => e.date && e.date.year);
                 if (!yearFilter) {
@@ -107,12 +84,12 @@
                 if (yearFilter.date.year === year.year) {
                     const idx = filters.findIndex(e => e.date && e.date.year);
                     filters.splice(idx, 1);
-                    data.years.forEach(y => y.selected = false)
+                    local.selectedFilterYear = undefined;
                 } else {
                     yearFilter.date.title = year.year;
                     yearFilter.date.year = year.year;
                     yearFilter.date.regex = new RegExp(`${year.year}-..-..`);
-                    data.years.forEach(y => y.selected = (y.year === year.year))
+                    local.selectedFilterYear = year.year;
                 }
             },
             selectMonth: (filters, month) => {
@@ -124,12 +101,12 @@
                 if (monthFilter.date.month === month.num) {
                     const idx = filters.findIndex(e => e.date && e.date.month);
                     filters.splice(idx, 1);
-                    data.months.forEach(y => y.selected = false)
+                    local.selectedFilterMonth = undefined;
                 } else {
                     monthFilter.date.title = month.month;
                     monthFilter.date.month = month.num;
                     monthFilter.date.regex = new RegExp(`....-${month.num}-..`);
-                    data.months.forEach(y => y.selected = (y.num === month.num))
+                    local.selectedFilterMonth = month.num;
                 }
             },
             selectBike: (filters, bike) => {
@@ -141,10 +118,10 @@
                 if (bikeFilter.bike === bike.name) {
                     const idx = filters.findIndex(e => e.bike);
                     filters.splice(idx, 1);
-                    data.bikes.forEach(y => y.selected = false)
+                    local.selectedFilterBike = undefined;
                 } else {
                     bikeFilter.bike = bike.name;
-                    data.bikes.forEach(y => y.selected = (y.name === bike.name))
+                    local.selectedFilterBike = bike.name;
                 }
             },
             titles: (filters) => filters.map(f => f.date ? f.date.title : _.values(f)).join(', ')
@@ -161,23 +138,6 @@
     .settings .selectedFilters, .settings .hamburger {
         display: inline-block;
         margin: 0 10px
-    }
-
-    .hamburger-grid {
-        width: 50px;
-        height: 50px;
-        display: grid;
-        grid-template-columns: auto auto auto;
-        grid-row-gap: 1px;
-        grid-column-gap: 1px;
-        background-color: aqua;
-    }
-    .hamburger-grid div {
-        width: 10px;
-        height: 10px;
-        background-color: black;
-        padding: 0;
-        margin: 0;
     }
 
     .filter-modal {
