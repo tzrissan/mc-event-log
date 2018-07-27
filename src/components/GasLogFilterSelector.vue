@@ -1,16 +1,22 @@
 <template>
     <div>
         <div class="settings" v-on:click="toggleShowFilters">
-            <div/>
-            <div/>
-            <div/>
+            <div class="selectedFilters">{{ titles(filters) }}</div>
+            <div class="hamburger">
+                <div/>
+                <div/>
+                <div/>
+            </div>
         </div>
         <div class="filter-modal" v-if="showFilterDialog" v-on:click="toggleShowFilters">
-            <h1>Suodata {{ filters }}</h1>
+            <h1>Suodata</h1>
             <div class="grid-container">
-                <div class="grid-item">Päivä</div>
                 <div class="grid-item">Kuukausi</div>
-                <div class="grid-item" v-on:click="selectYear(filters)">Vuosi {{selectedFilterYear}}</div>
+                <div class="grid-item"
+                     v-for="year in years"
+                     v-bind:key="year.year"
+                     v-bind:class="{selected: year.selected}"
+                     v-on:click="selectYear(filters, year)">{{ year.year }}</div>
                 <div class="grid-item">Pyörä</div>
                 <div class="grid-item">Odo</div>
                 <div class="grid-item">Info</div>
@@ -28,10 +34,10 @@
 
 <script>
     import _ from 'lodash';
+    import GasLogData from '../data.js'
 
     const data = {
         showFilterDialog: false,
-        selectedFilterYear: undefined,
     };
 
     export default {
@@ -43,17 +49,45 @@
             }
         },
         data: function () {
-            data.selectedFilterYear = _.chain(this.filters).map(f => _.get(f, 'date.year')).filter(d => !_.isUndefined(d)).head();
+            const selectedFilterYear = _.chain(this.filters).map(f => _.get(f, 'date.year')).filter(d => !_.isUndefined(d)).head().value();
+            const allEvents = GasLogData.get().events;
+            data.years = _.chain(allEvents)
+                .map(e => e.date)
+                .map(d => d.replace(/(\d*)-..-../, '$1'))
+                .uniq()
+                .sort()
+                .reverse()
+                .map(year => {
+                    return {
+                        year: year,
+                        selected: (selectedFilterYear === year)
+                    }
+                })
+                .value();
             return data;
         },
         methods: {
             toggleShowFilters: () => {
                 data.showFilterDialog = !data.showFilterDialog;
             },
-            selectYear: (filters) => {
-                filters.length = 0;
-                filters.push({bike: 'vstrom'})
-            }
+            selectYear: (filters, year) => {
+                let yearFilter = filters.find(e => e.date && e.date.year);
+                if (!yearFilter) {
+                    yearFilter = { date: { year: undefined, regex: /.*/ }};
+                    filters.push(yearFilter);
+                }
+                if (yearFilter.date.year === year.year) {
+                    const idx = filters.findIndex((e => e.date && e.date.year));
+                    filters.splice(idx, 1);
+                    data.years.forEach(y => y.selected = false)
+                } else {
+                    yearFilter.title = 'year.year';
+                    yearFilter.date.year = year.year;
+                    yearFilter.date.regex = new RegExp(`${year.year}-..-..`,"g");
+                    data.years.forEach(y => y.selected = (y.year === year.year))
+                }
+            },
+            titles: (filters) => filters.map(f => f.date ? f.date.year: _.values(f)).join(', ')
         }
     }
 
@@ -62,10 +96,14 @@
 <style scoped>
 
     .settings {
-        float: right;
+        text-align: center;
+    }
+    .settings .selectedFilters, .settings .hamburger {
+        display: inline-block;
+        margin: 0 10px
     }
 
-    .settings div {
+    .hamburger div {
         width: 20px;
         height: 3px;
         background-color: black;
@@ -96,6 +134,14 @@
         border: 1px solid rgba(0, 0, 0, 0.8);
         text-align: center;
         padding: 10px;
+    }
+
+    .selected {
+        #border: 2px solid #34675C;
+        border: 0;
+        background-color: #4CB5F5;
+        color: white;
+        font-weight: bold;
     }
 
 </style>
