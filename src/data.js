@@ -3588,7 +3588,7 @@ const foobar = (events) => {
             if (prev) {
                 prev.prevOdo = current.odo;
                 prev.dist = prev.odo - current.odo;
-                prev.milage = (100.0 * prev.fuelused / prev.dist).toFixed(2);
+                prev.milage = parseFloat((100.0 * prev.fuelused / prev.dist).toFixed(2));
             }
             prev=current;
         });
