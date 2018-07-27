@@ -118,6 +118,10 @@
         border-left: 1px solid lightgray;
     }
 
+    td:first-child {
+        border-left: 1px solid black;
+    }
+
     th:last-child, td:last-child {
         padding: 0 15px 0 5px;
         border-left: 1px solid black;

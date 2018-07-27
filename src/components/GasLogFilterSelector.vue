@@ -2,37 +2,32 @@
     <div>
         <div class="settings" v-on:click="toggleShowFilters">
             <div class="selectedFilters">{{ titles(filters) }}</div>
-            <div class="hamburger">
-                <div/>
-                <div/>
-                <div/>
-            </div>
+            <filter-glyph class="hamburger"></filter-glyph>
         </div>
         <div class="filter-modal" v-if="showFilterDialog" v-on:click="toggleShowFilters">
-            <h1>Suodata</h1>
+            <h1>Suodata vuodella</h1>
             <div class="grid-container">
                 <div class="grid-item"
                      v-for="month in months"
                      v-bind:key="month.month"
                      v-bind:class="{selected: month.selected}"
                      v-on:click="selectMonth(filters, month)">{{ month.month }}</div>
+            </div>
+            <h1>Suodata kuukaudella</h1>
+            <div class="grid-container">
                 <div class="grid-item"
                      v-for="year in years"
                      v-bind:key="year.year"
                      v-bind:class="{selected: year.selected}"
                      v-on:click="selectYear(filters, year)">{{ year.year }}</div>
+            </div>
+            <h1>Suodata pyörällä</h1>
+            <div class="grid-container">
                 <div class="grid-item"
                      v-for="bike in bikes"
                      v-bind:key="bike.name"
                      v-bind:class="{selected: bike.selected}"
                      v-on:click="selectBike(filters, bike)">{{ bike.name }}</div>
-            </div>
-            <h1>Laske summat</h1>
-            <div class="grid-container">
-                <div class="grid-item">Päivä</div>
-                <div class="grid-item">Kuukausi</div>
-                <div class="grid-item">Vuosi</div>
-                <div class="grid-item">Pyörä</div>
             </div>
         </div>
     </div>
@@ -41,6 +36,7 @@
 <script>
     import _ from 'lodash';
     import GasLogData from '../data.js'
+    import FilterGlyph from "./FilterGlyph";
 
     const data = {
         showFilterDialog: false,
@@ -53,6 +49,7 @@
 
     export default {
         name: 'GasLogFilterSelector',
+        components: {FilterGlyph},
         props: {
             filters: {
                 type: Array,
@@ -138,7 +135,6 @@
             selectBike: (filters, bike) => {
                 let bikeFilter = filters.find(e => e.bike);
                 if (!bikeFilter) {
-                    console.log('new filter')
                     bikeFilter = { bike: undefined };
                     filters.push(bikeFilter);
                 }
@@ -167,11 +163,21 @@
         margin: 0 10px
     }
 
-    .hamburger div {
-        width: 20px;
-        height: 3px;
+    .hamburger-grid {
+        width: 50px;
+        height: 50px;
+        display: grid;
+        grid-template-columns: auto auto auto;
+        grid-row-gap: 1px;
+        grid-column-gap: 1px;
+        background-color: aqua;
+    }
+    .hamburger-grid div {
+        width: 10px;
+        height: 10px;
         background-color: black;
-        margin: 2px 0;
+        padding: 0;
+        margin: 0;
     }
 
     .filter-modal {

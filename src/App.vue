@@ -8,13 +8,15 @@
     import GasLog from './components/GasLog'
     import ColumnSortIndicator from './components/ColumnSortIndicator'
     import GasLogFilterSelector from './components/GasLogFilterSelector'
+    import FilterGlyph from './components/FilterGlyph';
 
     export default {
         name: 'app',
         components: {
             GasLog,
             GasLogFilterSelector,
-            ColumnSortIndicator
+            ColumnSortIndicator,
+            FilterGlyph
         }
     }
 </script>
