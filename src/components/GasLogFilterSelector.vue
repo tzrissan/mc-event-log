@@ -2,7 +2,7 @@
     <div>
         <div class="settings" v-on:click="toggleShowFilters">
             <div class="selectedFilters">{{ titles(filters) }}</div>
-            <filter-glyph class="hamburger"></filter-glyph>
+            <filter-glyph class="filter-icon"></filter-glyph>
         </div>
         <div class="filter-modal" v-if="local.showFilterDialog" v-on:click="toggleShowFilters">
             <h1>Suodata vuodella</h1>
@@ -133,9 +133,10 @@
 <style scoped>
 
     .settings {
-        text-align: center;
+        text-align: right;
+        padding: 2px 0;
     }
-    .settings .selectedFilters, .settings .hamburger {
+    .settings .selectedFilters, .settings .filter-icon {
         display: inline-block;
         margin: 0 10px
     }
