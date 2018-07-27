@@ -1,20 +1,17 @@
 <template>
     <div>
+        <div class="settings" v-on:click="toggleShowFilters"><div/><div/><div/></div>
         <table>
             <thead>
             <tr>
-                <th v-on:click="toggleSort('date')">pvm
-                    <span class="sort-arrow" v-if="local.sort=='date'">
-                        <span v-if="local.sortAsc">&darr;</span>
-                        <span v-if="!local.sortAsc">&uarr;</span>
-                    </span>
+                <th v-on:click="toggleSort('date')">pvm <column-sort-indicator v-if="local.sort==='date'" v-bind:asc="local.sortAsc"/></th>
+                <th v-on:click="toggleSort('odo')">odo <column-sort-indicator v-if="local.sort==='odo'" v-bind:asc="local.sortAsc"/></th>
+                <th v-on:click="toggleSort('dist')">matka <column-sort-indicator v-if="local.sort==='dist'" v-bind:asc="local.sortAsc"/></th>
+                <th v-on:click="toggleSort('fuelused')">fuel <column-sort-indicator v-if="local.sort==='fuelused'" v-bind:asc="local.sortAsc"/></th>
+                <th v-on:click="toggleSort('milage')">kulutus <column-sort-indicator v-if="local.sort==='milage'" v-bind:asc="local.sortAsc"/></th>
+                <th v-on:click="toggleSort('bike')">bike <column-sort-indicator v-if="local.sort==='bike'" v-bind:asc="local.sortAsc"/></th>
+                <th v-on:click="toggleSort('info')" class="info">info <column-sort-indicator v-if="local.sort==='info'" v-bind:asc="local.sortAsc"/>
                 </th>
-                <th>odo</th>
-                <th>matka</th>
-                <th>fuel</th>
-                <th>kulutus</th>
-                <th>bike</th>
-                <th class="info">info <div class="settings" v-on:click="toggleShowFilters"><div/><div/><div/></div></th>
             </tr>
 
             </thead>
@@ -30,13 +27,13 @@
                 <td v-if="event.fuelused === event.fuelfilled">{{ event.fuelused }}
                     <small>ltr</small>
                 </td>
-                <td v-if="event.fuelused !== event.fuelfilled">
+                <td v-else>
                     <span v-bind:title="'Tankattu ' + event.fuelfilled + ' ltr'"><small>&#x26A0;</small> {{ event.fuelused }} <small>ltr</small></span>
                 </td>
                 <td class="milage">
+                    <div class="amount" v-if="event.milage">{{ event.milage }}</div>
                     <div class="unit" v-if="event.milage">litraa/<br/>100km</div>
-                    <div class="amount">{{ event.milage }}</div>
-                    <span v-if="!event.milage">-</span>
+                    <span v-else>-</span>
                 </td>
                 <td>{{ event.bike }}</td>
                 <td class="info">{{ event.info }}</td>
@@ -67,6 +64,7 @@
 <script>
     import _ from 'lodash';
     import GasLogData from '../data.js'
+    import ColumnSortIndicator from "./ColumnSortIndicator";
 
     const local = {
         showFilters: false,
@@ -76,6 +74,7 @@
 
     export default {
         name: 'GasLog',
+        components: {ColumnSortIndicator},
         data: function () {
             return {
                 local,
@@ -140,13 +139,11 @@
     }
 
     .amount {
-        float: right;
-        clear: none;
+        display: inline-block;
     }
 
     .unit {
-        float: right;
-        clear: none;
+        display: inline-block;
         font-size: 0.5em;
         line-height: 0.9em;
         padding-top: 0.1em;
@@ -186,8 +183,6 @@
         border: 1px solid rgba(0, 0, 0, 0.8);
         text-align: center;
     }
-    .sort-arrow {
-        font-weight: bold;
-    }
+
 
 </style>

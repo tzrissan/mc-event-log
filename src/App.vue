@@ -7,13 +7,15 @@
 
 <script>
     import HelloWorld from './components/HelloWorld.vue'
-    import GasLog from './components/GasLog.vue'
+    import GasLog from './components/GasLog'
+    import ColumnSortIndicator from './components/ColumnSortIndicator'
 
     export default {
         name: 'app',
         components: {
             HelloWorld,
-            GasLog
+            GasLog,
+            ColumnSortIndicator
         }
     }
 </script>
