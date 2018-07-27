@@ -23,17 +23,20 @@
         </div>
         <div class="tab-content">
             <GasLog v-if="selectedTab==='GasLog'"/>
+            <Tyres v-if="selectedTab==='Tyres'"/>
         </div>
     </div>
 </template>
 
 <script>
     import GasLog from './components/GasLog'
+    import Tyres from './components/Tyres'
 
     export default {
         name: 'app',
         components: {
-            GasLog
+            GasLog,
+            Tyres
         },
         data: () => ({selectedTab: 'GasLog'})
     }

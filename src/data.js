@@ -5,6 +5,9 @@ const PROD = !window.location.href.match(/localhost/);
 
 const _data = {
     bikes: [],
+    years: [],
+    months: [],
+    latestBike: undefined,
     events: PROD ? [] : [
         {
             "info": "Veikkaus banditin hankinnasta. Veikattu 2.12.2014",
@@ -3571,15 +3574,11 @@ const _data = {
 };
 
 const countMilages = (events) => {
-    const fuelEvents = _.filter(events, { type: 'FUEL'});
-    const countDistances = (events, bike) => {
-        const bikeFuelEvents = _.chain(fuelEvents).filter({ bike: bike }).value();
+    const countDistancesAndMilageForFuelEvents = (bike) => {
+        const bikeFuelEvents = _.chain(events).filter({ type: 'FUEL', bike: bike }).value();
         var prev;
         var sortedList = _.sortBy(bikeFuelEvents, 'odo').reverse();
         _.each(sortedList, function(current) {
-            /*current.fuelused = parseFloat(current.fuelused);
-            current.fuelfilled = parseFloat(current.fuelfilled);
-            current.odo = parseInt(current.odo);*/
             if (prev) {
                 prev.prevOdo = current.odo;
                 prev.dist = prev.odo - current.odo;
@@ -3587,26 +3586,59 @@ const countMilages = (events) => {
             }
             prev=current;
         });
-
     };
 
-    _data.bikes.forEach(bike => countDistances(events, bike));
+    const countDistancesForFrontTyres = (bike) => {
+        const bikeFrontTyreEvents = _.chain(events).filter({ type: 'TYRE_FRONT', bike: bike }).value();
+        var prev;
+        var sortedList = _.sortBy(bikeFrontTyreEvents, 'odo').reverse();
+        _.each(sortedList, function(current) {
+            if (prev) {
+                prev.prevOdo = current.odo;
+                prev.dist = prev.odo - current.odo;
+            }
+            prev=current;
+        });
+    };
+
+    const countDistancesForRearTyres = (bike) => {
+        const bikeFrontTyreEvents = _.chain(events).filter({ type: 'TYRE_REAR', bike: bike }).value();
+        var prev;
+        var sortedList = _.sortBy(bikeFrontTyreEvents, 'odo').reverse();
+        _.each(sortedList, function(current) {
+            if (prev) {
+                prev.prevOdo = current.odo;
+                prev.dist = prev.odo - current.odo;
+            }
+            prev=current;
+        });
+    };
+
+    _data.bikes.forEach(bike => {
+        countDistancesAndMilageForFuelEvents(bike);
+        countDistancesForFrontTyres(bike);
+        countDistancesForRearTyres(bike);
+    });
 };
 
 const dateRegex = /(\d{4})-(\d{2})-(\d{2})/;
-const countExtrainformationFromData = () => {
+const countExtraInformationFromData = () => {
     _data.bikes = _.chain(_data.events).map(e => e.bike).uniq().sort().value();
     _data.years = _.chain(_data.events).map(e => e.date).map(d => d.replace(dateRegex, '$1')).uniq().sort().reverse().value();
     _data.months = _.chain(_data.events).map(e => e.date).map(d => d.replace(dateRegex, '$2')).uniq().sort().value();
+    _data.latestBike = _.chain(_data.events)
+        .filter({type: 'FUEL'})
+        .sortBy('date')
+        .last().value().bike;
     countMilages(_data.events);
 }
 
-!PROD && countExtrainformationFromData();
+!PROD && countExtraInformationFromData();
 
 PROD && axios.create().get('/data')
     .then((response) => {
         _data.events = response.data;
-        countExtrainformationFromData();
+        countExtraInformationFromData();
     });
 
 const GasLogData = {

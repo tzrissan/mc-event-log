@@ -161,14 +161,12 @@
     }
 
     .grid-item {
-        background-color: rgba(255, 255, 255, 0.8);
-        border: 1px solid rgba(0, 0, 0, 0.8);
+        border: 1px solid black;
         text-align: center;
         padding: 10px;
     }
 
     .selected {
-        #border: 2px solid #34675C;
         border: 0;
         background-color: #4CB5F5;
         color: white;
