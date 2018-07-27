@@ -1,6 +1,6 @@
 <template>
     <div>
-        <gas-log-filter-selector />
+        <gas-log-filter-selector v-bind:filters="local.filters"/>
         <table>
             <thead>
             <tr>
@@ -50,7 +50,8 @@
 
     const local = {
         sort: 'date',
-        sortAsc: false
+        sortAsc: false,
+        filters: [{date: {year: 2018, regex: /2018-..-../}}, {bike: 'versys'}]
     };
 
     export default {
@@ -63,7 +64,21 @@
             };
         },
         methods: {
-            fuelEvents: (events) => events.filter(event => event.type === 'FUEL'),
+            fuelEvents: (events) => {
+                let filteredEvents = events.filter(event => event.type === 'FUEL');
+                local.filters
+                    .map(filter => {
+                        if (filter.date) {
+                            return (e) => ('' + e.date).match(filter.date.regex);
+                        } else {
+                            return filter;
+                        }
+                    })
+                    .forEach(filter => {
+                        filteredEvents = _.filter(filteredEvents, filter)
+                    });
+                return filteredEvents
+            },
             sortEvents: (events, sort, asc) => {
                 const sorted = _.sortBy(events, sort);
                 return asc ? sorted : sorted.reverse();
