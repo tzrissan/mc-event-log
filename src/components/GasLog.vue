@@ -51,7 +51,7 @@
     const local = {
         sort: 'date',
         sortAsc: false,
-        filters: [{date: {year: "2018", regex: /2018-..-../}}, {bike: 'versys'}]
+        filters: [{date: {title: "2018", year: "2018", regex: /2018-..-../}}, {bike: 'versys'}]
     };
 
     export default {

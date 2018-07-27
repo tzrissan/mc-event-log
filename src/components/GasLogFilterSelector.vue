@@ -21,9 +21,11 @@
                      v-bind:key="year.year"
                      v-bind:class="{selected: year.selected}"
                      v-on:click="selectYear(filters, year)">{{ year.year }}</div>
-                <div class="grid-item">Pyörä</div>
-                <div class="grid-item">Odo</div>
-                <div class="grid-item">Info</div>
+                <div class="grid-item"
+                     v-for="bike in bikes"
+                     v-bind:key="bike.name"
+                     v-bind:class="{selected: bike.selected}"
+                     v-on:click="selectBike(filters, bike)">{{ bike.name }}</div>
             </div>
             <h1>Laske summat</h1>
             <div class="grid-container">
@@ -43,7 +45,8 @@
     const data = {
         showFilterDialog: false,
         years: [],
-        months: []
+        months: [],
+        bikes: []
     };
 
     const dateRegex = /(\d{4})-(\d{2})-(\d{2})/;
@@ -57,8 +60,9 @@
             }
         },
         data: function () {
-            const selectedFilterYear = _.chain(this.filters).map(f => _.get(f, 'date.year')).filter(d => !_.isUndefined(d)).head().value();
-            const selectedFilterMonth = _.chain(this.filters).map(f => _.get(f, 'date.month')).filter(d => !_.isUndefined(d)).head().value();
+            const selectedFilterYear = _.get(this.filters.find(e => e.date && e.date.year), 'date.year');
+            const selectedFilterMonth = _.get(this.filters.find(e => e.date && e.date.month), 'date.month');
+            const selectedFilterBike = _.get(this.filters.find(e => e.bike), 'bike');
             const monthNames = ['Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu'];
             const allEvents = GasLogData.get().events;
             data.years = _.chain(allEvents).map(e => e.date)
@@ -82,6 +86,15 @@
                     }
                 })
                 .value();
+            data.bikes = _.chain(allEvents).map(e => e.bike)
+                .uniq().sort()
+                .map(bike => {
+                    return {
+                        name: bike,
+                        selected: (selectedFilterBike === bike)
+                    }
+                })
+                .value();
             return data;
         },
         methods: {
@@ -95,7 +108,7 @@
                     filters.push(yearFilter);
                 }
                 if (yearFilter.date.year === year.year) {
-                    const idx = filters.findIndex((e => e.date && e.date.year));
+                    const idx = filters.findIndex(e => e.date && e.date.year);
                     filters.splice(idx, 1);
                     data.years.forEach(y => y.selected = false)
                 } else {
@@ -112,7 +125,7 @@
                     filters.push(monthFilter);
                 }
                 if (monthFilter.date.month === month.num) {
-                    const idx = filters.findIndex((e => e.date && e.date.month));
+                    const idx = filters.findIndex(e => e.date && e.date.month);
                     filters.splice(idx, 1);
                     data.months.forEach(y => y.selected = false)
                 } else {
@@ -120,6 +133,22 @@
                     monthFilter.date.month = month.num;
                     monthFilter.date.regex = new RegExp(`....-${month.num}-..`);
                     data.months.forEach(y => y.selected = (y.num === month.num))
+                }
+            },
+            selectBike: (filters, bike) => {
+                let bikeFilter = filters.find(e => e.bike);
+                if (!bikeFilter) {
+                    console.log('new filter')
+                    bikeFilter = { bike: undefined };
+                    filters.push(bikeFilter);
+                }
+                if (bikeFilter.bike === bike.name) {
+                    const idx = filters.findIndex(e => e.bike);
+                    filters.splice(idx, 1);
+                    data.bikes.forEach(y => y.selected = false)
+                } else {
+                    bikeFilter.bike = bike.name;
+                    data.bikes.forEach(y => y.selected = (y.name === bike.name))
                 }
             },
             titles: (filters) => filters.map(f => f.date ? f.date.title : _.values(f)).join(', ')
