@@ -1,20 +1,19 @@
 <template>
     <div id="app">
         <GasLog/>
-        <HelloWorld v-if="false" msg="Welcome to Your Vue.js App"/>
     </div>
 </template>
 
 <script>
-    import HelloWorld from './components/HelloWorld.vue'
     import GasLog from './components/GasLog'
     import ColumnSortIndicator from './components/ColumnSortIndicator'
+    import GasLogFilterSelector from './components/GasLogFilterSelector'
 
     export default {
         name: 'app',
         components: {
-            HelloWorld,
             GasLog,
+            GasLogFilterSelector,
             ColumnSortIndicator
         }
     }
@@ -22,11 +21,5 @@
 
 <style>
     #app {
-        font-family: 'Avenir', Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
-        margin-top: 60px;
     }
 </style>

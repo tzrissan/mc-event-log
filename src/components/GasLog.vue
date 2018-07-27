@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="settings" v-on:click="toggleShowFilters"><div/><div/><div/></div>
+        <gas-log-filter-selector />
         <table>
             <thead>
             <tr>
@@ -13,7 +13,6 @@
                 <th v-on:click="toggleSort('info')" class="info">info <column-sort-indicator v-if="local.sort==='info'" v-bind:asc="local.sortAsc"/>
                 </th>
             </tr>
-
             </thead>
             <tbody>
             <tr v-for="event in sortEvents(fuelEvents(global.events), local.sort, local.sortAsc)" v-bind:key="event.bike + event.odo">
@@ -40,24 +39,6 @@
             </tr>
             </tbody>
         </table>
-        <div class="filter-modal" v-if="local.showFilters">
-            <h1>Suodata</h1>
-            <div class="grid-container">
-                <div class="grid-item">Päivä</div>
-                <div class="grid-item">Kuukausi</div>
-                <div class="grid-item">Vuosi</div>
-                <div class="grid-item">Pyörä</div>
-                <div class="grid-item">Odo</div>
-                <div class="grid-item">Info</div>
-            </div>
-            <h1>Laske summat</h1>
-            <div class="grid-container">
-                <div class="grid-item">Päivä</div>
-                <div class="grid-item">Kuukausi</div>
-                <div class="grid-item">Vuosi</div>
-                <div class="grid-item">Pyörä</div>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -65,16 +46,16 @@
     import _ from 'lodash';
     import GasLogData from '../data.js'
     import ColumnSortIndicator from "./ColumnSortIndicator";
+    import GasLogFilterSelector from "./GasLogFilterSelector";
 
     const local = {
-        showFilters: false,
         sort: 'date',
         sortAsc: false
     };
 
     export default {
         name: 'GasLog',
-        components: {ColumnSortIndicator},
+        components: {GasLogFilterSelector, ColumnSortIndicator},
         data: function () {
             return {
                 local,
@@ -87,7 +68,6 @@
                 const sorted = _.sortBy(events, sort);
                 return asc ? sorted : sorted.reverse();
             },
-            toggleShowFilters: () => { local.showFilters = !local.showFilters; },
             toggleSort: (sort) => {
                 if (local.sort === sort) {
                     local.sortAsc = !local.sortAsc;
@@ -147,42 +127,8 @@
         font-size: 0.5em;
         line-height: 0.9em;
         padding-top: 0.1em;
+        margin-left: 3px;
+        text-align: left;
     }
-
-    .settings {
-        float: right;
-    }
-
-    .settings div {
-        width: 20px;
-        height: 3px;
-        background-color: black;
-        margin: 2px 0;
-    }
-
-    .filter-modal {
-        border: 2px solid black;
-        z-index: 50;
-        width: 80vw;
-        height: 80vh;
-        top: 10vh;
-        left: 10vw;
-        position: fixed;
-        background-color: white;
-        padding: 10px;
-    }
-
-    .grid-container {
-        display: grid;
-        grid-template-columns: auto auto auto;
-        grid-row-gap: 5px;
-        grid-column-gap: 5px;
-    }
-    .grid-item {
-        background-color: rgba(255, 255, 255, 0.8);
-        border: 1px solid rgba(0, 0, 0, 0.8);
-        text-align: center;
-    }
-
 
 </style>
