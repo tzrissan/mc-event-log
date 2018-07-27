@@ -11,7 +11,11 @@
         <div class="filter-modal" v-if="showFilterDialog" v-on:click="toggleShowFilters">
             <h1>Suodata</h1>
             <div class="grid-container">
-                <div class="grid-item">Kuukausi</div>
+                <div class="grid-item"
+                     v-for="month in months"
+                     v-bind:key="month.month"
+                     v-bind:class="{selected: month.selected}"
+                     v-on:click="selectMonth(filters, month)">{{ month.month }}</div>
                 <div class="grid-item"
                      v-for="year in years"
                      v-bind:key="year.year"
@@ -38,7 +42,11 @@
 
     const data = {
         showFilterDialog: false,
+        years: [],
+        months: []
     };
+
+    const dateRegex = /(\d{4})-(\d{2})-(\d{2})/;
 
     export default {
         name: 'GasLogFilterSelector',
@@ -50,17 +58,27 @@
         },
         data: function () {
             const selectedFilterYear = _.chain(this.filters).map(f => _.get(f, 'date.year')).filter(d => !_.isUndefined(d)).head().value();
+            const selectedFilterMonth = _.chain(this.filters).map(f => _.get(f, 'date.month')).filter(d => !_.isUndefined(d)).head().value();
+            const monthNames = ['Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu'];
             const allEvents = GasLogData.get().events;
-            data.years = _.chain(allEvents)
-                .map(e => e.date)
-                .map(d => d.replace(/(\d*)-..-../, '$1'))
-                .uniq()
-                .sort()
-                .reverse()
+            data.years = _.chain(allEvents).map(e => e.date)
+                .map(d => d.replace(dateRegex, '$1'))
+                .uniq().sort().reverse()
                 .map(year => {
                     return {
                         year: year,
                         selected: (selectedFilterYear === year)
+                    }
+                })
+                .value();
+            data.months = _.chain(allEvents).map(e => e.date)
+                .map(d => d.replace(dateRegex, '$2'))
+                .uniq().sort()
+                .map(month => {
+                    return {
+                        num: month,
+                        month: monthNames[parseInt(month)-1],
+                        selected: (selectedFilterMonth === month)
                     }
                 })
                 .value();
@@ -81,13 +99,30 @@
                     filters.splice(idx, 1);
                     data.years.forEach(y => y.selected = false)
                 } else {
-                    yearFilter.title = 'year.year';
+                    yearFilter.date.title = year.year;
                     yearFilter.date.year = year.year;
-                    yearFilter.date.regex = new RegExp(`${year.year}-..-..`,"g");
+                    yearFilter.date.regex = new RegExp(`${year.year}-..-..`);
                     data.years.forEach(y => y.selected = (y.year === year.year))
                 }
             },
-            titles: (filters) => filters.map(f => f.date ? f.date.year: _.values(f)).join(', ')
+            selectMonth: (filters, month) => {
+                let monthFilter = filters.find(e => e.date && e.date.month);
+                if (!monthFilter) {
+                    monthFilter = { date: { month: undefined, regex: /.*/ }};
+                    filters.push(monthFilter);
+                }
+                if (monthFilter.date.month === month.num) {
+                    const idx = filters.findIndex((e => e.date && e.date.month));
+                    filters.splice(idx, 1);
+                    data.months.forEach(y => y.selected = false)
+                } else {
+                    monthFilter.date.title = month.month;
+                    monthFilter.date.month = month.num;
+                    monthFilter.date.regex = new RegExp(`....-${month.num}-..`);
+                    data.months.forEach(y => y.selected = (y.num === month.num))
+                }
+            },
+            titles: (filters) => filters.map(f => f.date ? f.date.title : _.values(f)).join(', ')
         }
     }
 
