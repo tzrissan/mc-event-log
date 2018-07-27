@@ -3570,11 +3570,10 @@ const _data = {
 
 };
 
-const foobar = (events) => {
+const countMilages = (events) => {
     const fuelEvents = _.filter(events, { type: 'FUEL'});
 
     _data.bikes = _.chain(events).map(e => e.bike).uniq().value();
-    //console.log({bikes: _data.bikes, events});
 
     const countDistances = (events, bike) => {
         const bikeFuelEvents = _.chain(fuelEvents).filter({ bike: bike }).value();
@@ -3593,19 +3592,17 @@ const foobar = (events) => {
             prev=current;
         });
 
-        //console.log({bike, bikeEvents: bikeFuelEvents, types: _.chain(bikeFuelEvents).map(e=>e.type).uniq().value() });
-    }
+    };
 
     _data.bikes.forEach(bike => countDistances(events, bike));
-
 }
 
-!PROD && foobar(_data.events);
+!PROD && countMilages(_data.events);
 
 PROD && axios.create().get('/data')
     .then((response) => {
         _data.events = response.data;
-        foobar(_data.events);
+        countMilages(_data.events);
     });
 
 var GasLogData = {
