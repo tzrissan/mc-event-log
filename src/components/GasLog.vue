@@ -113,18 +113,27 @@
 
     th, td {
         margin: 0;
-        padding: 0 5px;
         white-space: nowrap;
         border-left: 1px solid lightgray;
+    }
+
+    td {
+        padding: 0 5px;
+    }
+
+    th {
+        padding: 5px 10px;
     }
 
     td:first-child {
         border-left: 1px solid black;
     }
 
-    th:last-child, td:last-child {
-        padding: 0 15px 0 5px;
-        border-left: 1px solid black;
+    tr:first-child td {
+        padding-top: 3px;
+    }
+    tr:last-child td {
+        padding-bottom: 3px;
     }
 
     th {
@@ -135,6 +144,7 @@
     .info {
         white-space: pre-wrap;
         text-align: left;
+        border-left: 1px solid black;
     }
 
     .amount {
