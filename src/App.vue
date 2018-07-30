@@ -22,6 +22,7 @@
                  @click="selectedTab='Misc'">Muut</div>
         </div>
         <div class="tab-content">
+            <NewEvent v-if="selectedTab==='NewEvent'"/>
             <GasLog v-if="selectedTab==='GasLog'"/>
             <Tyres v-if="selectedTab==='Tyres'"/>
             <Maintenance v-if="selectedTab==='Maintenance'"/>
@@ -31,6 +32,7 @@
 </template>
 
 <script>
+    import NewEvent from './components/NewEvent'
     import GasLog from './components/GasLog'
     import Tyres from './components/Tyres'
     import Maintenance from './components/Maintenance'
@@ -39,12 +41,13 @@
     export default {
         name: 'app',
         components: {
+            NewEvent,
             GasLog,
             Tyres,
             Maintenance,
             Misc
         },
-        data: () => ({selectedTab: 'GasLog'})
+        data: () => ({selectedTab: 'NewEvent'})
     }
 </script>
 
