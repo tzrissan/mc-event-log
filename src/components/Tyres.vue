@@ -39,23 +39,34 @@
                 <circle r="55" cx="430" cy="233" stroke="black" stroke-width="20" fill="none" />
 
                 <!-- actual information -->
-                <text x="85" y="217" dy="-0.3em" text-anchor="middle">{{ currentFrontTyreDistance(local.selectedBike, global.events) }} km</text>
-                <text x="85" y="217" dy="0.9em" text-anchor="middle">{{ lastFrontTyreChange(local.selectedBike, global.events) | moment("D.M.YYYY")  }}</text>
-                <text x="430" y="233" dy="-0.3em" text-anchor="middle">{{ currentRearTyreDistance(local.selectedBike, global.events) }} km</text>
-                <text x="430" y="233" dy="0.9em" text-anchor="middle">{{ lastRearTyreChange(local.selectedBike, global.events) | moment("D.M.YYYY")  }}</text>
+                <text v-if="local.selectedBike" x="85" y="217" dy="-0.3em" text-anchor="middle">{{ currentFrontTyreDistance(local.selectedBike, global.events) }} km</text>
+                <text v-if="local.selectedBike" x="85" y="217" dy="0.9em" text-anchor="middle">{{ lastFrontTyreChange(local.selectedBike, global.events) | moment("D.M.YYYY")  }}</text>
+                <text v-if="local.selectedBike" x="430" y="233" dy="-0.3em" text-anchor="middle">{{ currentRearTyreDistance(local.selectedBike, global.events) }} km</text>
+                <text v-if="local.selectedBike" x="430" y="233" dy="0.9em" text-anchor="middle">{{ lastRearTyreChange(local.selectedBike, global.events) | moment("D.M.YYYY")  }}</text>
             </svg>
-        </div>
-        <div class="tyre-history-grid">
-            <div class="grid-item">
-                <h1>Eturenkaan vaihdot</h1>
-                <div v-for="event in filterFrontTyreChanges(local.selectedBike, global.events)" v-bind:key="event.odo">
-                    {{event.odo}} <span v-if="event.dist">({{event.dist}} km)</span>, {{event.info}}
+
+            <div class="tyre-history-grid">
+                <div class="grid-item">
+                    <h1>Eturenkaan vaihdot</h1>
+                    <div class="tyreChange"
+                         v-for="event in filterFrontTyreChanges(local.selectedBike, global.events)"
+                         v-bind:key="event.odo">
+                        <div class="odo" v-if="event.odo">{{event.odo}} </div>
+                        <div class="date">{{event.date  | moment("D.M.YYYY")  }}</div>
+                        <div class="info">{{event.info}}</div>
+                        <div class="dist" v-if="event.dist">{{event.dist}} km</div>
+                    </div>
                 </div>
-            </div>
-            <div class="grid-item">
-                <h1>Takarenkaan vaihdot</h1>
-                <div v-for="event in filterRearTyreChanges(local.selectedBike, global.events)" v-bind:key="event.odo">
-                    {{event.odo}} <span v-if="event.dist">({{event.dist}} km)</span>, {{event.info}}
+                <div class="grid-item">
+                    <h1>Takarenkaan vaihdot</h1>
+                    <div class="tyreChange"
+                         v-for="event in filterRearTyreChanges(local.selectedBike, global.events)"
+                         v-bind:key="event.odo">
+                        <div class="odo" v-if="event.odo">{{event.odo}} </div>
+                        <div class="date">{{event.date  | moment("D.M.YYYY")  }}</div>
+                        <div class="info">{{event.info}}</div>
+                        <div class="dist" v-if="event.dist">{{event.dist}} km</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,7 +164,27 @@
     }
 
     .mc {
-        text-align: center;
+        text-align: left;
+        width: 500px;
+    }
+
+    .tyreChange:not(:last-child) {
+        border-bottom: 1px solid grey;
+        padding: 0 10px;
+    }
+
+    .tyreChange div:not(:last-child) {
+        border-right: 1px solid grey;
+    }
+
+    .odo, .dist, .info, .date {
+        display: inline-block;
+        white-space: nowrap;
+        padding: 0 5px;
+    }
+
+    .dist {
+        font-size: small;
     }
 
     .bike-selection-grid {
