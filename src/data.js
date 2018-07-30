@@ -3573,8 +3573,8 @@ const _data = {
 
 };
 
-const countMilages = (events) => {
-    const countDistancesAndMilageForFuelEvents = (bike) => {
+function countMilages(events) {
+    function countDistancesAndMilageForFuelEvents(bike) {
         const bikeFuelEvents = _.chain(events).filter({type: 'FUEL', bike: bike}).value();
         var prev;
         var sortedList = _.sortBy(bikeFuelEvents, 'odo').reverse();
@@ -3587,7 +3587,7 @@ const countMilages = (events) => {
         });
     };
 
-    const countDistancesForFrontTyres = (bike) => {
+    function countDistancesForFrontTyres(bike) {
         const bikeFrontTyreEvents = _.chain(events).filter({type: 'TYRE_FRONT', bike: bike}).value();
         var prev;
         var sortedList = _.sortBy(bikeFrontTyreEvents, 'odo').reverse();
@@ -3599,7 +3599,7 @@ const countMilages = (events) => {
         });
     };
 
-    const countDistancesForRearTyres = (bike) => {
+    function countDistancesForRearTyres(bike) {
         const bikeFrontTyreEvents = _.chain(events).filter({type: 'TYRE_REAR', bike: bike}).value();
         var prev;
         var sortedList = _.sortBy(bikeFrontTyreEvents, 'odo').reverse();
@@ -3611,7 +3611,7 @@ const countMilages = (events) => {
         });
     };
 
-    const countDistancesForMaintenance = (bike) => {
+    function countDistancesForMaintenance(bike) {
         const bikeFrontTyreEvents = _.chain(events).filter({type: 'MAINTENANCE', bike: bike}).value();
         var prev;
         var sortedList = _.sortBy(bikeFrontTyreEvents, 'odo').reverse();
@@ -3632,7 +3632,8 @@ const countMilages = (events) => {
 };
 
 const dateRegex = /(\d{4})-(\d{2})-(\d{2})/;
-const countExtraInformationFromData = () => {
+
+function countExtraInformationFromData() {
     _data.bikes = _.chain(_data.events).map(e => e.bike).uniq().sort().value();
     _data.years = _.chain(_data.events).map(e => e.date).map(d => d.replace(dateRegex, '$1')).uniq().sort().reverse().value();
     _data.months = _.chain(_data.events).map(e => e.date).map(d => d.replace(dateRegex, '$2')).uniq().sort().value();
@@ -3643,18 +3644,24 @@ const countExtraInformationFromData = () => {
     countMilages(_data.events);
 }
 
+function reload() {
+    axios.create().get('/data')
+        .then((response) => {
+            _data.events = response.data;
+            countExtraInformationFromData();
+        });
+}
+
 !PROD && countExtraInformationFromData();
 
-PROD && axios.create().get('/data')
-    .then((response) => {
-        _data.events = response.data;
-        countExtraInformationFromData();
-    });
+PROD && reload();
 
 const GasLogData = {
-    get: function () {
+    get() {
         return _data;
-    }
+    },
+    reload,
+    countExtraInformationFromData
 };
 
 export const MONTH_NAMES = ['Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu'];

@@ -68,9 +68,18 @@
             saveNewLine(e) {
                 e.preventDefault();
                 local.isSaving = true;
-
-                console.log(_.pick(local, 'date', 'fuel', 'odo', 'info'));
-                //axios.post('/data')
+                axios.post('/data', _.pick(local, 'date', 'fuel', 'odo', 'info'))
+                    .then(function (response) {
+                        response.data.forEach(
+                            function(newEvent) {
+                                if (!global.events.find(_.matches(newEvent))) {
+                                    global.events.push(newEvent);
+                                }
+                            }
+                        );
+                        GasLogData.countExtraInformationFromData();
+                        local.isSaving = false;
+                    })
             }
         },
         watch: {
