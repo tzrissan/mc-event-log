@@ -14,42 +14,52 @@
         <div class="mc">
             <svg width="500" height="300" >
 
-                <!-- Handlebars -->
-                <polygon points="140,174, 133,166, 220,88, 225,92" style="fill:black" />
-                <polygon points="220,88, 215,94, 250,97 250,91" style="fill:black" />
 
-                <!-- V2-->
-                <polygon points="190,230, 210,220, 230,260, 210,270" style="fill:black" />
-                <polygon points="250,230, 230,220, 210,260, 230,270" style="fill:black" />
-                <circle r="10" cx="220" cy="260" stroke="white" stroke-width="14" fill="white" />
-                <circle r="10" cx="220" cy="260" stroke="black" stroke-width="10" fill="white" />
-
-                <!-- Tank -->
-                <ellipse cx="250" cy="170" rx="80" ry="30" style="fill:black" transform = "rotate(20, 250 170)"/>
-                <ellipse cx="195" cy="167" rx="30" ry="35" style="fill:black" />
-                <ellipse cx="237" cy="185" rx="65" ry="25" style="fill:black"/>
-                <polygon points="237,210 270,210 300,209, 250,200" style="fill:black"/>
 
                 <!-- Frame -->
-                <polygon points="265,215 240,270, 370,270, 370,215" style="fill:black"/>
+                <polygon points="210,160 280,270, 130,270, 100,160" style="fill:black"/>
+                <ellipse cx="150" cy="140" rx="70" ry="40" style="fill:white" transform = "rotate(10, 150 140)" />
+
+                <!-- V2-->
+                <polygon points="310,230, 290,220, 270,260, 290,270" style="fill:black" />
+                <polygon points="250,230, 270,220, 290,260, 270,270" stroke="white" stroke-width="5" style="fill:red" />
+                <polygon points="250,230, 270,220, 290,260, 270,270" style="fill:black" />
+                <circle r="10" cx="280" cy="260" stroke="white" stroke-width="14" fill="white" />
+                <circle r="10" cx="280" cy="260" stroke="black" stroke-width="10" fill="white" />
+
+                <!-- Tank -->
+                <ellipse cx="250" cy="170" rx="85" ry="35" style="fill:white" transform = "rotate(-20, 250 170)"/>
+                <ellipse cx="305" cy="167" rx="33" ry="40" style="fill:white" />
+                <ellipse cx="263" cy="185" rx="70" ry="30" style="fill:white"/>
+                <polygon points="263,215 230,215 200,214, 250,205" style="fill:white"/>
+
+                <ellipse cx="250" cy="170" rx="80" ry="30" style="fill:black" transform = "rotate(-20, 250 170)"/>
+                <ellipse cx="305" cy="167" rx="30" ry="35" style="fill:black" />
+                <ellipse cx="263" cy="185" rx="65" ry="25" style="fill:black"/>
+                <polygon points="263,210 230,210 200,209, 250,200" style="fill:black"/>
+
+                <!-- Handlebars -->
+                <polygon points="360,174, 367,166, 280,88, 275,92" style="fill:black" />
+                <polygon points="280,88, 285,94, 250,97 250,91" style="fill:black" />
 
                 <!-- Tyres -->
-                <circle r="75" cx="85" cy="217" stroke="black" stroke-width="15" fill="none" />
-                <circle r="55" cx="430" cy="233" stroke="white" stroke-width="30" fill="none" />
-                <circle r="55" cx="430" cy="233" stroke="black" stroke-width="20" fill="none" />
+                <circle r="75" cx="415" cy="217" stroke="black" stroke-width="15" fill="none" />
+                <circle r="55" cx="70" cy="233" stroke="white" stroke-width="30" fill="none" />
+                <circle r="55" cx="70" cy="233" stroke="black" stroke-width="20" fill="none" />
+
 
                 <!-- actual information -->
-                <text v-if="local.selectedBike" x="85" y="217" dy="-0.3em" text-anchor="middle">{{ currentFrontTyreDistance(local.selectedBike, global.events) }} km</text>
-                <text v-if="local.selectedBike" x="85" y="217" dy="0.9em" text-anchor="middle">{{ lastFrontTyreChange(local.selectedBike, global.events) | moment("D.M.YYYY")  }}</text>
-                <text v-if="local.selectedBike" x="430" y="233" dy="-0.3em" text-anchor="middle">{{ currentRearTyreDistance(local.selectedBike, global.events) }} km</text>
-                <text v-if="local.selectedBike" x="430" y="233" dy="0.9em" text-anchor="middle">{{ lastRearTyreChange(local.selectedBike, global.events) | moment("D.M.YYYY")  }}</text>
+                <text v-if="local.selectedBike" x="415" y="217" dy="-0.3em" text-anchor="middle">{{ currentFrontTyreDistance(local.selectedBike, global.events) }} km</text>
+                <text v-if="local.selectedBike" x="415" y="217" dy="0.9em" text-anchor="middle">{{ lastFrontTyreChange(local.selectedBike, global.events) | moment("D.M.YYYY")  }}</text>
+                <text v-if="local.selectedBike" x="70" y="233" dy="-0.3em" text-anchor="middle">{{ currentRearTyreDistance(local.selectedBike, global.events) }} km</text>
+                <text v-if="local.selectedBike" x="70" y="233" dy="0.9em" text-anchor="middle">{{ lastRearTyreChange(local.selectedBike, global.events) | moment("D.M.YYYY")  }}</text>
             </svg>
 
             <div class="tyre-history-grid">
                 <div class="grid-item">
-                    <h1>Eturenkaan vaihdot</h1>
+                    <h1>Takarenkaan vaihdot</h1>
                     <div class="tyreChange"
-                         v-for="event in filterFrontTyreChanges(local.selectedBike, global.events)"
+                         v-for="event in filterRearTyreChanges(local.selectedBike, global.events)"
                          v-bind:key="event.odo">
                         <div class="odo" v-if="event.odo">{{event.odo}} </div>
                         <div class="date">{{event.date  | moment("D.M.YYYY")  }}</div>
@@ -58,9 +68,9 @@
                     </div>
                 </div>
                 <div class="grid-item">
-                    <h1>Takarenkaan vaihdot</h1>
+                    <h1>Eturenkaan vaihdot</h1>
                     <div class="tyreChange"
-                         v-for="event in filterRearTyreChanges(local.selectedBike, global.events)"
+                         v-for="event in filterFrontTyreChanges(local.selectedBike, global.events)"
                          v-bind:key="event.odo">
                         <div class="odo" v-if="event.odo">{{event.odo}} </div>
                         <div class="date">{{event.date  | moment("D.M.YYYY")  }}</div>
