@@ -14,8 +14,6 @@
         <div class="mc">
             <svg width="500" height="300" >
 
-
-
                 <!-- Frame -->
                 <polygon points="210,160 280,270, 130,270, 100,160" style="fill:black"/>
                 <ellipse cx="150" cy="140" rx="70" ry="40" style="fill:white" transform = "rotate(10, 150 140)" />
@@ -94,7 +92,9 @@
     export default {
         name: 'Tyres',
         data: function () {
-            return { local, global: GasLogData.get() };
+            const global = GasLogData.get();
+            local.selectedBike = global.latestBike;
+            return { local, global };
         },
         methods: {
             selectBike: (bike) => {
@@ -176,6 +176,7 @@
     .mc {
         text-align: left;
         width: 500px;
+        margin: 0 auto;
     }
 
     .tyreChange:not(:last-child) {
