@@ -3575,42 +3575,39 @@ const _data = {
 
 const countMilages = (events) => {
     const countDistancesAndMilageForFuelEvents = (bike) => {
-        const bikeFuelEvents = _.chain(events).filter({ type: 'FUEL', bike: bike }).value();
+        const bikeFuelEvents = _.chain(events).filter({type: 'FUEL', bike: bike}).value();
         var prev;
         var sortedList = _.sortBy(bikeFuelEvents, 'odo').reverse();
-        _.each(sortedList, function(current) {
+        _.each(sortedList, function (current) {
             if (prev) {
-                prev.prevOdo = current.odo;
                 prev.dist = prev.odo - current.odo;
                 prev.milage = parseFloat((100.0 * prev.fuelused / prev.dist).toFixed(2));
             }
-            prev=current;
+            prev = current;
         });
     };
 
     const countDistancesForFrontTyres = (bike) => {
-        const bikeFrontTyreEvents = _.chain(events).filter({ type: 'TYRE_FRONT', bike: bike }).value();
+        const bikeFrontTyreEvents = _.chain(events).filter({type: 'TYRE_FRONT', bike: bike}).value();
         var prev;
         var sortedList = _.sortBy(bikeFrontTyreEvents, 'odo').reverse();
-        _.each(sortedList, function(current) {
+        _.each(sortedList, function (current) {
             if (prev) {
-                prev.prevOdo = current.odo;
-                prev.dist = prev.odo - current.odo;
+                current.dist = prev.odo - current.odo;
             }
-            prev=current;
+            prev = current;
         });
     };
 
     const countDistancesForRearTyres = (bike) => {
-        const bikeFrontTyreEvents = _.chain(events).filter({ type: 'TYRE_REAR', bike: bike }).value();
+        const bikeFrontTyreEvents = _.chain(events).filter({type: 'TYRE_REAR', bike: bike}).value();
         var prev;
         var sortedList = _.sortBy(bikeFrontTyreEvents, 'odo').reverse();
-        _.each(sortedList, function(current) {
+        _.each(sortedList, function (current) {
             if (prev) {
-                prev.prevOdo = current.odo;
-                prev.dist = prev.odo - current.odo;
+                current.dist = prev.odo - current.odo;
             }
-            prev=current;
+            prev = current;
         });
     };
 
