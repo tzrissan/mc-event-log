@@ -8,18 +8,18 @@
             <h1>Suodata vuodella</h1>
             <div class="grid-container">
                 <div class="grid-item"
-                     v-for="month in decorateMonths(global.months)"
-                     v-bind:key="month.month"
-                     v-bind:class="{selected: month.selected}"
-                     v-on:click="selectMonth(filters, month)">{{ month.month }}</div>
-            </div>
-            <h1>Suodata kuukaudella</h1>
-            <div class="grid-container">
-                <div class="grid-item"
                      v-for="year in decorateYears(global.years)"
                      v-bind:key="year.year"
                      v-bind:class="{selected: year.selected}"
                      v-on:click="selectYear(filters, year)">{{ year.year }}</div>
+            </div>
+            <h1>Suodata kuukaudella</h1>
+            <div class="grid-container">
+                <div class="grid-item"
+                     v-for="month in decorateMonths(global.months)"
+                     v-bind:key="month.month"
+                     v-bind:class="{selected: month.selected}"
+                     v-on:click="selectMonth(filters, month)">{{ month.month }}</div>
             </div>
             <h1>Suodata pyörällä</h1>
             <div class="grid-container">
