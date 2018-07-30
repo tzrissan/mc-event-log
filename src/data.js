@@ -3611,10 +3611,23 @@ const countMilages = (events) => {
         });
     };
 
+    const countDistancesForMaintenance = (bike) => {
+        const bikeFrontTyreEvents = _.chain(events).filter({type: 'MAINTENANCE', bike: bike}).value();
+        var prev;
+        var sortedList = _.sortBy(bikeFrontTyreEvents, 'odo').reverse();
+        _.each(sortedList, function (current) {
+            if (prev) {
+                prev.dist = prev.odo - current.odo;
+            }
+            prev = current;
+        });
+    };
+
     _data.bikes.forEach(bike => {
         countDistancesAndMilageForFuelEvents(bike);
         countDistancesForFrontTyres(bike);
         countDistancesForRearTyres(bike);
+        countDistancesForMaintenance(bike);
     });
 };
 

@@ -24,6 +24,7 @@
         <div class="tab-content">
             <GasLog v-if="selectedTab==='GasLog'"/>
             <Tyres v-if="selectedTab==='Tyres'"/>
+            <Maintenance v-if="selectedTab==='Maintenance'"/>
         </div>
     </div>
 </template>
@@ -31,12 +32,14 @@
 <script>
     import GasLog from './components/GasLog'
     import Tyres from './components/Tyres'
+    import Maintenance from './components/Maintenance'
 
     export default {
         name: 'app',
         components: {
             GasLog,
-            Tyres
+            Tyres,
+            Maintenance
         },
         data: () => ({selectedTab: 'GasLog'})
     }
