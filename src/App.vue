@@ -2,9 +2,9 @@
     <div id="app">
 
         <div class="tabs">
-            <div class="tab"
+            <div class="tab add-new"
                  v-bind:class="{ active: selectedTab === 'NewEvent'}"
-                 @click="selectedTab='NewEvent'">Uusi merkintä</div>
+                 @click="selectedTab='NewEvent'">+</div>
             <div class="tab"
                  v-bind:class="{ active: selectedTab === 'GasLog'}"
                  @click="selectedTab='GasLog'">Tankkaukset</div>
@@ -15,8 +15,8 @@
                  v-bind:class="{ active: selectedTab === 'Tyres'}"
                  @click="selectedTab='Tyres'">Renkaat</div>
             <div class="tab"
-                 v-bind:class="{ active: selectedTab === 'Seasons'}"
-                 @click="selectedTab='Seasons'">Kaudet</div>
+                 v-bind:class="{ active: selectedTab === 'Stats'}"
+                 @click="selectedTab='Stats'">Tilastot</div>
             <div class="tab"
                  v-bind:class="{ active: selectedTab === 'Misc'}"
                  @click="selectedTab='Misc'">Muut</div>
@@ -26,6 +26,7 @@
             <GasLog v-if="selectedTab==='GasLog'"/>
             <Tyres v-if="selectedTab==='Tyres'"/>
             <Maintenance v-if="selectedTab==='Maintenance'"/>
+            <Stats v-if="selectedTab==='Stats'"/>
             <Misc v-if="selectedTab==='Misc'"/>
         </div>
     </div>
@@ -37,6 +38,8 @@
     import Tyres from './components/Tyres'
     import Maintenance from './components/Maintenance'
     import Misc from './components/Misc'
+    import Stats from './components/Stats'
+
 
     export default {
         name: 'app',
@@ -45,6 +48,7 @@
             GasLog,
             Tyres,
             Maintenance,
+            Stats,
             Misc
         },
         data: () => ({selectedTab: 'NewEvent'})
@@ -53,23 +57,41 @@
 
 <style scoped>
     div.tabs {
-        padding: 0;
-        border-bottom: 1px solid lightgray;
-        border-left: 1px solid black;
+        display: grid;
+        grid-template-columns: 90px auto auto auto auto auto;
+        grid-row-gap: 1px;
+        grid-column-gap: 1px;
+        background-color: black;
+        border: 1px solid black;
+    }
+
+    @media (max-width: 600px) {
+        div.tabs {
+            grid-template-columns: auto auto auto;
+        }
     }
 
     div.tabs .tab {
-        display: inline-block;
-        border: 1px solid black;
-        border-bottom: none;
-        border-left: none;
+        #display: inline;
+        border: none;
         padding: 10px 20px;
         margin: 0;
+        vertical-align: center;
+        text-align: center;
+        line-height: 45px;
+        background-color: white;
+    }
+
+    .add-new {
+        color: #B3C100;
+        font-size: 30px;
+        font-weight: bolder;
+        padding: 0 20px;
     }
 
     .active {
         color: white;
-        background-color: #4CB5F5;
+        background-color: #4CB5F5 !important;
     }
 
     .blueSky {
