@@ -20,16 +20,17 @@
                 <td>{{ event.odo }}
                     <small>km</small>
                 </td>
-                <td>{{ event.dist }}
+                <td v-bind:class="flagStyles(event, 'dist')">{{ event.dist }}
                     <small v-if="event.dist">km</small>
                 </td>
-                <td v-if="event.fuelused === event.fuelfilled">{{ event.fuelused }}
+                <td v-bind:class="flagStyles(event, 'fuelused')"
+                    v-if="event.fuelused === event.fuelfilled">{{ event.fuelused }}
                     <small>ltr</small>
                 </td>
                 <td v-else>
                     <span v-bind:title="'Tankattu ' + event.fuelfilled + ' ltr'"><small>&#x26A0;</small> {{ event.fuelused }} <small>ltr</small></span>
                 </td>
-                <td class="milage">
+                <td class="milage" v-bind:class="flagStyles(event, 'milage')">
                     <div class="amount" v-if="event.milage">{{ event.milage }}</div>
                     <div class="unit" v-if="event.milage">litraa/<br/>100km</div>
                     <span v-else>-</span>
@@ -54,6 +55,36 @@
         filters: [{date: {title: "2018", year: "2018", regex: /2018-..-../}}, {bike: 'versys'}]
     };
 
+    function clearFlags(events) {
+        events.forEach(event => delete event.flags)
+    }
+
+    function setFlags(events, property, sanityCheck = () => true, asc = true) {
+        if (events && events.length > 0) {
+            let sortedEvents = _.chain(events).filter(sanityCheck).sortBy(property).value();
+            if (!asc) {
+                sortedEvents = sortedEvents.reverse();
+            }
+            _.set(_.head(sortedEvents), ['flags', property, 'best'], true);
+
+            const top5percent = Math.max(Math.trunc(events.length * 0.05), 1);
+            _.tail(sortedEvents).slice(0,top5percent).forEach(event => _.set(event, ['flags', property, 'good'], true));
+            sortedEvents.filter(event =>
+                _.get(event, property) * 1.05 > _.head(sortedEvents) &&
+                _.get(event, property) * 0.95 < _.head(sortedEvents)
+            ).forEach(event => _.set(event, ['flags', property, 'good'], true));
+
+            sortedEvents = sortedEvents.reverse();
+            _.set(_.head(sortedEvents), ['flags', property, 'worst'], true);
+
+            _.tail(sortedEvents).slice(0,top5percent).forEach(event => _.set(event, ['flags', property, 'bad'], true));
+            sortedEvents.filter(event =>
+                _.get(event, property) * 1.05 > _.head(sortedEvents) &&
+                _.get(event, property) * 0.95 < _.head(sortedEvents)
+            ).forEach(event => _.set(event, ['flags', property, 'bad'], true));
+        }
+    }
+
     export default {
         name: 'GasLog',
         components: {GasLogFilterSelector, ColumnSortIndicator},
@@ -64,8 +95,9 @@
             };
         },
         methods: {
-            fuelEvents: (events) => {
-                let filteredEvents = events.filter(event => event.type === 'FUEL');
+            fuelEvents(events) {
+                clearFlags(events);
+                let filteredEvents = _.filter(events, {type: 'FUEL'});
                 local.filters
                     .map(filter => {
                         if (filter.date) {
@@ -77,6 +109,11 @@
                     .forEach(filter => {
                         filteredEvents = _.filter(filteredEvents, filter)
                     });
+
+                setFlags(filteredEvents, 'dist', event => event.dist && event.dist > 50, false);
+                setFlags(filteredEvents, 'fuelused', event => event.fuelused && event.fuelused > 5);
+                setFlags(filteredEvents, 'milage', event => event.milage);
+
                 return filteredEvents
             },
             sortEvents: (events, sort, asc) => {
@@ -88,6 +125,17 @@
                     local.sortAsc = !local.sortAsc;
                 } else {
                     local.sort = sort;
+                }
+            },
+            flagStyles(event, property) {
+                function is(event, property, quality) {
+                    return _.get(event, ['flags', property, quality], false);
+                }
+                return {
+                    best: is(event, property, 'best'),
+                    good: is(event, property, 'good'),
+                    worst: is(event, property, 'worst'),
+                    bad: is(event, property, 'bad')
                 }
             }
         }
@@ -158,6 +206,28 @@
         padding-top: 0.1em;
         margin-left: 3px;
         text-align: left;
+    }
+
+    .best {
+        color: darkgreen;
+        font-weight: bold;
+        border: 1px solid green;
+    }
+
+    .worst {
+        color: red;
+        font-weight: bold;
+        border: 1px solid red;
+    }
+
+    .good {
+        color: darkgreen;
+        font-weight: bold;
+    }
+
+    .bad {
+        color: red;
+        font-weight: bold;
     }
 
 </style>
