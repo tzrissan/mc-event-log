@@ -55,20 +55,22 @@
     }
 </script>
 
+
+<style>
+    body {
+        margin: 0;
+        min-width: 600px;
+    }
+</style>
+
 <style scoped>
+
     div.tabs {
         display: grid;
         grid-template-columns: 90px auto auto auto auto auto;
         grid-row-gap: 1px;
         grid-column-gap: 1px;
         background-color: black;
-        border: 1px solid black;
-    }
-
-    @media (max-width: 600px) {
-        div.tabs {
-            grid-template-columns: auto auto auto;
-        }
     }
 
     div.tabs .tab {

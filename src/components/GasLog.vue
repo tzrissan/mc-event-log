@@ -211,13 +211,13 @@
     .best {
         color: darkgreen;
         font-weight: bold;
-        border: 1px solid green;
+        border-bottom: 1px dashed green;
     }
 
     .worst {
         color: red;
         font-weight: bold;
-        border: 1px solid red;
+        border-bottom: 1px dashed red;
     }
 
     .good {

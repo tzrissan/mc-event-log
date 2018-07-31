@@ -3501,7 +3501,7 @@ const _data = {
         },
         {
             "info": "Pilot Road 4 taakse",
-            "fuel": "TYRE_FRONT",
+            "fuel": "TYRE_REAR",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 30101,
