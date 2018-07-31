@@ -20,18 +20,18 @@
                 <td>{{ event.odo }}
                     <small>km</small>
                 </td>
-                <td v-bind:class="flagStyles(event, 'dist')">{{ event.dist }}
+                <td v-bind:class="flagStyles(event, 'dist')">{{ event.dist | number(0) }}
                     <small v-if="event.dist">km</small>
                 </td>
                 <td v-bind:class="flagStyles(event, 'fuelused')"
-                    v-if="event.fuelused === event.fuelfilled">{{ event.fuelused }}
+                    v-if="event.fuelused === event.fuelfilled">{{ event.fuelused | number }}
                     <small>ltr</small>
                 </td>
                 <td v-else>
-                    <span v-bind:title="'Tankattu ' + event.fuelfilled + ' ltr'"><small>&#x26A0;</small> {{ event.fuelused }} <small>ltr</small></span>
+                    <span v-bind:title="'Tankattu ' + event.fuelfilled + ' ltr'"><small>&#x26A0;</small> {{ event.fuelused | number }} <small>ltr</small></span>
                 </td>
                 <td class="milage" v-bind:class="flagStyles(event, 'milage')">
-                    <div class="amount" v-if="event.milage">{{ event.milage }}</div>
+                    <div class="amount" v-if="event.milage">{{ event.milage | number }}</div>
                     <div class="unit" v-if="event.milage">litraa/<br/>100km</div>
                     <span v-else>-</span>
                 </td>
