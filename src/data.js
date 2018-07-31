@@ -3585,7 +3585,7 @@ function countMilages(events) {
             }
             prev = current;
         });
-    };
+    }
 
     function countDistancesForFrontTyres(bike) {
         const bikeFrontTyreEvents = _.chain(events).filter({type: 'TYRE_FRONT', bike: bike}).value();
@@ -3597,7 +3597,7 @@ function countMilages(events) {
             }
             prev = current;
         });
-    };
+    }
 
     function countDistancesForRearTyres(bike) {
         const bikeFrontTyreEvents = _.chain(events).filter({type: 'TYRE_REAR', bike: bike}).value();
@@ -3609,7 +3609,7 @@ function countMilages(events) {
             }
             prev = current;
         });
-    };
+    }
 
     function countDistancesForMaintenance(bike) {
         const bikeFrontTyreEvents = _.chain(events).filter({type: 'MAINTENANCE', bike: bike}).value();
@@ -3621,7 +3621,7 @@ function countMilages(events) {
             }
             prev = current;
         });
-    };
+    }
 
     _data.bikes.forEach(bike => {
         countDistancesAndMilageForFuelEvents(bike);
@@ -3629,7 +3629,7 @@ function countMilages(events) {
         countDistancesForRearTyres(bike);
         countDistancesForMaintenance(bike);
     });
-};
+}
 
 const dateRegex = /(\d{4})-(\d{2})-(\d{2})/;
 
