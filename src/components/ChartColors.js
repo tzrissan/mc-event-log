@@ -3,10 +3,11 @@ let index = -1;
 
 export const CHART_COLORS = [
 
-    'rgb(52, 103, 92, alpha)',
-    'rgb(179,193,0, alpha)',
-    'rgb(76, 181, 245, alpha)',
-    'rgb(255,105,180, alpha)'
+    'rgb(52,  103, 92,  alpha)',
+    'rgb(179, 193, 0,   alpha)',
+    'rgb(76,  181, 245, alpha)',
+    'rgb(255, 105, 180, alpha)',
+    'rgb(255, 220, 0,   alpha)'
 
 ];
 

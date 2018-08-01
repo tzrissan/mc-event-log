@@ -3631,7 +3631,7 @@ function countMilages(events) {
     });
 }
 
-
+export const DATE_REGEX = /(\d{4})-(\d{2})-(\d{2})/;
 
 function countExtraInformationFromData() {
     _data.bikes = _.chain(_data.events).map(e => e.bike).uniq().sort().value();
@@ -3664,7 +3664,6 @@ const GasLogData = {
     countExtraInformationFromData
 };
 
-export const DATE_REGEX = /(\d{4})-(\d{2})-(\d{2})/;
 export const MONTH_NAMES = ['Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu'];
 
 export default GasLogData;

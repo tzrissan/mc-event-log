@@ -2,14 +2,16 @@
     <div>
         <div class="title">Kuukausittain yhteensä</div>
         <div class="filters" v-if="global">
-            <select v-model="selectedBike">
+            <select v-model="local.selectedBike">
                 <option v-bind:value="'all'">Kaikki yhteensä</option>
                 <option v-bind:value="'compare'">Kaikki vierekkäin</option>
+                <option v-bind:value="'seasons-distance'">Matkat ajokausittain</option>
+                <option v-bind:value="'seasons-milage'">Kulutukset ajokausittain</option>
                 <option v-for="bike in global.bikes" v-bind:value="bike">{{ bike }}</option>
             </select>
         </div>
         <BarChart
-                v-bind:data="chartData(global.events, selectedBike)"
+                v-bind:data="chartData(global.events, local.selectedBike)"
                 v-bind:options="chartOptions(global.events)"></BarChart>
     </div>
 
@@ -21,6 +23,11 @@
     import {MONTH_NAMES, DATE_REGEX} from '../data'
     import BarChart from './BarChart'
     import {nextColor, currentColor} from './ChartColors'
+
+    const local = {
+        selectedBike: 'all',
+        bikes: []
+    };
 
     function byMonth(month) {
         return e => e.date.replace(DATE_REGEX, '$2') === month;
@@ -52,10 +59,9 @@
         name: 'Stats',
         data() {
             const global = GasLogData.get();
-            return {
-                global: global,
-                selectedBike: global.latestBike
-            }
+            local.selectedBike = global.latestBike;
+            local.bikes = _.chain(global.events).filter({type: 'FUEL'}).map(e => e.bike).uniq().sort().value();
+            return { local, global };
         },
         components: {
             BarChart
@@ -63,7 +69,7 @@
         methods: {
             chartOptions(events) {
 
-                const fuelEvents = _.filter(events, {type: 'FUEL'});
+                /*const fuelEvents = _.filter(events, {type: 'FUEL'});
 
                 const monthData = _.chain(fuelEvents)
                     .map(e => ({
@@ -80,7 +86,7 @@
                     }, {})
                     .value();
 
-                _.values(monthData).forEach(md => md.milage = 100 * md.fuel / md.dist);
+                _.values(monthData).forEach(md => md.milage = 100 * md.fuel / md.dist);*/
 
                 return {
                     responsive: true,
@@ -108,10 +114,10 @@
                                 gridLines: {
                                     display: false
                                 },
-                                ticks: {
+                                /*ticks: {
                                     min: Math.trunc(_.chain(monthData).map(e => e.milage).min().value()),
                                     max: Math.trunc(_.chain(monthData).map(e => e.milage).max().value()) + 1,
-                                }
+                                }*/
                             }
 
                         ]
@@ -128,7 +134,7 @@
             chartData(events, bike) {
 
                 const filter = {type: 'FUEL'};
-                if (bike !== 'all' && bike !== 'compare') {
+                if (bike !== 'all' && bike !== 'compare' && bike !== 'seasons-distance' && bike !== 'seasons-milage') {
                     filter.bike = bike
                 }
                 const fuelEvents = _.filter(events, filter);
@@ -140,50 +146,101 @@
                     .sort()
                     .value();
 
-                let datasets = [];
-                if (bike==='compare') {
-                    this.global.bikes.forEach(bike => {
-                        const bikeEvents = _.filter(events, {bike});
-                        datasets.push(
-                            {
-                                label: 'Ajettu matka, ' + bike,
-                                borderColor: nextColor(),
-                                backgroundColor: currentColor(0.6),
-                                data: months.map(m => distByMonth(bikeEvents, m)),
-                                yAxisID: "km",
-                                type: 'line',
-                            }
-                        )
-                    });
-                } else {
-                    datasets = [
-                        {
-                            label: 'Ajettu matka',
-                            borderColor: '#4CB5F5',
-                            backgroundColor: 'rgb(76, 181, 245, 0.6)',
-                            data: months.map(m => distByMonth(fuelEvents, m)),
+                const datasets = [];
+                if (bike === 'compare') {
+                    this.local.bikes.forEach(bike => {
+                        const bikeEvents = _.filter(fuelEvents, {bike: bike});
+                        datasets.push({
+                            label: 'Ajettu matka, ' + bike,
+                            borderColor: nextColor(),
+                            backgroundColor: currentColor(0.6),
+                            data: months.map(m => distByMonth(bikeEvents, m)),
                             yAxisID: "km",
-                            type: 'line',
-                        },
-                        {
-                            label: 'Käytetty polttoaine',
-                            borderColor: '#34675C',
-                            backgroundColor: '#34675C',
-                            data: months.map(m => fuelByMonth(fuelEvents, m)),
-                            type: 'line',
-                            fill: false,
-                            yAxisID: "ltr"
-                        },
-                        {
-                            label: 'Litraa satasella',
-                            borderColor: '#B3C100',
-                            backgroundColor: '#B3C100',
-                            data: months.map(m => milageByMonth(fuelEvents, m)),
+                            type: 'line'
+                        });
+                        datasets.push({
+                            label: 'Litraa satasella, ' + bike,
+                            borderColor: nextColor(),
+                            backgroundColor: currentColor(0.6),
+                            data: months.map(m => milageByMonth(bikeEvents, m)),
                             type: 'line',
                             fill: false,
                             yAxisID: "milage"
-                        }
-                    ]
+                        });
+                    });
+                }
+                else if (bike === 'seasons-distance') {
+                    const seasons = _.chain(fuelEvents)
+                        .map(e => e.date)
+                        .map(d => d.replace(DATE_REGEX, '$1'))
+                        .uniq()
+                        .sort()
+                        .reverse()
+                        .value();
+                    seasons.forEach(season => {
+                        const seasonEvents = _.filter(fuelEvents, e => e.date.replace(DATE_REGEX, '$1') === season);
+                        const seasonBikes = _.chain(seasonEvents).map(e=>e.bike).uniq().sort().value().join(', ');
+                        const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
+                        datasets.push({
+                            label: `${season}, ${seasonBikes} (${distance} km)`,
+                            borderColor: nextColor(),
+                            backgroundColor: currentColor(0.6),
+                            data: months.map(m => distByMonth(seasonEvents, m)),
+                            yAxisID: "km",
+                            type: 'line'
+                        });
+                    });
+                }
+                else if (bike === 'seasons-milage') {
+                    const seasons = _.chain(fuelEvents)
+                        .map(e => e.date)
+                        .map(d => d.replace(DATE_REGEX, '$1'))
+                        .uniq()
+                        .sort()
+                        .reverse()
+                        .value();
+                    seasons.forEach(season => {
+                        const seasonEvents = _.filter(fuelEvents, e => e.date.replace(DATE_REGEX, '$1') === season);
+                        const seasonBikes = _.chain(seasonEvents).map(e=>e.bike).uniq().sort().value().join(', ');
+                        const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
+                        datasets.push({
+                            label: `${season}, ${seasonBikes} (${distance} km)`,
+                            borderColor: nextColor(),
+                            backgroundColor: currentColor(0.6),
+                            data: months.map(m => milageByMonth(seasonEvents, m)),
+                            type: 'line',
+                            fill: false,
+                            yAxisID: "milage"
+                        });
+                    });
+                }
+                else {
+                    datasets.push({
+                        label: 'Ajettu matka',
+                        borderColor: 'rgb(76, 181, 245)',
+                        backgroundColor: 'rgb(76, 181, 245, 0.6)',
+                        data: months.map(m => distByMonth(fuelEvents, m)),
+                        yAxisID: "km",
+                        type: 'line',
+                    });
+                    datasets.push({
+                        label: 'Käytetty polttoaine',
+                        borderColor: 'rgb(255, 105, 180)',
+                        backgroundColor: 'rgb(255, 105, 180, 0.6)',
+                        data: months.map(m => fuelByMonth(fuelEvents, m)),
+                        type: 'line',
+                        fill: false,
+                        yAxisID: "ltr"
+                    });
+                    datasets.push({
+                        label: 'Litraa satasella',
+                        borderColor: '#B3C100',
+                        backgroundColor: '#B3C100',
+                        data: months.map(m => milageByMonth(fuelEvents, m)),
+                        type: 'line',
+                        fill: false,
+                        yAxisID: "milage"
+                    });
                 }
 
                 return {
