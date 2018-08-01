@@ -3631,12 +3631,12 @@ function countMilages(events) {
     });
 }
 
-const dateRegex = /(\d{4})-(\d{2})-(\d{2})/;
+
 
 function countExtraInformationFromData() {
     _data.bikes = _.chain(_data.events).map(e => e.bike).uniq().sort().value();
-    _data.years = _.chain(_data.events).map(e => e.date).map(d => d.replace(dateRegex, '$1')).uniq().sort().reverse().value();
-    _data.months = _.chain(_data.events).map(e => e.date).map(d => d.replace(dateRegex, '$2')).uniq().sort().value();
+    _data.years = _.chain(_data.events).map(e => e.date).map(d => d.replace(DATE_REGEX, '$1')).uniq().sort().reverse().value();
+    _data.months = _.chain(_data.events).map(e => e.date).map(d => d.replace(DATE_REGEX, '$2')).uniq().sort().value();
     _data.latestBike = _.chain(_data.events)
         .filter({type: 'FUEL'})
         .sortBy('date')
@@ -3664,6 +3664,7 @@ const GasLogData = {
     countExtraInformationFromData
 };
 
+export const DATE_REGEX = /(\d{4})-(\d{2})-(\d{2})/;
 export const MONTH_NAMES = ['Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu'];
 
 export default GasLogData;
