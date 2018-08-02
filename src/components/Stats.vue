@@ -5,7 +5,8 @@
                 <option
                         v-for="(stat, name) in local.statisticOptions"
                         v-bind:key="name"
-                        v-bind:value="name">{{ stat.title }}</option>
+                        v-bind:value="name">{{ stat.title }}
+                </option>
             </select>
         </div>
         <BarChart
@@ -22,23 +23,15 @@
     import BarChart from './BarChart'
     import {CHART_COLORS, nextColor, currentColor} from './ChartColors'
 
-    const defaultYAxes = [
-        { id: 'km',  type: 'linear', position: 'left' },
-        { id: 'ltr', type: 'linear', position: 'left', gridLines: { display: false }},
-        { id: 'milage', type: 'linear', position: 'right', gridLines: { display: false }}
-    ];
-
-
-
     const local = {
         selectedStatistic: 'all',
         statisticOptions: {
             allByMonth: {
                 title: 'Yhteensä kuukausittain',
-                yAxes:  [
-                    { id: 'km',  type: 'linear', position: 'left' },
-                    { id: 'ltr', type: 'linear', position: 'left', gridLines: { display: false }},
-                    { id: 'milage', type: 'linear', position: 'right', gridLines: { display: false }}
+                yAxes: [
+                    {id: 'km', type: 'linear', position: 'left'},
+                    {id: 'ltr', type: 'linear', position: 'left', gridLines: {display: false}},
+                    {id: 'milage', type: 'linear', position: 'right', gridLines: {display: false}}
                 ],
                 filter: () => true,
                 datasets(fuelEvents) {
@@ -77,10 +70,10 @@
                 }
             },
             compareBikes: {
-                title: 'Pyörien vertailu',
+                title: 'Pyörät kuukausittain',
                 yAxes: [
-                    { id: 'km',  type: 'linear', position: 'left' },
-                    { id: 'milage', type: 'linear', position: 'right', gridLines: { display: false }}
+                    {id: 'km', type: 'linear', position: 'left'},
+                    {id: 'milage', type: 'linear', position: 'right', gridLines: {display: false}}
                 ],
                 filter: () => true,
                 datasets(fuelEvents, local) {
@@ -113,9 +106,9 @@
                 }
             },
             seasonsDistanceByMonth: {
-                title: 'Ajokauden matkat kukausittain',
+                title: 'Ajokausien matkat kuukausittain',
                 yAxes: [
-                    { id: 'km',  type: 'linear' }
+                    {id: 'km', type: 'linear'}
                 ],
                 filter: () => true,
                 datasets(fuelEvents) {
@@ -153,7 +146,8 @@
                                 data: months.map(() => avgDist),
                                 yAxisID: "km",
                                 type: 'line',
-                                fill: false
+                                fill: false,
+                                radius: 0
                             };
                         })
                     );
@@ -163,9 +157,9 @@
                 }
             },
             seasonsMilageByMonth: {
-                title: 'Ajokausien keskikulutukset ajokausittain',
+                title: 'Ajokausien keskikulutukset kuukausittain',
                 yAxes: [
-                    { id: 'milage', type: 'linear' }
+                    {id: 'milage', type: 'linear'}
                 ],
                 filter: () => true,
                 datasets(fuelEvents) {
@@ -195,7 +189,7 @@
                                 .map(e => e.fuelused)
                                 .filter(n => _.isNumber(n) && !_.isNaN(n))
                                 .reduce((sum, fuel) => sum + fuel, 0).value();
-                            const avgDist = 100 * totalFuel / totalDistance ;
+                            const avgDist = 100 * totalFuel / totalDistance;
 
                             return {
                                 label: `${bike.name} average`,
@@ -203,13 +197,83 @@
                                 data: months.map(() => avgDist),
                                 type: 'line',
                                 fill: false,
-                                yAxisID: "milage"
+                                yAxisID: "milage",
+                                radius: 0
                             };
                         })
                     );
                 },
                 labels(fuelEvents) {
                     return monthsWithEvents(fuelEvents).map(m => MONTH_NAMES[parseInt(m) - 1])
+                }
+            },
+            seasons: {
+                title: 'Ajokaudet',
+                yAxes: [
+                    {id: 'km', type: 'linear', position: 'left', ticks: {min: 0}},
+                    {id: 'ltr', type: 'linear', position: 'left', gridLines: {display: false}, ticks: {min: 0}},
+                    {id: 'milage', type: 'linear', position: 'right', gridLines: {display: false}}
+                ],
+                filter: () => true,
+                datasets(fuelEvents) {
+                    const seasons = seasonsWithEvents(fuelEvents).reverse();
+                    const distances = seasons.map(s => countDistance(fuelEvents, bySeason(s)));
+                    const fuels = seasons.map(s => countFuel(fuelEvents, bySeason(s)));
+                    const milages = _.zip(fuels, distances).map(z => (100 * z[0] / z[1]));
+                    const avgDistance = (distances.reduce((s, d) => s + d, 0) / distances.length).toFixed(0);
+                    const avgFuel = (fuels.reduce((s, d) => s + d, 0) / fuels.length).toFixed(2);
+                    const avgMilage = (100 * fuels.reduce((s, d) => s + d, 0) / distances.reduce((s, d) => s + d, 0));
+                    return [{
+                        label: `kilometriä`,
+                        borderColor: CHART_COLORS.blue(),
+                        backgroundColor: CHART_COLORS.blue(0.6),
+                        data: distances,
+                        yAxisID: "km"
+                    }, {
+                        label: `litraa`,
+                        borderColor: CHART_COLORS.pink(),
+                        backgroundColor: CHART_COLORS.pink(0.6),
+                        data: fuels,
+                        yAxisID: "ltr"
+                    }, {
+                        label: `litraa satasella`,
+                        borderColor: CHART_COLORS.pine(),
+                        backgroundColor: CHART_COLORS.pine(0.6),
+                        data: milages,
+                        type: 'line',
+                        fill: false,
+                        yAxisID: "milage"
+                    }, {
+                        label: `keskiarvo (${avgDistance} km)`,
+                        borderColor: CHART_COLORS.blue(),
+                        backgroundColor: CHART_COLORS.blue(0.6),
+                        data: seasons.map(() => avgDistance),
+                        type: 'line',
+                        fill: false,
+                        yAxisID: "km",
+                        radius: 0
+                    }, {
+                        label: `keskiarvo (${avgFuel} ltr)`,
+                        borderColor: CHART_COLORS.pink(),
+                        backgroundColor: CHART_COLORS.pink(0.6),
+                        data: seasons.map(() => avgFuel),
+                        type: 'line',
+                        fill: false,
+                        yAxisID: "ltr",
+                        radius: 0
+                    }, {
+                        label: `keskiarvo (${avgMilage} ltr/100km)`,
+                        borderColor: CHART_COLORS.pine(),
+                        backgroundColor: CHART_COLORS.pine(0.6),
+                        data: seasons.map(() => avgMilage),
+                        type: 'line',
+                        fill: false,
+                        yAxisID: "milage",
+                        radius: 0
+                    }];
+                },
+                labels(fuelEvents) {
+                    return seasonsWithEvents(fuelEvents).reverse();
                 }
             }
         },
@@ -244,8 +308,12 @@
     }
 
     function distByMonth(events, month) {
+        return countDistance(events, byMonth(month))
+    }
+
+    function countDistance(events, filter) {
         const dist = _.chain(events)
-            .filter(byMonth(month))
+            .filter(filter)
             .map(e => e.dist)
             .filter(dist => _.isNumber(dist))
             .reduce((sum, dist) => sum + dist, 0)
@@ -254,8 +322,12 @@
     }
 
     function fuelByMonth(events, month) {
+        return countFuel(events, byMonth(month));
+    }
+
+    function countFuel(events, filter) {
         const fuel = _.chain(events)
-            .filter(byMonth(month))
+            .filter(filter)
             .map(e => e.fuelused)
             .filter(fuel => _.isNumber(fuel))
             .reduce((sum, fuel) => sum + fuel, 0)
@@ -288,8 +360,12 @@
             local.bikes.forEach(bike => {
                 local.statisticOptions[bike.name] = {
                     title: bike.name,
-                    yAxes: defaultYAxes,
-                    filter: { bike: bike.name },
+                    yAxes: [
+                        {id: 'km', type: 'linear', position: 'left'},
+                        {id: 'ltr', type: 'linear', position: 'left', gridLines: {display: false}},
+                        {id: 'milage', type: 'linear', position: 'right', gridLines: {display: false}}
+                    ],
+                    filter: {bike: bike.name},
                     datasets(fuelEvents) {
                         const months = monthsWithEvents(fuelEvents);
                         return [
@@ -312,8 +388,8 @@
                             },
                             {
                                 label: 'Litraa satasella',
-                                borderColor: CHART_COLORS.yellow(),
-                                backgroundColor: CHART_COLORS.yellow(0.6),
+                                borderColor: CHART_COLORS.pine(),
+                                backgroundColor: CHART_COLORS.pine(0.6),
                                 data: months.map(m => milageByMonth(fuelEvents, m)),
                                 type: 'line',
                                 fill: false,
@@ -326,7 +402,7 @@
                     }
                 }
             });
-            return { local, global };
+            return {local, global};
         },
         components: {
             BarChart
