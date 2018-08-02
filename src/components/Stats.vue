@@ -28,31 +28,18 @@
         { id: 'milage', type: 'linear', position: 'right', gridLines: { display: false }}
     ];
 
-    function monthsWithEvents(fuelEvents) {
-        return _.chain(fuelEvents)
-            .map(e => e.date)
-            .map(d => d.replace(DATE_REGEX, '$2'))
-            .uniq()
-            .sort()
-            .value();
-    }
 
-    function seasonsWithEvents(fuelEvents) {
-        return _.chain(fuelEvents)
-            .map(e => e.date)
-            .map(d => d.replace(DATE_REGEX, '$1'))
-            .uniq()
-            .sort()
-            .reverse()
-            .value();
-    }
 
     const local = {
         selectedStatistic: 'all',
         statisticOptions: {
             allByMonth: {
                 title: 'Yhteensä kuukausittain',
-                yAxes: defaultYAxes,
+                yAxes:  [
+                    { id: 'km',  type: 'linear', position: 'left' },
+                    { id: 'ltr', type: 'linear', position: 'left', gridLines: { display: false }},
+                    { id: 'milage', type: 'linear', position: 'right', gridLines: { display: false }}
+                ],
                 filter: () => true,
                 datasets(fuelEvents) {
                     const months = monthsWithEvents(fuelEvents);
@@ -89,9 +76,12 @@
                     return monthsWithEvents(fuelEvents).map(m => MONTH_NAMES[parseInt(m) - 1])
                 }
             },
-            compare: {
+            compareBikes: {
                 title: 'Pyörien vertailu',
-                yAxes: defaultYAxes.filter(yaxis => yaxis.id === 'milage' || yaxis.id === 'km' ),
+                yAxes: [
+                    { id: 'km',  type: 'linear', position: 'left' },
+                    { id: 'milage', type: 'linear', position: 'right', gridLines: { display: false }}
+                ],
                 filter: () => true,
                 datasets(fuelEvents, local) {
                     const months = monthsWithEvents(fuelEvents);
@@ -122,21 +112,17 @@
                     return monthsWithEvents(fuelEvents).map(m => MONTH_NAMES[parseInt(m) - 1])
                 }
             },
-            seasonsDistance: {
+            seasonsDistanceByMonth: {
                 title: 'Ajokauden matkat kukausittain',
-                yAxes: [ defaultYAxes[0] ],
+                yAxes: [
+                    { id: 'km',  type: 'linear' }
+                ],
                 filter: () => true,
                 datasets(fuelEvents) {
                     const months = monthsWithEvents(fuelEvents);
-                    const seasons = _.chain(fuelEvents)
-                        .map(e => e.date)
-                        .map(d => d.replace(DATE_REGEX, '$1'))
-                        .uniq()
-                        .sort()
-                        .reverse()
-                        .value();
+                    const seasons = seasonsWithEvents(fuelEvents);
                     return seasons.map(season => {
-                        const seasonEvents = _.filter(fuelEvents, e => e.date.replace(DATE_REGEX, '$1') === season);
+                        const seasonEvents = _.filter(fuelEvents, bySeason(season));
                         const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
                         const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
                         const backgroundColor = _.get(_.filter(local.bikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
@@ -148,15 +134,39 @@
                             yAxisID: "km",
                             type: 'line'
                         };
-                    });
+                    }).concat(
+                        local.bikes.map(bike => {
+                            const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
+                            const monthCount = _.chain(bikeEvents)
+                                .map(e => e.date)
+                                .map(d => d.replace(DATE_REGEX, '$1-$2'))
+                                .uniq()
+                                .value().length;
+                            const totalDistance = _.chain(bikeEvents)
+                                .map(e => e.dist).filter(n => _.isNumber(n) && !_.isNaN(n))
+                                .reduce((sum, dist) => sum + dist, 0).value();
+                            const avgDist = totalDistance / monthCount;
+
+                            return {
+                                label: `${bike.name} average`,
+                                borderColor: bike.borderColor,
+                                data: months.map(() => avgDist),
+                                yAxisID: "km",
+                                type: 'line',
+                                fill: false
+                            };
+                        })
+                    );
                 },
                 labels(fuelEvents) {
                     return monthsWithEvents(fuelEvents).map(m => MONTH_NAMES[parseInt(m) - 1])
                 }
             },
-            seasonsMilage: {
+            seasonsMilageByMonth: {
                 title: 'Ajokausien keskikulutukset ajokausittain',
-                yAxes: defaultYAxes.filter(yaxis => yaxis.id === 'milage'),
+                yAxes: [
+                    { id: 'milage', type: 'linear' }
+                ],
                 filter: () => true,
                 datasets(fuelEvents) {
                     const months = monthsWithEvents(fuelEvents);
@@ -165,16 +175,38 @@
                         const seasonEvents = _.filter(fuelEvents, e => e.date.replace(DATE_REGEX, '$1') === season);
                         const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
                         const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
+                        const borderColor = _.get(_.filter(local.bikes, {name: seasonBikes}), '[0].borderColor', 'rgb(183,184,182,0.3)');
                         return {
                             label: `${season}, ${seasonBikes} (${distance} km)`,
-                            borderColor: nextColor(),
-                            backgroundColor: currentColor(0.6),
+                            borderColor: borderColor,
                             data: months.map(m => milageByMonth(seasonEvents, m)),
                             type: 'line',
                             fill: false,
                             yAxisID: "milage"
                         };
-                    });
+                    }).concat(
+                        local.bikes.map(bike => {
+                            const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
+                            const totalDistance = _.chain(bikeEvents)
+                                .map(e => e.dist)
+                                .filter(n => _.isNumber(n) && !_.isNaN(n))
+                                .reduce((sum, dist) => sum + dist, 0).value();
+                            const totalFuel = _.chain(bikeEvents)
+                                .map(e => e.fuelused)
+                                .filter(n => _.isNumber(n) && !_.isNaN(n))
+                                .reduce((sum, fuel) => sum + fuel, 0).value();
+                            const avgDist = 100 * totalFuel / totalDistance ;
+
+                            return {
+                                label: `${bike.name} average`,
+                                borderColor: bike.borderColor,
+                                data: months.map(() => avgDist),
+                                type: 'line',
+                                fill: false,
+                                yAxisID: "milage"
+                            };
+                        })
+                    );
                 },
                 labels(fuelEvents) {
                     return monthsWithEvents(fuelEvents).map(m => MONTH_NAMES[parseInt(m) - 1])
@@ -184,8 +216,31 @@
         bikes: []
     };
 
+    function monthsWithEvents(fuelEvents) {
+        return _.chain(fuelEvents)
+            .map(e => e.date)
+            .map(d => d.replace(DATE_REGEX, '$2'))
+            .uniq()
+            .sort()
+            .value();
+    }
+
+    function seasonsWithEvents(fuelEvents) {
+        return _.chain(fuelEvents)
+            .map(e => e.date)
+            .map(d => d.replace(DATE_REGEX, '$1'))
+            .uniq()
+            .sort()
+            .reverse()
+            .value();
+    }
+
     function byMonth(month) {
         return e => e.date.replace(DATE_REGEX, '$2') === month;
+    }
+
+    function bySeason(season) {
+        return e => e.date.replace(DATE_REGEX, '$1') === season;
     }
 
     function distByMonth(events, month) {
