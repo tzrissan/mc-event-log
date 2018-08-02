@@ -41,7 +41,7 @@
                             label: 'Ajettu matka',
                             borderColor: 'rgb(76, 181, 245)',
                             backgroundColor: 'rgb(76, 181, 245, 0.6)',
-                            data: months.map(m => distByMonth(fuelEvents, m)),
+                            data: months.map(m => countDistance(fuelEvents, byMonth(m))),
                             yAxisID: "km",
                             type: 'line',
                         },
@@ -49,7 +49,7 @@
                             label: 'Käytetty polttoaine',
                             borderColor: 'rgb(255, 105, 180)',
                             backgroundColor: 'rgb(255, 105, 180, 0.6)',
-                            data: months.map(m => fuelByMonth(fuelEvents, m)),
+                            data: months.map(m => countFuel(fuelEvents, byMonth(m))),
                             type: 'line',
                             fill: false,
                             yAxisID: "ltr"
@@ -85,7 +85,7 @@
                             label: `${bike.name}, ajettu matka`,
                             borderColor: bike.borderColor,
                             backgroundColor: bike.backgroundColor,
-                            data: months.map(m => distByMonth(bikeEvents, m)),
+                            data: months.map(m => countDistance(bikeEvents, byMonth(m))),
                             yAxisID: "km",
                             type: 'line'
                         });
@@ -123,7 +123,7 @@
                             label: `${season}, ${seasonBikes} (${distance} km)`,
                             borderColor: nextColor(),
                             backgroundColor: backgroundColor,
-                            data: months.map(m => distByMonth(seasonEvents, m)),
+                            data: months.map(m => countDistance(seasonEvents, byMonth(m))),
                             yAxisID: "km",
                             type: 'line'
                         };
@@ -307,10 +307,6 @@
         return e => e.date.replace(DATE_REGEX, '$1') === season;
     }
 
-    function distByMonth(events, month) {
-        return countDistance(events, byMonth(month))
-    }
-
     function countDistance(events, filter) {
         const dist = _.chain(events)
             .filter(filter)
@@ -319,10 +315,6 @@
             .reduce((sum, dist) => sum + dist, 0)
             .value();
         return dist && dist > 30 ? dist : undefined;
-    }
-
-    function fuelByMonth(events, month) {
-        return countFuel(events, byMonth(month));
     }
 
     function countFuel(events, filter) {
@@ -336,8 +328,8 @@
     }
 
     function milageByMonth(events, month) {
-        const fuel = fuelByMonth(events, month);
-        const dist = distByMonth(events, month);
+        const fuel = countFuel(events, byMonth(month));
+        const dist = countDistance(events, byMonth(month));
 
         return (dist && fuel && dist > 30) ? 100 * fuel / dist : undefined;
     }
@@ -373,7 +365,7 @@
                                 label: 'Ajettu matka',
                                 borderColor: bike.borderColor,
                                 backgroundColor: bike.backgroundColor,
-                                data: months.map(m => distByMonth(fuelEvents, m)),
+                                data: months.map(m => countDistance(fuelEvents, byMonth(m))),
                                 yAxisID: "km",
                                 type: 'line',
                             },
@@ -381,7 +373,7 @@
                                 label: 'Käytetty polttoaine',
                                 borderColor: CHART_COLORS.pink(),
                                 backgroundColor: CHART_COLORS.pink(0.6),
-                                data: months.map(m => fuelByMonth(fuelEvents, m)),
+                                data: months.map(m => countFuel(fuelEvents, byMonth(m))),
                                 type: 'line',
                                 fill: false,
                                 yAxisID: "ltr"
@@ -439,10 +431,14 @@
 <style scoped>
 
     .filters {
-        font-size: x-large;
         font-weight: bold;
         text-align: center;
         margin: 20px;
+    }
+
+    .filters select {
+        font-size: large;
+        padding: 5px 20px;
     }
 
 </style>

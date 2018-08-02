@@ -49,10 +49,12 @@
     import ColumnSortIndicator from "./ColumnSortIndicator";
     import GasLogFilterSelector from "./GasLogFilterSelector";
 
+    const currentYear = new Date().getFullYear().toString();
+
     const local = {
         sort: 'date',
         sortAsc: false,
-        filters: [{date: {title: "2018", year: "2018", regex: /2018-..-../}}, {bike: 'versys'}]
+        filters: [{date: {title: currentYear, year: currentYear, regex: new RegExp(`${currentYear}-..-..`)}}]
     };
 
     function clearFlags(events) {
