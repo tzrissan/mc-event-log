@@ -10,8 +10,13 @@
             </select>
         </div>
         <BarChart
+                v-if="isCurrentStatType(local.selectedStatistic, 'bar')"
                 v-bind:data="chartData(global.events)"
                 v-bind:options="chartOptions(local.selectedStatistic)"></BarChart>
+        <PieChart
+                v-if="isCurrentStatType(local.selectedStatistic, 'pie')"
+                v-bind:data="chartData(global.events)"
+                v-bind:options="chartOptions(local.selectedStatistic)"></PieChart>
     </div>
 
 </template>
@@ -20,20 +25,18 @@
     import _ from 'lodash';
     import GasLogData from '../data'
     import {MONTH_NAMES, DATE_REGEX} from '../data'
-    import BarChart from './BarChart'
     import {CHART_COLORS, nextColor, currentColor} from './ChartColors'
+    import BarChart from './BarChart'
+    import PieChart from './PieChart';
+
 
     const local = {
-        selectedStatistic: 'all',
+        selectedStatistic: 'compareBikes',
         statisticOptions: {
             compareBikes: {
                 title: 'Pyörät',
-                yAxes: [
-                    {id: 'km', type: 'linear', position: 'left', ticks: {min: 0}},
-                    {id: 'ltr', type: 'linear', position: 'left', gridLines: {display: false}, ticks: {min: 0}},
-                    {id: 'milage', type: 'linear', position: 'right', gridLines: {display: false}, ticks: {min: 0}},
-                    {id: 'kpl', type: 'linear', position: 'right', gridLines: {display: false}, ticks: {min: 0}}
-                ],
+                type: 'pie',
+                yAxes: [ ],
                 datasets(events) {
 
                     const global = GasLogData.get();
@@ -54,7 +57,7 @@
                             .value()
                     }
 
-                    function averageMilage(bike, events) {
+                    /*function averageMilage(bike, events) {
                         const bikeEvents = _.filter(events, {bike, type: 'FUEL'});
                         const totalDistance = _.chain(bikeEvents)
                             .map(e => e.dist)
@@ -66,7 +69,7 @@
                             .reduce((sum, fuel) => sum + fuel, 0).value();
                         const avgMilage = 100 * totalFuel / totalDistance;
                         return _.isNaN(avgMilage) ? undefined : avgMilage;
-                    }
+                    }*/
 
                     function seasonCount(bike, events) {
                         return _.chain(events)
@@ -79,30 +82,24 @@
 
                     return [{
                         label: `kilometriä`,
-                        borderWidth: 2,
-                        borderColor: CHART_COLORS.blue(),
-                        backgroundColor: CHART_COLORS.blue(0.6),
-                        data: global.bikes.map(bike => totalDistance(bike, events)),
-                        yAxisID: "km"
+                        borderColor: local.allBikes.map(bike => bike.borderColor),
+                        backgroundColor: local.allBikes.map(bike => bike.backgroundColor),
+                        data: global.bikes.map(bike => totalDistance(bike, events))
                     }, {
                         label: `litraa`,
-                        borderWidth: 2,
-                        borderColor: CHART_COLORS.pink(),
-                        backgroundColor: CHART_COLORS.pink(0.6),
-                        data: global.bikes.map(bike => totalFuel(bike, events)),
-                        yAxisID: "ltr"
-                    }, {
+                        borderColor: local.allBikes.map(bike => bike.borderColor),
+                        backgroundColor: local.allBikes.map(bike => bike.backgroundColor),
+                        data: global.bikes.map(bike => totalFuel(bike, events))
+                    }, /*{
                         label: `keskikulutus`,
-                        borderColor: CHART_COLORS.green(),
-                        backgroundColor: CHART_COLORS.green(0.6),
-                        data: global.bikes.map(bike => averageMilage(bike, events)),
-                        yAxisID: "milage"
-                    }, {
+                        borderColor: local.allBikes.map(bike => bike.borderColor),
+                        backgroundColor: local.allBikes.map(bike => bike.backgroundColor),
+                        data: global.bikes.map(bike => averageMilage(bike, events))
+                    },*/ {
                         label: `ajokausia`,
-                        borderColor: CHART_COLORS.yellow(),
-                        backgroundColor: CHART_COLORS.yellow(0.6),
-                        data: global.bikes.map(bike => seasonCount(bike, events)),
-                        yAxisID: "milage"
+                        borderColor: local.allBikes.map(bike => bike.borderColor),
+                        backgroundColor: local.allBikes.map(bike => bike.backgroundColor),
+                        data: global.bikes.map(bike => seasonCount(bike, events))
                     }]
                 },
                 labels() {
@@ -111,6 +108,7 @@
             },
             compareBikesByMonth: {
                 title: 'Pyörät kuukausittain',
+                type: 'bar',
                 yAxes: [
                     {id: 'km', type: 'linear', position: 'left'},
                     {id: 'ltr', type: 'linear', position: 'left', gridLines: {display: false}},
@@ -120,7 +118,7 @@
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const datasets = [];
-                    local.bikes.forEach(bike => {
+                    local.fuelledBikes.forEach(bike => {
                         const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
                         datasets.push({
                             label: `${bike.name}, ajettu matka`,
@@ -155,6 +153,7 @@
             },
             allByMonth: {
                 title: 'Pyörät yhteensä kuukausittain',
+                type: 'bar',
                 yAxes: [
                     {id: 'km', type: 'linear', position: 'left'},
                     {id: 'ltr', type: 'linear', position: 'left', gridLines: {display: false}},
@@ -196,6 +195,7 @@
             },
             seasons: {
                 title: 'Ajokaudet',
+                type: 'bar',
                 yAxes: [
                     {id: 'km', type: 'linear', position: 'left', ticks: {min: 0}},
                     {id: 'ltr', type: 'linear', position: 'left', gridLines: {display: false}, ticks: {min: 0}},
@@ -294,6 +294,7 @@
             },
             seasonsDistanceByMonth: {
                 title: 'Ajokausien matkat kuukausittain',
+                type: 'bar',
                 yAxes: [
                     {id: 'km', type: 'linear'}
                 ],
@@ -305,7 +306,7 @@
                         const seasonEvents = _.filter(fuelEvents, bySeason(season));
                         const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
                         const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
-                        const backgroundColor = _.get(_.filter(local.bikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
+                        const backgroundColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
                         return {
                             label: `${season}, ${seasonBikes} (${distance} km)`,
                             borderColor: nextColor(),
@@ -315,7 +316,7 @@
                             type: 'line'
                         };
                     }).concat(
-                        local.bikes.map(bike => {
+                        local.fuelledBikes.map(bike => {
                             const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
                             const monthCount = _.chain(bikeEvents)
                                 .map(e => e.date)
@@ -345,6 +346,7 @@
             },
             seasonsMilageByMonth: {
                 title: 'Ajokausien keskikulutukset kuukausittain',
+                type: 'bar',
                 yAxes: [
                     {id: 'milage', type: 'linear'}
                 ],
@@ -356,7 +358,7 @@
                         const seasonEvents = _.filter(fuelEvents, e => e.date.replace(DATE_REGEX, '$1') === season);
                         const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
                         const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
-                        const borderColor = _.get(_.filter(local.bikes, {name: seasonBikes}), '[0].borderColor', 'rgb(183,184,182,0.3)');
+                        const borderColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].borderColor', 'rgb(183,184,182,0.3)');
                         return {
                             label: `${season}, ${seasonBikes} (${distance} km)`,
                             borderColor: borderColor,
@@ -366,7 +368,7 @@
                             yAxisID: "milage"
                         };
                     }).concat(
-                        local.bikes.map(bike => {
+                        local.fuelledBikes.map(bike => {
                             const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
                             const totalDistance = _.chain(bikeEvents)
                                 .map(e => e.dist)
@@ -395,7 +397,8 @@
                 }
             }
         },
-        bikes: []
+        allBikes: [],
+        fuelledBikes: []
     };
 
     function monthsWithEvents(fuelEvents) {
@@ -454,11 +457,13 @@
 
     export default {
         name: 'Stats',
+        components: {
+            PieChart,
+            BarChart
+        },
         data() {
             const global = GasLogData.get();
-            local.selectedStatistic = 'compareBikes'; //'compareBikesByMonth';
-            local.bikes = _.chain(global.events)
-                .filter({type: 'FUEL'})
+            local.allBikes = _.chain(global.events)
                 .map(e => e.bike)
                 .uniq()
                 .sort()
@@ -467,10 +472,18 @@
                     borderColor: nextColor(),
                     backgroundColor: currentColor(0.6)
                 })).value();
+            console.log(local.allBikes);
+
+            local.fuelledBikes = _.chain(global.events)
+                .filter({type: 'FUEL'})
+                .map(e => e.bike)
+                .uniq()
+                .sort()
+                .map(bike => _.find(local.allBikes, {name: bike}))
+                .value();
+
+            console.log(local.fuelledBikes);
             return {local, global};
-        },
-        components: {
-            BarChart
         },
         methods: {
             chartOptions() {
@@ -484,6 +497,9 @@
                         position: 'bottom'
                     }
                 }
+            },
+            isCurrentStatType(selected, typeToTest) {
+                return local.statisticOptions[selected].type === typeToTest;
             },
             chartData(events) {
                 const stat = local.statisticOptions[local.selectedStatistic];

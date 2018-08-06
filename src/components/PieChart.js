@@ -1,8 +1,8 @@
-import {Bar} from 'vue-chartjs'
+import {Pie} from 'vue-chartjs'
 
 export default {
-    name: 'BarChart',
-    extends: Bar,
+    name: 'PieChart',
+    extends: Pie,
     props: {data: Object, options: Object},
     mounted() {
         this.renderChart(this.data, this.options);
