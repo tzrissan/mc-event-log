@@ -73,6 +73,7 @@
                 title: 'Pyörät kuukausittain',
                 yAxes: [
                     {id: 'km', type: 'linear', position: 'left'},
+                    {id: 'ltr', type: 'linear', position: 'left', gridLines: {display: false}},
                     {id: 'milage', type: 'linear', position: 'right', gridLines: {display: false}}
                 ],
                 filter: () => true,
@@ -88,6 +89,13 @@
                             data: months.map(m => countDistance(bikeEvents, byMonth(m))),
                             yAxisID: "km",
                             type: 'line'
+                        });
+                        datasets.push({
+                            label: 'Käytetty polttoaine',
+                            borderColor: bike.borderColor,
+                            backgroundColor: bike.backgroundColor,
+                            data: months.map(m => countFuel(bikeEvents, byMonth(m))),
+                            yAxisID: "ltr"
                         });
                         datasets.push({
                             label: `${bike.name},  litraa satasella`,
@@ -338,7 +346,7 @@
         name: 'Stats',
         data() {
             const global = GasLogData.get();
-            local.selectedStatistic = global.latestBike;
+            local.selectedStatistic = 'compareBikes';
             local.bikes = _.chain(global.events)
                 .filter({type: 'FUEL'})
                 .map(e => e.bike)
@@ -349,51 +357,6 @@
                     borderColor: nextColor(),
                     backgroundColor: currentColor(0.6)
                 })).value();
-            local.bikes.forEach(bike => {
-                local.statisticOptions[bike.name] = {
-                    title: bike.name,
-                    yAxes: [
-                        {id: 'km', type: 'linear', position: 'left'},
-                        {id: 'ltr', type: 'linear', position: 'left', gridLines: {display: false}},
-                        {id: 'milage', type: 'linear', position: 'right', gridLines: {display: false}}
-                    ],
-                    filter: {bike: bike.name},
-                    datasets(fuelEvents) {
-                        const months = monthsWithEvents(fuelEvents);
-                        return [
-                            {
-                                label: 'Ajettu matka',
-                                borderColor: bike.borderColor,
-                                backgroundColor: bike.backgroundColor,
-                                data: months.map(m => countDistance(fuelEvents, byMonth(m))),
-                                yAxisID: "km",
-                                type: 'line',
-                            },
-                            {
-                                label: 'Käytetty polttoaine',
-                                borderColor: CHART_COLORS.pink(),
-                                backgroundColor: CHART_COLORS.pink(0.6),
-                                data: months.map(m => countFuel(fuelEvents, byMonth(m))),
-                                type: 'line',
-                                fill: false,
-                                yAxisID: "ltr"
-                            },
-                            {
-                                label: 'Litraa satasella',
-                                borderColor: CHART_COLORS.pine(),
-                                backgroundColor: CHART_COLORS.pine(0.6),
-                                data: months.map(m => milageByMonth(fuelEvents, m)),
-                                type: 'line',
-                                fill: false,
-                                yAxisID: "milage"
-                            }
-                        ];
-                    },
-                    labels(fuelEvents) {
-                        return monthsWithEvents(fuelEvents).map(m => MONTH_NAMES[parseInt(m) - 1])
-                    }
-                }
-            });
             return {local, global};
         },
         components: {
