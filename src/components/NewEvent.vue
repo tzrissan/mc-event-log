@@ -1,6 +1,6 @@
 <template>
     <div>
-        <form @submit="saveNewLine" name="new-line-form">
+        <form @submit="saveNewLine" name="new-line-form" v-if="!local.newEvent">
             <fieldset v-bind:disabled="local.isSaving || local.isLoading">
                 <div class="new-line">
                     <label for="date">Pvm</label>
@@ -27,6 +27,15 @@
                 <input type="submit" value="Lähetä"/>
             </fieldset>
         </form>
+        <div class="newEvent" v-if="local.newEvent">
+            <div class="title">{{ local.newEvent.date | moment("D.M.YYYY") }} | {{ local.newEvent.bike }} | {{
+                local.newEvent.odo }}
+            </div>
+            <div>Matka {{ local.newEvent.dist }} km</div>
+            <div>Tankattu {{ local.newEvent.fuel }} litraa</div>
+            <div>Kulutus {{ local.newEvent.milage }} litraa satasella</div>
+            <input type="button" value="OK" v-on:click="local.newEvent = undefined"/>
+        </div>
     </div>
 </template>
 
@@ -34,6 +43,7 @@
 
     import _ from 'lodash';
     import GasLogData from '../data.js'
+    import {PROD} from '../data.js'
     import axios from 'axios';
 
     const local = {
@@ -45,10 +55,32 @@
         isSaving: false,
         isLoading: true,
         minOdo: 0,
-        maxOdo: 0
+        maxOdo: 0,
+        newEvent: undefined
     };
 
     let global = undefined;
+
+    function resetForm() {
+        local.date = new Date().toISOString().split('T')[0];
+        local.fuel = undefined;
+        local.odo = undefined;
+        local.info = "Malmi-Hki";
+    }
+
+    function updateNewEventsToGlobalData(local, global, newEvents) {
+        newEvents.forEach(
+            function (newEvent) {
+                local.newEvent = newEvent;
+                if (!global.events.find(_.matches(newEvent))) {
+                    global.events.push(newEvent);
+                }
+            }
+        );
+        GasLogData.countExtraInformationFromData();
+        resetForm();
+        local.isSaving = false;
+    }
 
     const readDataFromGlobalToLocal = (local, global) => {
         local.currentBike = global.latestBike;
@@ -61,6 +93,7 @@
         name: 'NewEvent',
         data() {
             global = GasLogData.get();
+            resetForm();
             readDataFromGlobalToLocal(local, global);
             return {local, global};
         },
@@ -68,18 +101,19 @@
             saveNewLine(e) {
                 e.preventDefault();
                 local.isSaving = true;
-                axios.post('/data', _.pick(local, 'date', 'fuel', 'odo', 'info'))
-                    .then(function (response) {
-                        response.data.forEach(
-                            function(newEvent) {
-                                if (!global.events.find(_.matches(newEvent))) {
-                                    global.events.push(newEvent);
-                                }
-                            }
-                        );
-                        GasLogData.countExtraInformationFromData();
-                        local.isSaving = false;
-                    })
+                if (!PROD) {
+                    updateNewEventsToGlobalData(local, global, [{
+                        ..._.pick(local, 'date', 'fuel', 'odo', 'info'),
+                        fuelused: local.fuel,
+                        type: 'FUEL',
+                        bike: 'versys'
+                    }]);
+                } else {
+                    axios.post('/data', _.pick(local, 'date', 'fuel', 'odo', 'info'))
+                        .then(function (response) {
+                            updateNewEventsToGlobalData(local, global, response.data);
+                        });
+                }
             }
         },
         watch: {
@@ -120,7 +154,7 @@
         border-color: graytext;
     }
 
-    input[type="submit"] {
+    input[type="submit"], input[type="button"] {
         height: 1.8em;
         background: #4CB5F5;
         width: 172px;
@@ -131,4 +165,21 @@
     input[type="submit"]:disabled {
         background: #B7B8B6;
     }
+
+    .newEvent {
+        border: 1px solid black;
+        margin: 50px;
+        padding: 20px
+    }
+
+    .newEvent .title {
+        font-size: large;
+        font-weight: bold;
+        margin-bottom: 10px
+    }
+
+    .newEvent input[type="button"] {
+        margin-top: 20px;
+    }
+
 </style>
