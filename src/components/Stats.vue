@@ -31,7 +31,8 @@
                 yAxes: [
                     {id: 'km', type: 'linear', position: 'left', ticks: {min: 0}},
                     {id: 'ltr', type: 'linear', position: 'left', gridLines: {display: false}, ticks: {min: 0}},
-                    {id: 'milage', type: 'linear', position: 'right', gridLines: {display: false}, ticks: {min: 0}}
+                    {id: 'milage', type: 'linear', position: 'right', gridLines: {display: false}, ticks: {min: 0}},
+                    {id: 'kpl', type: 'linear', position: 'right', gridLines: {display: false}, ticks: {min: 0}}
                 ],
                 datasets(events) {
 
@@ -67,6 +68,15 @@
                         return _.isNaN(avgMilage) ? undefined : avgMilage;
                     }
 
+                    function seasonCount(bike, events) {
+                        return _.chain(events)
+                            .filter({bike})
+                            .map(e => e.date)
+                            .map(d=>d.replace(DATE_REGEX, '$1'))
+                            .uniq()
+                            .value().length;
+                    }
+
                     return [{
                         label: `kilometriä`,
                         borderWidth: 2,
@@ -86,6 +96,12 @@
                         borderColor: CHART_COLORS.green(),
                         backgroundColor: CHART_COLORS.green(0.6),
                         data: global.bikes.map(bike => averageMilage(bike, events)),
+                        yAxisID: "milage"
+                    }, {
+                        label: `ajokausia`,
+                        borderColor: CHART_COLORS.yellow(),
+                        backgroundColor: CHART_COLORS.yellow(0.6),
+                        data: global.bikes.map(bike => seasonCount(bike, events)),
                         yAxisID: "milage"
                     }]
                 },
