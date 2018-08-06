@@ -131,14 +131,14 @@
                             type: 'line'
                         });
                         datasets.push({
-                            label: 'Käytetty polttoaine',
+                            label: `${bike.name}, käytetty polttoaine`,
                             borderColor: bike.borderColor,
                             backgroundColor: bike.backgroundColor,
                             data: months.map(m => countFuel(bikeEvents, byMonth(m))),
                             yAxisID: "ltr"
                         });
                         datasets.push({
-                            label: `${bike.name},  litraa satasella`,
+                            label: `${bike.name}, litraa satasella`,
                             borderColor: bike.borderColor,
                             backgroundColor: bike.backgroundColor,
                             data: months.map(m => milageByMonth(bikeEvents, m)),
@@ -325,10 +325,10 @@
                             const totalDistance = _.chain(bikeEvents)
                                 .map(e => e.dist).filter(n => _.isNumber(n) && !_.isNaN(n))
                                 .reduce((sum, dist) => sum + dist, 0).value();
-                            const avgDist = totalDistance / monthCount;
+                            const avgDist = parseFloat((totalDistance / monthCount).toFixed());
 
                             return {
-                                label: `${bike.name} average`,
+                                label: `${bike.name} average (${avgDist} km)`,
                                 borderColor: bike.borderColor,
                                 data: months.map(() => avgDist),
                                 yAxisID: "km",
@@ -376,10 +376,10 @@
                                 .map(e => e.fuelused)
                                 .filter(n => _.isNumber(n) && !_.isNaN(n))
                                 .reduce((sum, fuel) => sum + fuel, 0).value();
-                            const avgMilage = 100 * totalFuel / totalDistance;
+                            const avgMilage = parseFloat(( 100 * totalFuel / totalDistance).toFixed(2));
 
                             return {
-                                label: `${bike.name} average`,
+                                label: `${bike.name} average (${avgMilage} litraa satasella)`,
                                 borderColor: bike.borderColor,
                                 data: months.map(() => avgMilage),
                                 type: 'line',
