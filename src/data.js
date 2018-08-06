@@ -1,7 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 
-const PROD = !window.location.href.match(/localhost/);
+export const PROD = !window.location.href.match(/localhost/);
 
 const _data = {
     bikes: [],
@@ -11,7 +11,6 @@ const _data = {
     events: PROD ? [] : [
         {
             "info": "Veikkaus banditin hankinnasta. Veikattu 2.12.2014",
-            "fuel": "OTHER",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 12000,
@@ -21,7 +20,6 @@ const _data = {
         },
         {
             "info": "Banditin ostop\u00e4iv\u00e4. T\u00e4st\u00e4 se l\u00e4hti. Odo veikattu 2.12.2014",
-            "fuel": "SEASON_START",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 12000,
@@ -31,7 +29,6 @@ const _data = {
         },
         {
             "info": "Veikkaus ekan kauden loppumisesta",
-            "fuel": "SEASON_END",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 17000,
@@ -41,7 +38,6 @@ const _data = {
         },
         {
             "info": "Kauden mahdollinen aloitus. P\u00e4iv\u00e4 ja odo arvattu 25.11.2014",
-            "fuel": "SEASON_START",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 17000,
@@ -51,7 +47,6 @@ const _data = {
         },
         {
             "info": "V-Stromin hankinta",
-            "fuel": "OTHER",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 10500,
@@ -61,7 +56,6 @@ const _data = {
         },
         {
             "info": "Banditin myynti. Arvio heitettu 2.12.2014",
-            "fuel": "OTHER",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 22000,
@@ -71,7 +65,6 @@ const _data = {
         },
         {
             "info": "12k huolto",
-            "fuel": "MAINTENANCE",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 11875,
@@ -81,7 +74,6 @@ const _data = {
         },
         {
             "info": "Arvio takakumin vaihdosta",
-            "fuel": "TYRE_REAR",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 13000,
@@ -91,7 +83,6 @@ const _data = {
         },
         {
             "info": "Odo arvattu 24.11.2014",
-            "fuel": "SEASON_END",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 13948,
@@ -101,7 +92,6 @@ const _data = {
         },
         {
             "info": "Alkumerkint\u00e4, odo arvattu",
-            "fuel": "SEASON_START",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 13700,
@@ -111,7 +101,6 @@ const _data = {
         },
         {
             "info": "Eka tankki",
-            "fuel": "FUEL",
             "fuelused": 16.39,
             "fuelfilled": 16.39,
             "odo": 13948,
@@ -121,7 +110,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 14.4,
             "fuelfilled": 14.4,
             "odo": 14117,
@@ -131,7 +119,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 15.84,
             "fuelfilled": 15.84,
             "odo": 14259,
@@ -141,7 +128,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 17.04,
             "fuelfilled": 17.04,
             "odo": 14517,
@@ -151,7 +137,6 @@ const _data = {
         },
         {
             "info": "Humppila",
-            "fuel": "FUEL",
             "fuelused": 15.4,
             "fuelfilled": 15.4,
             "odo": 14783,
@@ -161,7 +146,6 @@ const _data = {
         },
         {
             "info": "Nokia",
-            "fuel": "FUEL",
             "fuelused": 11.33,
             "fuelfilled": 11.33,
             "odo": 14996,
@@ -171,7 +155,6 @@ const _data = {
         },
         {
             "info": "Keskiseisontatuki + fender extender",
-            "fuel": "OTHER",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 15174,
@@ -181,7 +164,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 16.0,
             "fuelfilled": 16.0,
             "odo": 15264,
@@ -191,7 +173,6 @@ const _data = {
         },
         {
             "info": "Pro-Oiler asennettu",
-            "fuel": "OTHER",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 15406,
@@ -201,7 +182,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 16.24,
             "fuelfilled": 16.24,
             "odo": 15513,
@@ -211,7 +191,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 18.27,
             "fuelfilled": 18.27,
             "odo": 15798,
@@ -221,7 +200,6 @@ const _data = {
         },
         {
             "info": "Eteen Z6",
-            "fuel": "TYRE_FRONT",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 16054,
@@ -231,7 +209,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 16.14,
             "fuelfilled": 16.14,
             "odo": 16057,
@@ -241,7 +218,6 @@ const _data = {
         },
         {
             "info": "Jyv\u00e4skyl\u00e4",
-            "fuel": "FUEL",
             "fuelused": 18.76,
             "fuelfilled": 18.76,
             "odo": 16338,
@@ -251,7 +227,6 @@ const _data = {
         },
         {
             "info": "Haapaj\u00e4rvi",
-            "fuel": "FUEL",
             "fuelused": 12.11,
             "fuelfilled": 12.11,
             "odo": 16533,
@@ -261,7 +236,6 @@ const _data = {
         },
         {
             "info": "Oulu",
-            "fuel": "FUEL",
             "fuelused": 9.5,
             "fuelfilled": 9.5,
             "odo": 16676,
@@ -271,7 +245,6 @@ const _data = {
         },
         {
             "info": "Ranua",
-            "fuel": "FUEL",
             "fuelused": 11.06,
             "fuelfilled": 11.06,
             "odo": 16853,
@@ -281,7 +254,6 @@ const _data = {
         },
         {
             "info": "Sodankyl\u00e4",
-            "fuel": "FUEL",
             "fuelused": 15.4,
             "fuelfilled": 15.4,
             "odo": 17098,
@@ -291,7 +263,6 @@ const _data = {
         },
         {
             "info": "Inari, odo laskettu j\u00e4lkik\u00e4teen",
-            "fuel": "FUEL",
             "fuelused": 12.94,
             "fuelfilled": 12.94,
             "odo": 17295,
@@ -301,7 +272,6 @@ const _data = {
         },
         {
             "info": "Utsjoki",
-            "fuel": "FUEL",
             "fuelused": 10.05,
             "fuelfilled": 10.05,
             "odo": 17442,
@@ -311,7 +281,6 @@ const _data = {
         },
         {
             "info": "Utsjoki",
-            "fuel": "FUEL",
             "fuelused": 11.5,
             "fuelfilled": 11.5,
             "odo": 17645,
@@ -321,7 +290,6 @@ const _data = {
         },
         {
             "info": "Merkint\u00e4 puuttuu",
-            "fuel": "FUEL",
             "fuelused": 17.0,
             "fuelfilled": 17.0,
             "odo": 17913,
@@ -331,7 +299,6 @@ const _data = {
         },
         {
             "info": "Saariselk\u00e4",
-            "fuel": "FUEL",
             "fuelused": 12.57,
             "fuelfilled": 12.57,
             "odo": 18112,
@@ -341,7 +308,6 @@ const _data = {
         },
         {
             "info": "Vanttauskoski",
-            "fuel": "FUEL",
             "fuelused": 18.0,
             "fuelfilled": 18.0,
             "odo": 18425,
@@ -351,7 +317,6 @@ const _data = {
         },
         {
             "info": "Kajaani",
-            "fuel": "FUEL",
             "fuelused": 19.6,
             "fuelfilled": 19.6,
             "odo": 18760,
@@ -361,7 +326,6 @@ const _data = {
         },
         {
             "info": "Juva",
-            "fuel": "FUEL",
             "fuelused": 18.18,
             "fuelfilled": 18.18,
             "odo": 19061,
@@ -371,7 +335,6 @@ const _data = {
         },
         {
             "info": "Kotka, odo laskettu j\u00e4lkik\u00e4teen",
-            "fuel": "FUEL",
             "fuelused": 12.14,
             "fuelfilled": 12.14,
             "odo": 19262,
@@ -381,7 +344,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 17.77,
             "fuelfilled": 17.77,
             "odo": 19556,
@@ -391,7 +353,6 @@ const _data = {
         },
         {
             "info": "18k huolto",
-            "fuel": "MAINTENANCE",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 19687,
@@ -401,7 +362,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 17.23,
             "fuelfilled": 17.23,
             "odo": 19833,
@@ -411,7 +371,6 @@ const _data = {
         },
         {
             "info": "Kotka",
-            "fuel": "FUEL",
             "fuelused": 18.66,
             "fuelfilled": 18.66,
             "odo": 20158,
@@ -421,7 +380,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 18.17,
             "fuelfilled": 18.17,
             "odo": 20436,
@@ -431,7 +389,6 @@ const _data = {
         },
         {
             "info": "Hanko",
-            "fuel": "FUEL",
             "fuelused": 18.0,
             "fuelfilled": 18.0,
             "odo": 20739,
@@ -441,7 +398,6 @@ const _data = {
         },
         {
             "info": "Kotka",
-            "fuel": "FUEL",
             "fuelused": 14.5,
             "fuelfilled": 14.5,
             "odo": 20975,
@@ -451,7 +407,6 @@ const _data = {
         },
         {
             "info": "Hki, eka mob.",
-            "fuel": "FUEL",
             "fuelused": 19.5,
             "fuelfilled": 19.5,
             "odo": 21296,
@@ -461,7 +416,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 14.65,
             "fuelfilled": 14.65,
             "odo": 21533,
@@ -471,7 +425,6 @@ const _data = {
         },
         {
             "info": "Valkeakoski",
-            "fuel": "FUEL",
             "fuelused": 18.15,
             "fuelfilled": 18.15,
             "odo": 21848,
@@ -481,7 +434,6 @@ const _data = {
         },
         {
             "info": "Nokia, tankki arvattu",
-            "fuel": "FUEL",
             "fuelused": 17.0,
             "fuelfilled": 17.0,
             "odo": 22125,
@@ -491,7 +443,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 18.03,
             "fuelfilled": 18.03,
             "odo": 22413,
@@ -501,7 +452,6 @@ const _data = {
         },
         {
             "info": "Hki-kotka",
-            "fuel": "FUEL",
             "fuelused": 20.16,
             "fuelfilled": 20.16,
             "odo": 22734,
@@ -511,7 +461,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 19.0,
             "fuelfilled": 19.0,
             "odo": 23043,
@@ -521,7 +470,6 @@ const _data = {
         },
         {
             "info": "Nokia, s\u00e4hl\u00e4yst\u00e4, arvot arvattu",
-            "fuel": "FUEL",
             "fuelused": 16.5,
             "fuelfilled": 16.5,
             "odo": 23290,
@@ -531,7 +479,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 18.31,
             "fuelfilled": 18.31,
             "odo": 23553,
@@ -541,7 +488,6 @@ const _data = {
         },
         {
             "info": "Hki->Pulkkilanharju",
-            "fuel": "FUEL",
             "fuelused": 19.0,
             "fuelfilled": 19.0,
             "odo": 23847,
@@ -551,7 +497,6 @@ const _data = {
         },
         {
             "info": "p\u00e4ij\u00e4nne",
-            "fuel": "FUEL",
             "fuelused": 18.01,
             "fuelfilled": 18.01,
             "odo": 24166,
@@ -561,7 +506,6 @@ const _data = {
         },
         {
             "info": "kotka",
-            "fuel": "FUEL",
             "fuelused": 15.01,
             "fuelfilled": 15.01,
             "odo": 24415,
@@ -571,7 +515,6 @@ const _data = {
         },
         {
             "info": "24k huolto",
-            "fuel": "MAINTENANCE",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 24562,
@@ -581,7 +524,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 18.1,
             "fuelfilled": 18.1,
             "odo": 24699,
@@ -591,7 +533,6 @@ const _data = {
         },
         {
             "info": "Talviparkkiin",
-            "fuel": "FUEL",
             "fuelused": 10.59,
             "fuelfilled": 10.59,
             "odo": 24864,
@@ -601,7 +542,6 @@ const _data = {
         },
         {
             "info": "Talviparkkiin",
-            "fuel": "SEASON_END",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 24864,
@@ -611,7 +551,6 @@ const _data = {
         },
         {
             "info": "Kauden aloitus",
-            "fuel": "SEASON_START",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 24864,
@@ -621,7 +560,6 @@ const _data = {
         },
         {
             "info": "J\u00e4rvenp\u00e4\u00e4",
-            "fuel": "FUEL",
             "fuelused": 17.84,
             "fuelfilled": 17.84,
             "odo": 25167,
@@ -631,7 +569,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 17.74,
             "fuelfilled": 17.74,
             "odo": 25444,
@@ -641,7 +578,6 @@ const _data = {
         },
         {
             "info": "Hki kaupunkiajoa, Sipoo ajelua",
-            "fuel": "FUEL",
             "fuelused": 19.27,
             "fuelfilled": 19.27,
             "odo": 25742,
@@ -651,7 +587,6 @@ const _data = {
         },
         {
             "info": "Z6 Interact taakse",
-            "fuel": "TYRE_REAR",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 25942,
@@ -661,7 +596,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 13.93,
             "fuelfilled": 13.93,
             "odo": 25950,
@@ -671,7 +605,6 @@ const _data = {
         },
         {
             "info": "Kotka+kaupunkia",
-            "fuel": "FUEL",
             "fuelused": 18.92,
             "fuelfilled": 18.92,
             "odo": 26275,
@@ -681,7 +614,6 @@ const _data = {
         },
         {
             "info": "Vorssa, vakkalaan menossa",
-            "fuel": "FUEL",
             "fuelused": 10.0,
             "fuelfilled": 10.0,
             "odo": 26444,
@@ -691,7 +623,6 @@ const _data = {
         },
         {
             "info": "Ketju\u00f6jlyn t\u00e4ytt\u00f6",
-            "fuel": "OTHER",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 26333,
@@ -701,7 +632,6 @@ const _data = {
         },
         {
             "info": "Juhannus Vakkalassa",
-            "fuel": "FUEL",
             "fuelused": 18.32,
             "fuelfilled": 18.32,
             "odo": 26766,
@@ -711,7 +641,6 @@ const _data = {
         },
         {
             "info": "Kotka",
-            "fuel": "FUEL",
             "fuelused": 17.22,
             "fuelfilled": 17.22,
             "odo": 27062,
@@ -721,7 +650,6 @@ const _data = {
         },
         {
             "info": "Hki-j\u00e4k\u00e4 -eestaas. helle. +30",
-            "fuel": "FUEL",
             "fuelused": 18.97,
             "fuelfilled": 18.97,
             "odo": 27381,
@@ -731,7 +659,6 @@ const _data = {
         },
         {
             "info": "Hki-sipoo-kotka. Helle +30",
-            "fuel": "FUEL",
             "fuelused": 18.45,
             "fuelfilled": 18.45,
             "odo": 27688,
@@ -741,7 +668,6 @@ const _data = {
         },
         {
             "info": "Ketjy\u00f6ljyn t\u00e4ytt\u00f6",
-            "fuel": "OTHER",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 27946,
@@ -751,7 +677,6 @@ const _data = {
         },
         {
             "info": "kotka-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.35,
             "fuelfilled": 19.35,
             "odo": 28022,
@@ -761,7 +686,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 17.56,
             "fuelfilled": 17.56,
             "odo": 28301,
@@ -771,7 +695,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 18.0,
             "fuelfilled": 18.0,
             "odo": 28625,
@@ -781,7 +704,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 18.25,
             "fuelfilled": 18.25,
             "odo": 28941,
@@ -791,7 +713,6 @@ const _data = {
         },
         {
             "info": "Hki, vika tankki ennen Norjaa",
-            "fuel": "FUEL",
             "fuelused": 14.79,
             "fuelfilled": 14.79,
             "odo": 29161,
@@ -801,7 +722,6 @@ const _data = {
         },
         {
             "info": "Ketju\u00f6ljyn t\u00e4ytt\u00f6 (astia t\u00e4yteen ennen Norjaa)",
-            "fuel": "OTHER",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 29161,
@@ -811,7 +731,6 @@ const _data = {
         },
         {
             "info": "Grue finskoga",
-            "fuel": "FUEL",
             "fuelused": 12.88,
             "fuelfilled": 12.88,
             "odo": 29381,
@@ -821,7 +740,6 @@ const _data = {
         },
         {
             "info": "Lillehammer",
-            "fuel": "FUEL",
             "fuelused": 13.0,
             "fuelfilled": 13.0,
             "odo": 29610,
@@ -831,7 +749,6 @@ const _data = {
         },
         {
             "info": "Lom",
-            "fuel": "FUEL",
             "fuelused": 15.19,
             "fuelfilled": 15.19,
             "odo": 29876,
@@ -841,7 +758,6 @@ const _data = {
         },
         {
             "info": "Skj\u00e5k",
-            "fuel": "FUEL",
             "fuelused": 12.42,
             "fuelfilled": 12.42,
             "odo": 30107,
@@ -851,7 +767,6 @@ const _data = {
         },
         {
             "info": "Skei (Satkalle bensaa hakemassa)",
-            "fuel": "FUEL",
             "fuelused": 16.0,
             "fuelfilled": 16.0,
             "odo": 30394,
@@ -861,7 +776,6 @@ const _data = {
         },
         {
             "info": "Fj\u00f6rde",
-            "fuel": "FUEL",
             "fuelused": 6.0,
             "fuelfilled": 6.0,
             "odo": 30496,
@@ -871,7 +785,6 @@ const _data = {
         },
         {
             "info": "Unohtunut merkint\u00e4 (?)",
-            "fuel": "FUEL",
             "fuelused": 12.0,
             "fuelfilled": 12.0,
             "odo": 30700,
@@ -881,7 +794,6 @@ const _data = {
         },
         {
             "info": "Knarvik",
-            "fuel": "FUEL",
             "fuelused": 8.51,
             "fuelfilled": 8.51,
             "odo": 30843,
@@ -891,7 +803,6 @@ const _data = {
         },
         {
             "info": "Geilo",
-            "fuel": "FUEL",
             "fuelused": 11.0,
             "fuelfilled": 11.0,
             "odo": 31035,
@@ -901,7 +812,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 11.5,
             "fuelfilled": 11.5,
             "odo": 31236,
@@ -911,7 +821,6 @@ const _data = {
         },
         {
             "info": "E18, Ruotsi",
-            "fuel": "FUEL",
             "fuelused": 11.5,
             "fuelfilled": 11.5,
             "odo": 31434,
@@ -921,7 +830,6 @@ const _data = {
         },
         {
             "info": "E18, Ruotsi, taas (unohtunut merkint\u00e4)",
-            "fuel": "FUEL",
             "fuelused": 12.5,
             "fuelfilled": 12.5,
             "odo": 31650,
@@ -931,7 +839,6 @@ const _data = {
         },
         {
             "info": "Kaarina",
-            "fuel": "FUEL",
             "fuelused": 13.5,
             "fuelfilled": 13.5,
             "odo": 31895,
@@ -941,7 +848,6 @@ const _data = {
         },
         {
             "info": "30k huolto",
-            "fuel": "MAINTENANCE",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 32141,
@@ -951,7 +857,6 @@ const _data = {
         },
         {
             "info": "Takaisin kotona",
-            "fuel": "FUEL",
             "fuelused": 19.73,
             "fuelfilled": 19.73,
             "odo": 32202,
@@ -961,7 +866,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 18.82,
             "fuelfilled": 18.82,
             "odo": 32462,
@@ -971,7 +875,6 @@ const _data = {
         },
         {
             "info": "Hki-j\u00e4k\u00e4-odilampi",
-            "fuel": "FUEL",
             "fuelused": 18.65,
             "fuelfilled": 18.65,
             "odo": 32766,
@@ -981,7 +884,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 17.41,
             "fuelfilled": 17.41,
             "odo": 33007,
@@ -991,7 +893,6 @@ const _data = {
         },
         {
             "info": "Kotka",
-            "fuel": "FUEL",
             "fuelused": 12.8,
             "fuelfilled": 12.8,
             "odo": 33228,
@@ -1001,7 +902,6 @@ const _data = {
         },
         {
             "info": "Hki",
-            "fuel": "FUEL",
             "fuelused": 19.5,
             "fuelfilled": 19.5,
             "odo": 33494,
@@ -1011,7 +911,6 @@ const _data = {
         },
         {
             "info": "Talviparkkiin",
-            "fuel": "FUEL",
             "fuelused": 2.0,
             "fuelfilled": 2.0,
             "odo": 33514,
@@ -1021,7 +920,6 @@ const _data = {
         },
         {
             "info": "Talviparkkiin",
-            "fuel": "SEASON_END",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 33514,
@@ -1031,7 +929,6 @@ const _data = {
         },
         {
             "info": "Kauden aloitus",
-            "fuel": "SEASON_START",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 33514,
@@ -1041,7 +938,6 @@ const _data = {
         },
         {
             "info": "Kauden eka tankki. Kotka",
-            "fuel": "FUEL",
             "fuelused": 18.95,
             "fuelfilled": 18.95,
             "odo": 33818,
@@ -1051,7 +947,6 @@ const _data = {
         },
         {
             "info": "Paluu Kotkasta + Vantaa",
-            "fuel": "FUEL",
             "fuelused": 19.11,
             "fuelfilled": 19.11,
             "odo": 34128,
@@ -1061,7 +956,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki ruuhkajunnaamista",
-            "fuel": "FUEL",
             "fuelused": 18.52,
             "fuelfilled": 18.52,
             "odo": 34404,
@@ -1071,7 +965,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki ruuhkajunnaamista",
-            "fuel": "FUEL",
             "fuelused": 19.5,
             "fuelfilled": 19.5,
             "odo": 34698,
@@ -1081,7 +974,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.33,
             "fuelfilled": 19.33,
             "odo": 34992,
@@ -1091,7 +983,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki+Sipoo",
-            "fuel": "FUEL",
             "fuelused": 19.66,
             "fuelfilled": 19.66,
             "odo": 35309,
@@ -1101,7 +992,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki+Sipoo",
-            "fuel": "FUEL",
             "fuelused": 18.55,
             "fuelfilled": 18.55,
             "odo": 35611,
@@ -1111,7 +1001,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.24,
             "fuelfilled": 19.24,
             "odo": 35917,
@@ -1121,7 +1010,6 @@ const _data = {
         },
         {
             "info": "Ajelua Kirkkonummi Vihti",
-            "fuel": "FUEL",
             "fuelused": 17.02,
             "fuelfilled": 17.02,
             "odo": 36210,
@@ -1131,7 +1019,6 @@ const _data = {
         },
         {
             "info": "Hki-Vantaa + Orimattila",
-            "fuel": "FUEL",
             "fuelused": 18.65,
             "fuelfilled": 18.65,
             "odo": 36525,
@@ -1141,7 +1028,6 @@ const _data = {
         },
         {
             "info": "myrskyl\u00e4 + Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.18,
             "fuelfilled": 19.18,
             "odo": 36858,
@@ -1151,7 +1037,6 @@ const _data = {
         },
         {
             "info": "myrskyl\u00e4\u00e4 + Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.05,
             "fuelfilled": 18.05,
             "odo": 37171,
@@ -1161,7 +1046,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.19,
             "fuelfilled": 19.19,
             "odo": 37491,
@@ -1171,7 +1055,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.56,
             "fuelfilled": 19.56,
             "odo": 37828,
@@ -1181,7 +1064,6 @@ const _data = {
         },
         {
             "info": "karjalohja",
-            "fuel": "FUEL",
             "fuelused": 20.17,
             "fuelfilled": 20.17,
             "odo": 38187,
@@ -1191,7 +1073,6 @@ const _data = {
         },
         {
             "info": "Tourance eteen (ura ~4,6mm)",
-            "fuel": "TYRE_FRONT",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 38369,
@@ -1201,7 +1082,6 @@ const _data = {
         },
         {
             "info": "36k huolto",
-            "fuel": "MAINTENANCE",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 38369,
@@ -1211,7 +1091,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.84,
             "fuelfilled": 19.84,
             "odo": 38518,
@@ -1221,7 +1100,6 @@ const _data = {
         },
         {
             "info": "Nakkila",
-            "fuel": "FUEL",
             "fuelused": 19.1,
             "fuelfilled": 19.1,
             "odo": 38835,
@@ -1231,7 +1109,6 @@ const _data = {
         },
         {
             "info": "paluu nakkilasta",
-            "fuel": "FUEL",
             "fuelused": 18.23,
             "fuelfilled": 18.23,
             "odo": 39160,
@@ -1241,7 +1118,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki, sadetta",
-            "fuel": "FUEL",
             "fuelused": 18.36,
             "fuelfilled": 18.36,
             "odo": 39477,
@@ -1251,7 +1127,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.61,
             "fuelfilled": 18.61,
             "odo": 39787,
@@ -1261,7 +1136,6 @@ const _data = {
         },
         {
             "info": "Kotka ja kaatosade Hki",
-            "fuel": "FUEL",
             "fuelused": 19.41,
             "fuelfilled": 19.41,
             "odo": 40130,
@@ -1271,7 +1145,6 @@ const _data = {
         },
         {
             "info": "Kaato pitk\u00e4nsillan p\u00e4\u00e4ss\u00e4",
-            "fuel": "OTHER",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 40341,
@@ -1281,7 +1154,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.5,
             "fuelfilled": 19.5,
             "odo": 40440,
@@ -1291,7 +1163,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.36,
             "fuelfilled": 19.36,
             "odo": 40765,
@@ -1301,7 +1172,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.0,
             "fuelfilled": 19.0,
             "odo": 41063,
@@ -1311,7 +1181,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 20.62,
             "fuelfilled": 20.62,
             "odo": 41380,
@@ -1321,7 +1190,6 @@ const _data = {
         },
         {
             "info": "Nokia (talviparkkiin)",
-            "fuel": "FUEL",
             "fuelused": 16.61,
             "fuelfilled": 16.61,
             "odo": 41667,
@@ -1331,7 +1199,6 @@ const _data = {
         },
         {
             "info": "Nokia (talviparkkiin)",
-            "fuel": "SEASON_END",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 41667,
@@ -1341,7 +1208,6 @@ const _data = {
         },
         {
             "info": "Kauden aloitus",
-            "fuel": "SEASON_START",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 41667,
@@ -1351,7 +1217,6 @@ const _data = {
         },
         {
             "info": "Nouto Nokialta + hki",
-            "fuel": "FUEL",
             "fuelused": 17.71,
             "fuelfilled": 17.71,
             "odo": 41987,
@@ -1361,7 +1226,6 @@ const _data = {
         },
         {
             "info": "Nokia",
-            "fuel": "FUEL",
             "fuelused": 13.15,
             "fuelfilled": 13.15,
             "odo": 42185,
@@ -1371,7 +1235,6 @@ const _data = {
         },
         {
             "info": "Paluu Nokialta ja ty\u00f6matkaa",
-            "fuel": "FUEL",
             "fuelused": 18.32,
             "fuelfilled": 18.32,
             "odo": 42512,
@@ -1381,7 +1244,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.87,
             "fuelfilled": 19.87,
             "odo": 42824,
@@ -1391,7 +1253,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.18,
             "fuelfilled": 19.18,
             "odo": 43147,
@@ -1401,7 +1262,6 @@ const _data = {
         },
         {
             "info": "Tourance taakse",
-            "fuel": "TYRE_REAR",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 43247,
@@ -1411,7 +1271,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki, ruuhkia",
-            "fuel": "FUEL",
             "fuelused": 18.35,
             "fuelfilled": 18.35,
             "odo": 43442,
@@ -1421,7 +1280,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 20.5,
             "fuelfilled": 20.5,
             "odo": 43759,
@@ -1431,7 +1289,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki (kirkkonummella)",
-            "fuel": "FUEL",
             "fuelused": 19.62,
             "fuelfilled": 19.62,
             "odo": 44086,
@@ -1441,7 +1298,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 20.53,
             "fuelfilled": 20.53,
             "odo": 44421,
@@ -1451,7 +1307,6 @@ const _data = {
         },
         {
             "info": "42k huolto",
-            "fuel": "MAINTENANCE",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 44503,
@@ -1461,7 +1316,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki+Sipoo",
-            "fuel": "FUEL",
             "fuelused": 18.74,
             "fuelfilled": 18.74,
             "odo": 44743,
@@ -1471,7 +1325,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Espoo (vika tankki ennen reissua)",
-            "fuel": "FUEL",
             "fuelused": 11.41,
             "fuelfilled": 11.41,
             "odo": 44932,
@@ -1481,7 +1334,6 @@ const _data = {
         },
         {
             "info": "Tukholma-S\u00e4rma",
-            "fuel": "FUEL",
             "fuelused": 14.0,
             "fuelfilled": 14.0,
             "odo": 45173,
@@ -1491,7 +1343,6 @@ const _data = {
         },
         {
             "info": "S\u00e4rna-R\u00f8ros",
-            "fuel": "FUEL",
             "fuelused": 15.0,
             "fuelfilled": 15.0,
             "odo": 45425,
@@ -1501,7 +1352,6 @@ const _data = {
         },
         {
             "info": "Roros",
-            "fuel": "FUEL",
             "fuelused": 11.35,
             "fuelfilled": 11.35,
             "odo": 45626,
@@ -1511,7 +1361,6 @@ const _data = {
         },
         {
             "info": "R\u00f8ros-Steinkjer",
-            "fuel": "FUEL",
             "fuelused": 10.62,
             "fuelfilled": 10.62,
             "odo": 45836,
@@ -1521,7 +1370,6 @@ const _data = {
         },
         {
             "info": "S\u00f8mna",
-            "fuel": "FUEL",
             "fuelused": 16.49,
             "fuelfilled": 16.49,
             "odo": 46133,
@@ -1531,7 +1379,6 @@ const _data = {
         },
         {
             "info": "Kilboghamn",
-            "fuel": "FUEL",
             "fuelused": 13.26,
             "fuelfilled": 13.26,
             "odo": 46364,
@@ -1541,7 +1388,6 @@ const _data = {
         },
         {
             "info": "Reine",
-            "fuel": "FUEL",
             "fuelused": 13.56,
             "fuelfilled": 13.56,
             "odo": 46598,
@@ -1551,7 +1397,6 @@ const _data = {
         },
         {
             "info": "L\u00f8dingen",
-            "fuel": "FUEL",
             "fuelused": 15.05,
             "fuelfilled": 15.05,
             "odo": 46852,
@@ -1561,7 +1406,6 @@ const _data = {
         },
         {
             "info": "Bjerkvik",
-            "fuel": "FUEL",
             "fuelused": 6.65,
             "fuelfilled": 6.65,
             "odo": 46975,
@@ -1571,7 +1415,6 @@ const _data = {
         },
         {
             "info": "Birtavarre",
-            "fuel": "FUEL",
             "fuelused": 12.56,
             "fuelfilled": 12.56,
             "odo": 47213,
@@ -1581,7 +1424,6 @@ const _data = {
         },
         {
             "info": "Alta",
-            "fuel": "FUEL",
             "fuelused": 13.91,
             "fuelfilled": 13.91,
             "odo": 47471,
@@ -1591,7 +1433,6 @@ const _data = {
         },
         {
             "info": "Karasjoki",
-            "fuel": "FUEL",
             "fuelused": 10.22,
             "fuelfilled": 10.22,
             "odo": 47672,
@@ -1601,7 +1442,6 @@ const _data = {
         },
         {
             "info": "Utsjoki",
-            "fuel": "FUEL",
             "fuelused": 7.9,
             "fuelfilled": 7.9,
             "odo": 47814,
@@ -1611,7 +1451,6 @@ const _data = {
         },
         {
             "info": "Sodankyl\u00e4",
-            "fuel": "FUEL",
             "fuelused": 18.82,
             "fuelfilled": 18.82,
             "odo": 48149,
@@ -1621,7 +1460,6 @@ const _data = {
         },
         {
             "info": "Kuusamo",
-            "fuel": "FUEL",
             "fuelused": 16.28,
             "fuelfilled": 16.28,
             "odo": 48446,
@@ -1631,7 +1469,6 @@ const _data = {
         },
         {
             "info": "Iisalmi",
-            "fuel": "FUEL",
             "fuelused": 19.25,
             "fuelfilled": 19.25,
             "odo": 48789,
@@ -1641,7 +1478,6 @@ const _data = {
         },
         {
             "info": "Jyv\u00e4skyl\u00e4",
-            "fuel": "FUEL",
             "fuelused": 13.04,
             "fuelfilled": 13.04,
             "odo": 49025,
@@ -1651,7 +1487,6 @@ const _data = {
         },
         {
             "info": "Vantaa (paluu Norjasta)",
-            "fuel": "FUEL",
             "fuelused": 17.1,
             "fuelfilled": 17.1,
             "odo": 49322,
@@ -1661,7 +1496,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki+Em\u00e4salo",
-            "fuel": "FUEL",
             "fuelused": 19.13,
             "fuelfilled": 19.13,
             "odo": 49642,
@@ -1671,7 +1505,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.0,
             "fuelfilled": 19.0,
             "odo": 49946,
@@ -1681,7 +1514,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.01,
             "fuelfilled": 19.01,
             "odo": 50264,
@@ -1691,7 +1523,6 @@ const _data = {
         },
         {
             "info": "48k huolto",
-            "fuel": "MAINTENANCE",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 50453,
@@ -1701,7 +1532,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.11,
             "fuelfilled": 18.11,
             "odo": 50552,
@@ -1711,7 +1541,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.77,
             "fuelfilled": 18.77,
             "odo": 50854,
@@ -1721,7 +1550,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 15.9,
             "fuelfilled": 15.9,
             "odo": 51107,
@@ -1731,7 +1559,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.0,
             "fuelfilled": 19.0,
             "odo": 51392,
@@ -1741,7 +1568,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.8,
             "fuelfilled": 18.8,
             "odo": 51667,
@@ -1751,7 +1577,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 20.2,
             "fuelfilled": 20.2,
             "odo": 51966,
@@ -1761,7 +1586,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki-Nokia",
-            "fuel": "FUEL",
             "fuelused": 21.5,
             "fuelfilled": 21.5,
             "odo": 52304,
@@ -1771,7 +1595,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki-Nokia",
-            "fuel": "SEASON_END",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 52304,
@@ -1781,7 +1604,6 @@ const _data = {
         },
         {
             "info": "Kauden aloitus",
-            "fuel": "SEASON_START",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 52321,
@@ -1791,7 +1613,6 @@ const _data = {
         },
         {
             "info": "Nokia-Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.26,
             "fuelfilled": 18.26,
             "odo": 52597,
@@ -1801,7 +1622,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 17.5,
             "fuelfilled": 17.5,
             "odo": 52866,
@@ -1811,7 +1631,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki-Kotka",
-            "fuel": "FUEL",
             "fuelused": 18.81,
             "fuelfilled": 18.81,
             "odo": 53161,
@@ -1821,7 +1640,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.85,
             "fuelfilled": 18.85,
             "odo": 53483,
@@ -1831,7 +1649,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.6,
             "fuelfilled": 19.6,
             "odo": 53791,
@@ -1841,7 +1658,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.67,
             "fuelfilled": 19.67,
             "odo": 54105,
@@ -1851,7 +1667,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki,Sipoo",
-            "fuel": "FUEL",
             "fuelused": 20.46,
             "fuelfilled": 20.46,
             "odo": 54435,
@@ -1861,7 +1676,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.0,
             "fuelfilled": 19.0,
             "odo": 54744,
@@ -1871,7 +1685,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.28,
             "fuelfilled": 19.28,
             "odo": 55078,
@@ -1881,7 +1694,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.16,
             "fuelfilled": 18.16,
             "odo": 55369,
@@ -1891,7 +1703,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.02,
             "fuelfilled": 19.02,
             "odo": 55683,
@@ -1901,7 +1712,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki-m\u00e4nts\u00e4l\u00e4",
-            "fuel": "FUEL",
             "fuelused": 16.2,
             "fuelfilled": 16.2,
             "odo": 55954,
@@ -1911,7 +1721,6 @@ const _data = {
         },
         {
             "info": "Suonenjoki",
-            "fuel": "FUEL",
             "fuelused": 15.48,
             "fuelfilled": 15.48,
             "odo": 56240,
@@ -1921,7 +1730,6 @@ const _data = {
         },
         {
             "info": "Tervo",
-            "fuel": "FUEL",
             "fuelused": 14.74,
             "fuelfilled": 14.74,
             "odo": 56505,
@@ -1931,7 +1739,6 @@ const _data = {
         },
         {
             "info": "Orimattila",
-            "fuel": "FUEL",
             "fuelused": 16.1,
             "fuelfilled": 16.1,
             "odo": 56813,
@@ -1941,7 +1748,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.26,
             "fuelfilled": 19.26,
             "odo": 57135,
@@ -1951,7 +1757,6 @@ const _data = {
         },
         {
             "info": "54k huolto",
-            "fuel": "MAINTENANCE",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 57160,
@@ -1961,7 +1766,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki, Kirkkonummen visiittej\u00e4",
-            "fuel": "FUEL",
             "fuelused": 19.7,
             "fuelfilled": 19.7,
             "odo": 57464,
@@ -1971,7 +1775,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki-siuntio",
-            "fuel": "FUEL",
             "fuelused": 18.65,
             "fuelfilled": 18.65,
             "odo": 57780,
@@ -1981,7 +1784,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki-Kirkkonummi",
-            "fuel": "FUEL",
             "fuelused": 18.34,
             "fuelfilled": 18.34,
             "odo": 58076,
@@ -1991,7 +1793,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki-Knummi",
-            "fuel": "FUEL",
             "fuelused": 19.0,
             "fuelfilled": 19.0,
             "odo": 58382,
@@ -2001,7 +1802,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Hki",
-            "fuel": "FUEL",
             "fuelused": 16.0,
             "fuelfilled": 16.0,
             "odo": 58630,
@@ -2011,7 +1811,6 @@ const _data = {
         },
         {
             "info": "Nokia",
-            "fuel": "FUEL",
             "fuelused": 10.65,
             "fuelfilled": 10.65,
             "odo": 58807,
@@ -2021,7 +1820,6 @@ const _data = {
         },
         {
             "info": "Nokia",
-            "fuel": "SEASON_END",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 58807,
@@ -2031,7 +1829,6 @@ const _data = {
         },
         {
             "info": "Kauden aloitus",
-            "fuel": "SEASON_START",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 58807,
@@ -2041,7 +1838,6 @@ const _data = {
         },
         {
             "info": "Nokia-knummi",
-            "fuel": "FUEL",
             "fuelused": 14.49,
             "fuelfilled": 14.49,
             "odo": 59065,
@@ -2051,7 +1847,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.14,
             "fuelfilled": 18.14,
             "odo": 59385,
@@ -2061,7 +1856,6 @@ const _data = {
         },
         {
             "info": "Mummun hautajaiset",
-            "fuel": "FUEL",
             "fuelused": 20.2,
             "fuelfilled": 20.2,
             "odo": 59720,
@@ -2071,7 +1865,6 @@ const _data = {
         },
         {
             "info": "Paluu Kotkasta, Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.2,
             "fuelfilled": 18.2,
             "odo": 60037,
@@ -2081,7 +1874,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.82,
             "fuelfilled": 18.82,
             "odo": 60359,
@@ -2091,7 +1883,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.91,
             "fuelfilled": 18.91,
             "odo": 60693,
@@ -2101,7 +1892,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.91,
             "fuelfilled": 18.91,
             "odo": 61011,
@@ -2111,7 +1901,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 17.6,
             "fuelfilled": 17.6,
             "odo": 61325,
@@ -2121,7 +1910,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.6,
             "fuelfilled": 19.6,
             "odo": 61670,
@@ -2131,7 +1919,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.81,
             "fuelfilled": 19.81,
             "odo": 62018,
@@ -2141,7 +1928,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki-hanko",
-            "fuel": "FUEL",
             "fuelused": 19.0,
             "fuelfilled": 19.0,
             "odo": 62371,
@@ -2151,7 +1937,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.7,
             "fuelfilled": 19.7,
             "odo": 62730,
@@ -2161,7 +1946,6 @@ const _data = {
         },
         {
             "info": "Knummi-Kotka-Kuninkaantie",
-            "fuel": "FUEL",
             "fuelused": 19.0,
             "fuelfilled": 19.0,
             "odo": 63072,
@@ -2171,7 +1955,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.3,
             "fuelfilled": 19.3,
             "odo": 63427,
@@ -2181,7 +1964,6 @@ const _data = {
         },
         {
             "info": "Knummi-hiidenpirtti-lohja-knummi",
-            "fuel": "FUEL",
             "fuelused": 18.88,
             "fuelfilled": 18.88,
             "odo": 63767,
@@ -2191,7 +1973,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.45,
             "fuelfilled": 18.45,
             "odo": 64111,
@@ -2201,7 +1982,6 @@ const _data = {
         },
         {
             "info": "60k huolto",
-            "fuel": "MAINTENANCE",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 63846,
@@ -2211,7 +1991,6 @@ const _data = {
         },
         {
             "info": "Vantaa-Nuuksio-Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.51,
             "fuelfilled": 18.51,
             "odo": 64441,
@@ -2221,7 +2000,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.45,
             "fuelfilled": 19.45,
             "odo": 64780,
@@ -2231,7 +2009,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.02,
             "fuelfilled": 19.02,
             "odo": 65102,
@@ -2241,7 +2018,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki-Vihti",
-            "fuel": "FUEL",
             "fuelused": 18.5,
             "fuelfilled": 18.5,
             "odo": 65431,
@@ -2251,7 +2027,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.54,
             "fuelfilled": 19.54,
             "odo": 65756,
@@ -2261,7 +2036,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.41,
             "fuelfilled": 18.41,
             "odo": 66063,
@@ -2271,7 +2045,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.7,
             "fuelfilled": 19.7,
             "odo": 66378,
@@ -2281,7 +2054,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.78,
             "fuelfilled": 18.78,
             "odo": 66691,
@@ -2291,7 +2063,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.6,
             "fuelfilled": 18.6,
             "odo": 67000,
@@ -2301,7 +2072,6 @@ const _data = {
         },
         {
             "info": "Myyty",
-            "fuel": "OTHER",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 67050,
@@ -2311,7 +2081,6 @@ const _data = {
         },
         {
             "info": "Knummi-Hki. Knummi neste versys",
-            "fuel": "FUEL",
             "fuelused": 3.4,
             "fuelfilled": 18.49,
             "odo": 2987,
@@ -2321,7 +2090,6 @@ const _data = {
         },
         {
             "info": "Versys osto",
-            "fuel": "OTHER",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 2929,
@@ -2331,7 +2099,6 @@ const _data = {
         },
         {
             "info": "Versys osto. Tankki ei ollut t\u00e4ysi",
-            "fuel": "FUEL",
             "fuelused": 0.0,
             "fuelfilled": 0.0,
             "odo": 2929,
@@ -2341,7 +2108,6 @@ const _data = {
         },
         {
             "info": "Orkkiskumi/Scropion trail",
-            "fuel": "TYRE_FRONT",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 0,
@@ -2351,7 +2117,6 @@ const _data = {
         },
         {
             "info": "Orkkiskumi/Scropion trail",
-            "fuel": "TYRE_REAR",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 0,
@@ -2361,7 +2126,6 @@ const _data = {
         },
         {
             "info": "Kauden lopetus.Knummi. Odo tavattu.",
-            "fuel": "SEASON_END",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 3288,
@@ -2371,7 +2135,6 @@ const _data = {
         },
         {
             "info": "Py\u00f6r\u00e4 talviparkkiin tyhj\u00e4ll\u00e4 tankilla",
-            "fuel": "FUEL",
             "fuelused": 19.68,
             "fuelfilled": 0.0,
             "odo": 3287,
@@ -2381,7 +2144,6 @@ const _data = {
         },
         {
             "info": "Kausi k\u00e4yntiin Kirkkkonummen katsastuksen kellarista",
-            "fuel": "SEASON_START",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 3288,
@@ -2391,7 +2153,6 @@ const _data = {
         },
         {
             "info": "Py\u00f6r\u00e4 yl\u00f6s kellarista",
-            "fuel": "FUEL",
             "fuelused": 0.0,
             "fuelfilled": 6.02,
             "odo": 3288,
@@ -2401,7 +2162,6 @@ const _data = {
         },
         {
             "info": "Tankki t\u00e4yteen ennen l\u00e4ht\u00f6\u00e4 eteenp\u00e4in",
-            "fuel": "FUEL",
             "fuelused": 0.06,
             "fuelfilled": 13.66,
             "odo": 3289,
@@ -2411,7 +2171,6 @@ const _data = {
         },
         {
             "info": "Nikkil\u00e4",
-            "fuel": "FUEL",
             "fuelused": 16.36,
             "fuelfilled": 16.36,
             "odo": 3573,
@@ -2421,7 +2180,6 @@ const _data = {
         },
         {
             "info": "Hki p\u00e4rr\u00e4yst\u00e4",
-            "fuel": "FUEL",
             "fuelused": 17.95,
             "fuelfilled": 17.95,
             "odo": 3850,
@@ -2431,7 +2189,6 @@ const _data = {
         },
         {
             "info": "Hki kaupunkiajoa",
-            "fuel": "FUEL",
             "fuelused": 18.6,
             "fuelfilled": 18.6,
             "odo": 4132,
@@ -2441,7 +2198,6 @@ const _data = {
         },
         {
             "info": "Kotkaan/Saaren",
-            "fuel": "FUEL",
             "fuelused": 18.61,
             "fuelfilled": 18.61,
             "odo": 4446,
@@ -2451,7 +2207,6 @@ const _data = {
         },
         {
             "info": "Hki +Kotkaan",
-            "fuel": "FUEL",
             "fuelused": 18.14,
             "fuelfilled": 18.14,
             "odo": 4728,
@@ -2461,7 +2216,6 @@ const _data = {
         },
         {
             "info": "Kotkasta kotiin ja Vihtiin",
-            "fuel": "FUEL",
             "fuelused": 16.27,
             "fuelfilled": 16.27,
             "odo": 5020,
@@ -2471,7 +2225,6 @@ const _data = {
         },
         {
             "info": "Kawan eka huolto",
-            "fuel": "MAINTENANCE",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 5210,
@@ -2481,7 +2234,6 @@ const _data = {
         },
         {
             "info": "Vihti + Hki",
-            "fuel": "FUEL",
             "fuelused": 19.21,
             "fuelfilled": 19.21,
             "odo": 5359,
@@ -2491,7 +2243,6 @@ const _data = {
         },
         {
             "info": "Hki-Kotka",
-            "fuel": "FUEL",
             "fuelused": 16.81,
             "fuelfilled": 16.81,
             "odo": 5650,
@@ -2501,7 +2252,6 @@ const _data = {
         },
         {
             "info": "Mj\u00f6lby",
-            "fuel": "FUEL",
             "fuelused": 16.22,
             "fuelfilled": 16.22,
             "odo": 5960,
@@ -2511,7 +2261,6 @@ const _data = {
         },
         {
             "info": "Helsingborg",
-            "fuel": "FUEL",
             "fuelused": 18.34,
             "fuelfilled": 18.34,
             "odo": 6290,
@@ -2521,7 +2270,6 @@ const _data = {
         },
         {
             "info": "Heilingenhagen",
-            "fuel": "FUEL",
             "fuelused": 15.56,
             "fuelfilled": 15.56,
             "odo": 6584,
@@ -2531,7 +2279,6 @@ const _data = {
         },
         {
             "info": "Hannover",
-            "fuel": "FUEL",
             "fuelused": 16.6,
             "fuelfilled": 16.6,
             "odo": 6871,
@@ -2541,7 +2288,6 @@ const _data = {
         },
         {
             "info": "Fulda",
-            "fuel": "FUEL",
             "fuelused": 15.96,
             "fuelfilled": 15.96,
             "odo": 7134,
@@ -2551,7 +2297,6 @@ const _data = {
         },
         {
             "info": "Illertissen",
-            "fuel": "FUEL",
             "fuelused": 18.25,
             "fuelfilled": 18.25,
             "odo": 7442,
@@ -2561,7 +2306,6 @@ const _data = {
         },
         {
             "info": "S\u00f6lden",
-            "fuel": "FUEL",
             "fuelused": 16.74,
             "fuelfilled": 16.74,
             "odo": 7747,
@@ -2571,7 +2315,6 @@ const _data = {
         },
         {
             "info": "Rabland",
-            "fuel": "FUEL",
             "fuelused": 11.91,
             "fuelfilled": 11.91,
             "odo": 7978,
@@ -2581,7 +2324,6 @@ const _data = {
         },
         {
             "info": "Tiefencastel",
-            "fuel": "FUEL",
             "fuelused": 13.4,
             "fuelfilled": 13.4,
             "odo": 8232,
@@ -2591,7 +2333,6 @@ const _data = {
         },
         {
             "info": "Muster",
-            "fuel": "FUEL",
             "fuelused": 10.64,
             "fuelfilled": 10.64,
             "odo": 8450,
@@ -2601,7 +2342,6 @@ const _data = {
         },
         {
             "info": "Schattdorf",
-            "fuel": "FUEL",
             "fuelused": 10.11,
             "fuelfilled": 10.11,
             "odo": 8653,
@@ -2611,7 +2351,6 @@ const _data = {
         },
         {
             "info": "Mieders",
-            "fuel": "FUEL",
             "fuelused": 15.47,
             "fuelfilled": 15.47,
             "odo": 8960,
@@ -2621,7 +2360,6 @@ const _data = {
         },
         {
             "info": "Salzburg",
-            "fuel": "FUEL",
             "fuelused": 10.34,
             "fuelfilled": 10.34,
             "odo": 9180,
@@ -2631,7 +2369,6 @@ const _data = {
         },
         {
             "info": "Hochleiten",
-            "fuel": "FUEL",
             "fuelused": 17.29,
             "fuelfilled": 17.29,
             "odo": 9510,
@@ -2641,7 +2378,6 @@ const _data = {
         },
         {
             "info": "Praha",
-            "fuel": "FUEL",
             "fuelused": 16.92,
             "fuelfilled": 16.92,
             "odo": 9828,
@@ -2651,7 +2387,6 @@ const _data = {
         },
         {
             "info": "L\u00fcbben",
-            "fuel": "FUEL",
             "fuelused": 16.49,
             "fuelfilled": 16.49,
             "odo": 10124,
@@ -2661,7 +2396,6 @@ const _data = {
         },
         {
             "info": "Mecklenburg",
-            "fuel": "FUEL",
             "fuelused": 17.81,
             "fuelfilled": 17.81,
             "odo": 10391,
@@ -2671,7 +2405,6 @@ const _data = {
         },
         {
             "info": "Lindvall",
-            "fuel": "FUEL",
             "fuelused": 18.25,
             "fuelfilled": 18.25,
             "odo": 10688,
@@ -2681,7 +2414,6 @@ const _data = {
         },
         {
             "info": "Norsholm",
-            "fuel": "FUEL",
             "fuelused": 14.7,
             "fuelfilled": 14.7,
             "odo": 10973,
@@ -2691,7 +2423,6 @@ const _data = {
         },
         {
             "info": "Salo",
-            "fuel": "FUEL",
             "fuelused": 14.91,
             "fuelfilled": 14.91,
             "odo": 11253,
@@ -2701,7 +2432,6 @@ const _data = {
         },
         {
             "info": "Hki + kaupunkiajoa + K\u00e4rk\u00f6l\u00e4",
-            "fuel": "FUEL",
             "fuelused": 14.47,
             "fuelfilled": 14.47,
             "odo": 11496,
@@ -2711,7 +2441,6 @@ const _data = {
         },
         {
             "info": "Hki kaupunkiajoa",
-            "fuel": "FUEL",
             "fuelused": 17.93,
             "fuelfilled": 17.93,
             "odo": 11789,
@@ -2721,7 +2450,6 @@ const _data = {
         },
         {
             "info": "Hki kaupunkiajoa . Knummi",
-            "fuel": "FUEL",
             "fuelused": 14.68,
             "fuelfilled": 14.68,
             "odo": 11989,
@@ -2731,7 +2459,6 @@ const _data = {
         },
         {
             "info": "Hki kaupunkiajoa",
-            "fuel": "FUEL",
             "fuelused": 18.08,
             "fuelfilled": 18.08,
             "odo": 12223,
@@ -2741,7 +2468,6 @@ const _data = {
         },
         {
             "info": "12k huolto",
-            "fuel": "MAINTENANCE",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 12227,
@@ -2751,7 +2477,6 @@ const _data = {
         },
         {
             "info": "Kirkkonummi",
-            "fuel": "FUEL",
             "fuelused": 7.56,
             "fuelfilled": 7.56,
             "odo": 12343,
@@ -2761,7 +2486,6 @@ const _data = {
         },
         {
             "info": "Kauden p\u00e4\u00e4t\u00f6s, Herttoniemi, +2C",
-            "fuel": "SEASON_END",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 12376,
@@ -2771,7 +2495,6 @@ const _data = {
         },
         {
             "info": "Kausi k\u00e4yntiin Herttoniemest\u00e4",
-            "fuel": "SEASON_START",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 12376,
@@ -2781,7 +2504,6 @@ const _data = {
         },
         {
             "info": "Hki kaupunkiajoa",
-            "fuel": "FUEL",
             "fuelused": 18.41,
             "fuelfilled": 18.41,
             "odo": 12605,
@@ -2791,7 +2513,6 @@ const _data = {
         },
         {
             "info": "Hki-Pellinki-Hki-Paippinen-JP\u00e4\u00e4",
-            "fuel": "FUEL",
             "fuelused": 17.48,
             "fuelfilled": 17.48,
             "odo": 12906,
@@ -2801,7 +2522,6 @@ const _data = {
         },
         {
             "info": "Hki kaupunkiajoa",
-            "fuel": "FUEL",
             "fuelused": 17.18,
             "fuelfilled": 17.18,
             "odo": 13130,
@@ -2811,7 +2531,6 @@ const _data = {
         },
         {
             "info": "Solita MC Forssa + Hki kaupunkiajoa",
-            "fuel": "FUEL",
             "fuelused": 18.25,
             "fuelfilled": 18.25,
             "odo": 13471,
@@ -2821,7 +2540,6 @@ const _data = {
         },
         {
             "info": "Hki+Kotka",
-            "fuel": "FUEL",
             "fuelused": 17.69,
             "fuelfilled": 17.69,
             "odo": 13768,
@@ -2831,7 +2549,6 @@ const _data = {
         },
         {
             "info": "Hki kaupunkiajoa",
-            "fuel": "FUEL",
             "fuelused": 17.74,
             "fuelfilled": 17.74,
             "odo": 14030,
@@ -2841,7 +2558,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 17.47,
             "fuelfilled": 17.47,
             "odo": 14300,
@@ -2851,7 +2567,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki +Kotkaan",
-            "fuel": "FUEL",
             "fuelused": 18.91,
             "fuelfilled": 18.91,
             "odo": 14622,
@@ -2861,7 +2576,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.22,
             "fuelfilled": 18.22,
             "odo": 14946,
@@ -2871,7 +2585,6 @@ const _data = {
         },
         {
             "info": "Pilot Road 3",
-            "fuel": "TYRE_FRONT",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 15060,
@@ -2881,7 +2594,6 @@ const _data = {
         },
         {
             "info": "Pilot Road 3",
-            "fuel": "TYRE_REAR",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 15060,
@@ -2891,7 +2603,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.0,
             "fuelfilled": 18.0,
             "odo": 15243,
@@ -2901,7 +2612,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki-Rajamarket",
-            "fuel": "FUEL",
             "fuelused": 18.77,
             "fuelfilled": 18.77,
             "odo": 15583,
@@ -2911,7 +2621,6 @@ const _data = {
         },
         {
             "info": "Kontiolahti",
-            "fuel": "FUEL",
             "fuelused": 15.93,
             "fuelfilled": 15.93,
             "odo": 15896,
@@ -2921,7 +2630,6 @@ const _data = {
         },
         {
             "info": "Kuhmo",
-            "fuel": "FUEL",
             "fuelused": 10.79,
             "fuelfilled": 10.79,
             "odo": 16105,
@@ -2931,7 +2639,6 @@ const _data = {
         },
         {
             "info": "Kuusamo",
-            "fuel": "FUEL",
             "fuelused": 13.23,
             "fuelfilled": 13.23,
             "odo": 16378,
@@ -2941,7 +2648,6 @@ const _data = {
         },
         {
             "info": "Sodankyl\u00e4",
-            "fuel": "FUEL",
             "fuelused": 12.29,
             "fuelfilled": 12.29,
             "odo": 16632,
@@ -2951,7 +2657,6 @@ const _data = {
         },
         {
             "info": "Inari",
-            "fuel": "FUEL",
             "fuelused": 9.24,
             "fuelfilled": 9.24,
             "odo": 16838,
@@ -2961,7 +2666,6 @@ const _data = {
         },
         {
             "info": "Hesseng",
-            "fuel": "FUEL",
             "fuelused": 16.61,
             "fuelfilled": 16.61,
             "odo": 17156,
@@ -2971,7 +2675,6 @@ const _data = {
         },
         {
             "info": "Tana Bru",
-            "fuel": "FUEL",
             "fuelused": 8.8,
             "fuelfilled": 8.8,
             "odo": 17339,
@@ -2981,7 +2684,6 @@ const _data = {
         },
         {
             "info": "Kj\u00f8llefjord",
-            "fuel": "FUEL",
             "fuelused": 10.18,
             "fuelfilled": 10.18,
             "odo": 17540,
@@ -2991,7 +2693,6 @@ const _data = {
         },
         {
             "info": "Lakselv",
-            "fuel": "FUEL",
             "fuelused": 15.82,
             "fuelfilled": 15.82,
             "odo": 17849,
@@ -3001,7 +2702,6 @@ const _data = {
         },
         {
             "info": "Kautokeino",
-            "fuel": "FUEL",
             "fuelused": 10.0,
             "fuelfilled": 10.0,
             "odo": 18055,
@@ -3011,7 +2711,6 @@ const _data = {
         },
         {
             "info": "Pello",
-            "fuel": "FUEL",
             "fuelused": 14.81,
             "fuelfilled": 14.81,
             "odo": 18359,
@@ -3021,7 +2720,6 @@ const _data = {
         },
         {
             "info": "Paavola",
-            "fuel": "FUEL",
             "fuelused": 17.01,
             "fuelfilled": 17.01,
             "odo": 18699,
@@ -3031,7 +2729,6 @@ const _data = {
         },
         {
             "info": "Vaajakoski",
-            "fuel": "FUEL",
             "fuelused": 15.1,
             "fuelfilled": 15.1,
             "odo": 19016,
@@ -3041,7 +2738,6 @@ const _data = {
         },
         {
             "info": "Malmille + kaupunkiajoa",
-            "fuel": "FUEL",
             "fuelused": 18.99,
             "fuelfilled": 18.99,
             "odo": 19377,
@@ -3051,7 +2747,6 @@ const _data = {
         },
         {
             "info": "18k huolto",
-            "fuel": "MAINTENANCE",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 19408,
@@ -3061,7 +2756,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki-Kirkkonummi",
-            "fuel": "FUEL",
             "fuelused": 17.04,
             "fuelfilled": 17.04,
             "odo": 19646,
@@ -3071,7 +2765,6 @@ const _data = {
         },
         {
             "info": "Porvoo, Hausj\u00e4rvi, Heinola",
-            "fuel": "FUEL",
             "fuelused": 18.66,
             "fuelfilled": 18.66,
             "odo": 20006,
@@ -3081,7 +2774,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki-Lahti",
-            "fuel": "FUEL",
             "fuelused": 18.16,
             "fuelfilled": 18.16,
             "odo": 20328,
@@ -3091,7 +2783,6 @@ const _data = {
         },
         {
             "info": "Lahti-Jyv\u00e4skyl\u00e4-Lahti",
-            "fuel": "FUEL",
             "fuelused": 17.79,
             "fuelfilled": 17.79,
             "odo": 20685,
@@ -3101,7 +2792,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.41,
             "fuelfilled": 18.41,
             "odo": 20974,
@@ -3111,7 +2801,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.07,
             "fuelfilled": 19.07,
             "odo": 21262,
@@ -3121,7 +2810,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki-Vierum\u00e4ki",
-            "fuel": "FUEL",
             "fuelused": 18.21,
             "fuelfilled": 18.21,
             "odo": 21543,
@@ -3131,7 +2819,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.62,
             "fuelfilled": 19.62,
             "odo": 21876,
@@ -3141,7 +2828,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 12.57,
             "fuelfilled": 12.57,
             "odo": 22087,
@@ -3151,7 +2837,6 @@ const _data = {
         },
         {
             "info": "Honkanummelle talviparkkiin",
-            "fuel": "SEASON_END",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 22088,
@@ -3161,7 +2846,6 @@ const _data = {
         },
         {
             "info": "Huhtikuu r\u00e4nt\u00e4sateita. Kausi kuikulla k\u00e4yntiin vaikka keli ei silt\u00e4 viel\u00e4k\u00e4\u00e4n tunnu.",
-            "fuel": "SEASON_START",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 22090,
@@ -3171,7 +2855,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 17.92,
             "fuelfilled": 17.92,
             "odo": 22335,
@@ -3181,7 +2864,6 @@ const _data = {
         },
         {
             "info": "Kittil\u00e4/Lohja",
-            "fuel": "FUEL",
             "fuelused": 17.1,
             "fuelfilled": 17.1,
             "odo": 22621,
@@ -3191,7 +2873,6 @@ const _data = {
         },
         {
             "info": "Kuninkaantie",
-            "fuel": "FUEL",
             "fuelused": 17.94,
             "fuelfilled": 17.94,
             "odo": 22904,
@@ -3201,7 +2882,6 @@ const _data = {
         },
         {
             "info": "Kotka-Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.42,
             "fuelfilled": 18.42,
             "odo": 23214,
@@ -3211,7 +2891,6 @@ const _data = {
         },
         {
             "info": "Hki-Malmi ennen Thaimaata",
-            "fuel": "FUEL",
             "fuelused": 18.35,
             "fuelfilled": 18.35,
             "odo": 23473,
@@ -3221,7 +2900,6 @@ const _data = {
         },
         {
             "info": "Kuninkaantie (Marin kanssa)",
-            "fuel": "FUEL",
             "fuelused": 17.17,
             "fuelfilled": 17.17,
             "odo": 23749,
@@ -3231,7 +2909,6 @@ const _data = {
         },
         {
             "info": "Rekisterikilpi putosi (99-GEP)",
-            "fuel": "OTHER",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 24439,
@@ -3241,7 +2918,6 @@ const _data = {
         },
         {
             "info": "Kotka-Espoo-Hki (Mari)",
-            "fuel": "FUEL",
             "fuelused": 17.31,
             "fuelfilled": 17.31,
             "odo": 24061,
@@ -3251,7 +2927,6 @@ const _data = {
         },
         {
             "info": "Kes\u00e4lenkki: Hki-Heinola-Hevossaari-Kimola-Vierum\u00e4ri",
-            "fuel": "FUEL",
             "fuelused": 17.95,
             "fuelfilled": 17.95,
             "odo": 24401,
@@ -3261,7 +2936,6 @@ const _data = {
         },
         {
             "info": "Uusi kilpi kiinni (58-LHX)",
-            "fuel": "OTHER",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 24439,
@@ -3271,7 +2945,6 @@ const _data = {
         },
         {
             "info": "Tenala",
-            "fuel": "FUEL",
             "fuelused": 15.79,
             "fuelfilled": 15.79,
             "odo": 24670,
@@ -3281,7 +2954,6 @@ const _data = {
         },
         {
             "info": "Bromarv, Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.34,
             "fuelfilled": 18.34,
             "odo": 25010,
@@ -3291,7 +2963,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.9,
             "fuelfilled": 18.9,
             "odo": 25326,
@@ -3301,7 +2972,6 @@ const _data = {
         },
         {
             "info": "Em\u00e4salo-Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 17.87,
             "fuelfilled": 17.87,
             "odo": 25628,
@@ -3311,7 +2981,6 @@ const _data = {
         },
         {
             "info": "Verla, P\u00e4ij\u00e4tsalo ja Marjo",
-            "fuel": "FUEL",
             "fuelused": 17.02,
             "fuelfilled": 17.02,
             "odo": 25951,
@@ -3321,7 +2990,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.29,
             "fuelfilled": 19.29,
             "odo": 26261,
@@ -3331,7 +2999,6 @@ const _data = {
         },
         {
             "info": "24k huolto",
-            "fuel": "MAINTENANCE",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 26422,
@@ -3341,7 +3008,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.85,
             "fuelfilled": 18.85,
             "odo": 26535,
@@ -3351,7 +3017,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.51,
             "fuelfilled": 18.51,
             "odo": 26803,
@@ -3361,7 +3026,6 @@ const _data = {
         },
         {
             "info": "Hki-Kotka-Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.38,
             "fuelfilled": 19.38,
             "odo": 27137,
@@ -3371,7 +3035,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.16,
             "fuelfilled": 18.16,
             "odo": 27391,
@@ -3381,7 +3044,6 @@ const _data = {
         },
         {
             "info": "Talviparkkiin, Tyhj\u00e4ll\u00e4 tankilla. Bensat arvattu, odo arvattu",
-            "fuel": "FUEL",
             "fuelused": 16.5,
             "fuelfilled": 0.0,
             "odo": 27631,
@@ -3391,7 +3053,6 @@ const _data = {
         },
         {
             "info": "Talviparkkiin Ormuspellontielle",
-            "fuel": "SEASON_END",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 27631,
@@ -3401,7 +3062,6 @@ const _data = {
         },
         {
             "info": null,
-            "fuel": "SEASON_START",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 27631,
@@ -3411,7 +3071,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 1.33,
             "fuelfilled": 17.83,
             "odo": 27653,
@@ -3421,7 +3080,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.01,
             "fuelfilled": 18.01,
             "odo": 27916,
@@ -3431,7 +3089,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki-Em\u00e4salo",
-            "fuel": "FUEL",
             "fuelused": 16.06,
             "fuelfilled": 16.06,
             "odo": 28185,
@@ -3441,7 +3098,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.01,
             "fuelfilled": 18.01,
             "odo": 28463,
@@ -3451,7 +3107,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki-Kotka, Marjo",
-            "fuel": "FUEL",
             "fuelused": 17.33,
             "fuelfilled": 17.33,
             "odo": 28748,
@@ -3461,7 +3116,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 17.64,
             "fuelfilled": 17.64,
             "odo": 29029,
@@ -3471,7 +3125,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki-Siuntio",
-            "fuel": "FUEL",
             "fuelused": 15.87,
             "fuelfilled": 15.87,
             "odo": 29311,
@@ -3481,7 +3134,6 @@ const _data = {
         },
         {
             "info": "Malmi-Kotka-Malmi+Mari",
-            "fuel": "FUEL",
             "fuelused": 18.49,
             "fuelfilled": 18.49,
             "odo": 29636,
@@ -3491,7 +3143,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 19.04,
             "fuelfilled": 19.04,
             "odo": 29927,
@@ -3501,17 +3152,15 @@ const _data = {
         },
         {
             "info": "Pilot Road 4 taakse",
-            "fuel": "TYRE_REAR",
             "fuelused": null,
             "fuelfilled": null,
             "odo": 30101,
             "date": "2018-06-14",
-            "type": "TYRE_FRONT",
+            "type": "TYRE_REAR",
             "bike": "versys"
         },
         {
             "info": "Malmi-Hki-Paippinen",
-            "fuel": "FUEL",
             "fuelused": 16.91,
             "fuelfilled": 16.91,
             "odo": 30226,
@@ -3521,7 +3170,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki-Kotka",
-            "fuel": "FUEL",
             "fuelused": 17.23,
             "fuelfilled": 17.23,
             "odo": 30507,
@@ -3531,7 +3179,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 17.32,
             "fuelfilled": 17.32,
             "odo": 30815,
@@ -3541,7 +3188,6 @@ const _data = {
         },
         {
             "info": "Malmi-Hki",
-            "fuel": "FUEL",
             "fuelused": 18.61,
             "fuelfilled": 18.61,
             "odo": 31164,
@@ -3551,7 +3197,6 @@ const _data = {
         },
         {
             "info": "Hki-Jotseno (Mari)",
-            "fuel": "FUEL",
             "fuelused": 16.09,
             "fuelfilled": 16.09,
             "odo": 31474,
@@ -3561,7 +3206,6 @@ const _data = {
         },
         {
             "info": "Joutseno (Mari)",
-            "fuel": "FUEL",
             "fuelused": 17.55,
             "fuelfilled": 17.55,
             "odo": 31811,
