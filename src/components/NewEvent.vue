@@ -43,7 +43,6 @@
 
     import _ from 'lodash';
     import GasLogData from '../data.js'
-    import {PROD} from '../data.js'
     import axios from 'axios';
 
     const local = {
@@ -101,19 +100,10 @@
             saveNewLine(e) {
                 e.preventDefault();
                 local.isSaving = true;
-                if (!PROD) {
-                    updateNewEventsToGlobalData(local, global, [{
-                        ..._.pick(local, 'date', 'fuel', 'odo', 'info'),
-                        fuelused: local.fuel,
-                        type: 'FUEL',
-                        bike: 'versys'
-                    }]);
-                } else {
-                    axios.post('/data', _.pick(local, 'date', 'fuel', 'odo', 'info'))
-                        .then(function (response) {
-                            updateNewEventsToGlobalData(local, global, response.data);
-                        });
-                }
+                axios.post('/data', _.pick(local, 'date', 'fuel', 'odo', 'info'))
+                    .then(function (response) {
+                        updateNewEventsToGlobalData(local, global, response.data);
+                    });
             }
         },
         watch: {
