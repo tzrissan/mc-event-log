@@ -85,11 +85,9 @@
 
                 if (sortedEvents.length % 2 === 1) {
                     const medianIdx = Math.floor(sortedEvents.length / 2);
-                    console.log({l:sortedEvents.length , m: medianIdx, a: 1});
                     _.set(sortedEvents[medianIdx], ['flags', property, 'median'], true);
                 } else {
                     const medianIdx = sortedEvents.length / 2;
-                    console.log({l:sortedEvents.length , m: medianIdx, a: 0})
                     _.set(sortedEvents[medianIdx-1], ['flags', property, 'median'], true);
                     _.set(sortedEvents[medianIdx], ['flags', property, 'median'], true);
                 }
