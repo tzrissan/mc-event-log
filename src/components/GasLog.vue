@@ -69,7 +69,7 @@
             }
             _.set(_.head(sortedEvents), ['flags', property, 'best'], true);
 
-            const top5percent = Math.max(Math.trunc(events.length * 0.05), 1);
+            const top5percent = Math.max(Math.floor(events.length * 0.05), 1);
             _.tail(sortedEvents).slice(0,top5percent).forEach(event => _.set(event, ['flags', property, 'good'], true));
             sortedEvents.filter(event =>
                 _.get(event, property) * 1.05 > _.head(sortedEvents) &&
