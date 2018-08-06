@@ -202,14 +202,43 @@
                     {id: 'milage', type: 'linear', position: 'right', gridLines: {display: false}}
                 ],
                 datasets(events) {
+
+                    function totalDistance(season, events) {
+                        const seasonEvents = _.filter(events, bySeason(season));
+                        const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().value();
+
+                        return seasonBikes.map(bike => {
+                            const bikeEvents = _.filter(seasonEvents, {bike});
+                            const minOdo = _.chain(bikeEvents).map(e => e.odo).min().value();
+                            const maxOdo = _.chain(bikeEvents).map(e => e.odo).max().value();
+                            return maxOdo - minOdo;
+                        }).reduce((sum, dist) => _.isNumber(dist) && !_.isNaN(dist) ? sum + dist : sum, 0);
+                    }
+
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
-                    const seasons = seasonsWithEvents(fuelEvents).reverse();
-                    const distances = seasons.map(s => countDistance(fuelEvents, bySeason(s)));
+                    const seasons = seasonsWithEvents(events).reverse();
+                    const distances = seasons.map(s => totalDistance(s, events));
                     const fuels = seasons.map(s => countFuel(fuelEvents, bySeason(s)));
                     const milages = _.zip(fuels, distances).map(z => (100 * z[0] / z[1]));
                     const avgDistance = (distances.reduce((s, d) => s + d, 0) / distances.length).toFixed(0);
-                    const avgFuel = (fuels.reduce((s, d) => s + d, 0) / fuels.length).toFixed(2);
-                    const avgMilage = (100 * fuels.reduce((s, d) => s + d, 0) / distances.reduce((s, d) => s + d, 0));
+                    const avgFuel = _.chain(fuels)
+                        .filter(f => _.isNumber(f) && !_.isNaN(f))
+                        .reduce((acc, fuel) => ({
+                            sum: acc.sum + fuel,
+                            count: acc.count + 1,
+                            avg() { return this.sum / this.count }
+                        }), {sum: 0.0, count: 0})
+                        .value().avg()
+                        .toFixed();
+                    const avgMilage = _.chain(_.zip(fuels, distances))
+                        .filter(z => _.isNumber(z[0]) && !_.isNaN(z[0]))
+                        .filter(z => _.isNumber(z[1]) && !_.isNaN(z[1]))
+                        .reduce((acc, z) => ({
+                            fuel: acc.fuel + z[0],
+                            dist: acc.dist + z[1],
+                            milage() { return 100 * this.fuel / this.dist }
+                        }), {fuel: 0, dist: 0})
+                        .value().milage().toFixed(2);
                     return [{
                         label: `kilometriä`,
                         borderColor: CHART_COLORS.blue(),
@@ -260,7 +289,7 @@
                     }];
                 },
                 labels(events) {
-                    return seasonsWithEvents(_.filter(events, {type: 'FUEL'})).reverse();
+                    return seasonsWithEvents(events).reverse();
                 }
             },
             seasonsDistanceByMonth: {
@@ -410,7 +439,7 @@
         const fuel = _.chain(events)
             .filter(filter)
             .map(e => e.fuelused)
-            .filter(fuel => _.isNumber(fuel))
+            .filter(fuel => _.isNumber(fuel) && !_.isNaN(fuel))
             .reduce((sum, fuel) => sum + fuel, 0)
             .value();
         return fuel && fuel > 5 ? fuel : undefined;
