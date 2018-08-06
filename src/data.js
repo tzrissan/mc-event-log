@@ -2107,24 +2107,6 @@ const _data = {
             "bike": "versys"
         },
         {
-            "info": "Orkkiskumi/Scropion trail",
-            "fuelused": null,
-            "fuelfilled": null,
-            "odo": 0,
-            "date": "2014-10-28",
-            "type": "TYRE_FRONT",
-            "bike": "versys"
-        },
-        {
-            "info": "Orkkiskumi/Scropion trail",
-            "fuelused": null,
-            "fuelfilled": null,
-            "odo": 0,
-            "date": "2014-10-28",
-            "type": "TYRE_REAR",
-            "bike": "versys"
-        },
-        {
             "info": "Kauden lopetus.Knummi. Odo tavattu.",
             "fuelused": null,
             "fuelfilled": null,
@@ -3219,49 +3201,51 @@ const _data = {
 
 function countMilages(events) {
     function countDistancesAndMilageForFuelEvents(bike) {
-        const bikeFuelEvents = _.chain(events).filter({type: 'FUEL', bike: bike}).value();
-        var prev;
-        var sortedList = _.sortBy(bikeFuelEvents, 'odo').reverse();
-        _.each(sortedList, function (current) {
+        const bikeFuelEvents = _.chain(events).filter({type: 'FUEL', bike: bike}).sortBy('odo').value();
+        let prev;
+        _.each(bikeFuelEvents, function (current) {
             if (prev) {
-                prev.dist = prev.odo - current.odo;
-                prev.milage = parseFloat((100.0 * prev.fuelused / prev.dist).toFixed(2));
+                current.dist = current.odo - prev.odo;
+                current.milage = parseFloat((100.0 * current.fuelused / current.dist).toFixed(2));
             }
             prev = current;
         });
     }
 
     function countDistancesForFrontTyres(bike) {
-        const bikeFrontTyreEvents = _.chain(events).filter({type: 'TYRE_FRONT', bike: bike}).value();
+        const bikeFrontTyreEvents = _.chain(events).filter({type: 'TYRE_FRONT', bike: bike}).sortBy('odo').value();
         var prev;
-        var sortedList = _.sortBy(bikeFrontTyreEvents, 'odo').reverse();
-        _.each(sortedList, function (current) {
+        _.each(bikeFrontTyreEvents, function (current) {
             if (prev) {
-                current.dist = prev.odo - current.odo;
+                current.dist = current.odo - prev.odo;
+            } else {
+                current.dist = current.odo;
             }
             prev = current;
         });
     }
 
     function countDistancesForRearTyres(bike) {
-        const bikeFrontTyreEvents = _.chain(events).filter({type: 'TYRE_REAR', bike: bike}).value();
+        const bikeRearTyreEvents = _.chain(events).filter({type: 'TYRE_REAR', bike: bike}).sortBy('odo').value();
         var prev;
-        var sortedList = _.sortBy(bikeFrontTyreEvents, 'odo').reverse();
-        _.each(sortedList, function (current) {
+        _.each(bikeRearTyreEvents, function (current) {
             if (prev) {
-                current.dist = prev.odo - current.odo;
+                current.dist = current.odo - prev.odo;
+            } else {
+                current.dist = current.odo;
             }
             prev = current;
         });
     }
 
     function countDistancesForMaintenance(bike) {
-        const bikeFrontTyreEvents = _.chain(events).filter({type: 'MAINTENANCE', bike: bike}).value();
+        const bikeMaintenanceEvents = _.chain(events).filter({type: 'MAINTENANCE', bike: bike}).sortBy('odo').value();
         var prev;
-        var sortedList = _.sortBy(bikeFrontTyreEvents, 'odo').reverse();
-        _.each(sortedList, function (current) {
+        _.each(bikeMaintenanceEvents, function (current) {
             if (prev) {
-                prev.dist = prev.odo - current.odo;
+                current.dist = current.odo - prev.odo;
+            } else {
+                current.dist = current.odo;
             }
             prev = current;
         });
@@ -3278,7 +3262,15 @@ function countMilages(events) {
 export const DATE_REGEX = /(\d{4})-(\d{2})-(\d{2})/;
 
 function countExtraInformationFromData() {
-    _data.bikes = _.chain(_data.events).map(e => e.bike).uniq().sort().value();
+    _data.bikes = _.toPairs(_data.events.reduce((acc, event) => {
+        if (!acc[event.bike] || acc[event.bike] < event.date) {
+            acc[event.bike] = event.date;
+        }
+        return acc;
+    }, {})).sort((a, b) =>
+        a[1] > b[1] ? 1 :
+            a[1] === b[1] ? 0 : -1
+    ).map(e => e[0]);
     _data.years = _.chain(_data.events).map(e => e.date).map(d => d.replace(DATE_REGEX, '$1')).uniq().sort().reverse().value();
     _data.months = _.chain(_data.events).map(e => e.date).map(d => d.replace(DATE_REGEX, '$2')).uniq().sort().value();
     _data.latestBike = _.chain(_data.events)
