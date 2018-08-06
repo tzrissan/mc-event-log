@@ -64,26 +64,45 @@
     function setFlags(events, property, sanityCheck = () => true, asc = true) {
         if (events && events.length > 0) {
             let sortedEvents = _.chain(events).filter(sanityCheck).sortBy(property).value();
-            if (!asc) {
+            if (sortedEvents.length < 5 ) {
+                return;
+            } else {
+
+                if (!asc) {
+                    sortedEvents = sortedEvents.reverse();
+                }
+                _.set(_.head(sortedEvents), ['flags', property, 'best'], true);
+
+                const top5percent = Math.max(Math.floor(events.length * 0.05), 1);
+
+                if (sortedEvents.length > 8 ) {
+                    _.tail(sortedEvents).slice(0, top5percent).forEach(event => _.set(event, ['flags', property, 'good'], true));
+                    sortedEvents.filter(event =>
+                        _.get(event, property) * 1.05 > _.head(sortedEvents) &&
+                        _.get(event, property) * 0.95 < _.head(sortedEvents)
+                    ).forEach(event => _.set(event, ['flags', property, 'good'], true));
+                }
+
+                if (sortedEvents.length % 2 === 1) {
+                    const medianIdx = Math.floor(sortedEvents.length / 2);
+                    _.set(sortedEvents[medianIdx], ['flags', property, 'median'], true);
+                } else {
+                    const medianIdx = sortedEvents.length / 2;
+                    _.set(sortedEvents[medianIdx-1], ['flags', property, 'median'], true);
+                    _.set(sortedEvents[medianIdx], ['flags', property, 'median'], true);
+                }
+
                 sortedEvents = sortedEvents.reverse();
+                _.set(_.head(sortedEvents), ['flags', property, 'worst'], true);
+
+                if (sortedEvents.length > 8 ) {
+                    _.tail(sortedEvents).slice(0, top5percent).forEach(event => _.set(event, ['flags', property, 'bad'], true));
+                    sortedEvents.filter(event =>
+                        _.get(event, property) * 1.05 > _.head(sortedEvents) &&
+                        _.get(event, property) * 0.95 < _.head(sortedEvents)
+                    ).forEach(event => _.set(event, ['flags', property, 'bad'], true));
+                }
             }
-            _.set(_.head(sortedEvents), ['flags', property, 'best'], true);
-
-            const top5percent = Math.max(Math.floor(events.length * 0.05), 1);
-            _.tail(sortedEvents).slice(0,top5percent).forEach(event => _.set(event, ['flags', property, 'good'], true));
-            sortedEvents.filter(event =>
-                _.get(event, property) * 1.05 > _.head(sortedEvents) &&
-                _.get(event, property) * 0.95 < _.head(sortedEvents)
-            ).forEach(event => _.set(event, ['flags', property, 'good'], true));
-
-            sortedEvents = sortedEvents.reverse();
-            _.set(_.head(sortedEvents), ['flags', property, 'worst'], true);
-
-            _.tail(sortedEvents).slice(0,top5percent).forEach(event => _.set(event, ['flags', property, 'bad'], true));
-            sortedEvents.filter(event =>
-                _.get(event, property) * 1.05 > _.head(sortedEvents) &&
-                _.get(event, property) * 0.95 < _.head(sortedEvents)
-            ).forEach(event => _.set(event, ['flags', property, 'bad'], true));
         }
     }
 
@@ -136,6 +155,7 @@
                 return {
                     best: is(event, property, 'best'),
                     good: is(event, property, 'good'),
+                    median: is(event, property, 'median'),
                     worst: is(event, property, 'worst'),
                     bad: is(event, property, 'bad')
                 }
@@ -220,6 +240,10 @@
         color: red;
         font-weight: bold;
         border-right: 3px solid red;
+    }
+
+    .median {
+        font-weight: bold;
     }
 
     .good {

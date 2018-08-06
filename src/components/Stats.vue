@@ -31,7 +31,7 @@
 
 
     const local = {
-        selectedStatistic: 'compareBikes',
+        selectedStatistic: 'seasonsDistanceByMonth',
         statisticOptions: {
             compareBikes: {
                 title: 'Pyörät',
@@ -243,6 +243,7 @@
                         label: `kilometriä`,
                         borderColor: CHART_COLORS.blue(),
                         backgroundColor: CHART_COLORS.blue(0.6),
+                        type: 'line',
                         data: distances,
                         yAxisID: "km"
                     }, {
@@ -472,7 +473,6 @@
                     borderColor: nextColor(),
                     backgroundColor: currentColor(0.6)
                 })).value();
-            console.log(local.allBikes);
 
             local.fuelledBikes = _.chain(global.events)
                 .filter({type: 'FUEL'})
@@ -482,7 +482,6 @@
                 .map(bike => _.find(local.allBikes, {name: bike}))
                 .value();
 
-            console.log(local.fuelledBikes);
             return {local, global};
         },
         methods: {
