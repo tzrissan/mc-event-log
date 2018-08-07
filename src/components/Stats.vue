@@ -345,6 +345,46 @@
                     return monthsWithEvents(_.filter(events, {type: 'FUEL'})).map(m => MONTH_NAMES[parseInt(m) - 1])
                 }
             },
+            seasonsDistanceSumByMonth: {
+                title: 'Ajokausien matkat yhteensä kuukausittain',
+                type: 'bar',
+                yAxes: [
+                    {id: 'km', type: 'linear'}
+                ],
+                datasets(events) {
+                    const fuelEvents = _.filter(events, {type: 'FUEL'});
+                    const months = monthsWithEvents(fuelEvents);
+                    const seasons = seasonsWithEvents(fuelEvents);
+                    return seasons.map(season => {
+                        const seasonEvents = _.filter(fuelEvents, bySeason(season));
+                        const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
+                        const seasonTotalDist = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
+                        const backgroundColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
+                        const data = months.map(m => countDistance(seasonEvents, byMonth(m)))
+                            .reduce((acc, dist) => {
+                                if (acc.length === 0 || !_.isNumber(acc[acc.length - 1]) || _.isNaN(acc[acc.length - 1])) {
+                                    acc.push(_.isNumber(dist) && !_.isNaN(dist) ? dist : undefined);
+                                } else if (_.isNumber(dist) && !_.isNaN(dist)) {
+                                    acc.push(acc[acc.length - 1] + dist);
+                                } else {
+                                    acc.push(undefined);
+                                }
+                                return acc;
+                            }, []);
+                        return {
+                            label: `${season}, ${seasonBikes} (${seasonTotalDist} km)`,
+                            borderColor: nextColor(),
+                            backgroundColor: backgroundColor,
+                            data,
+                            yAxisID: "km",
+                            type: 'line'
+                        };
+                    });
+                },
+                labels(events) {
+                    return monthsWithEvents(_.filter(events, {type: 'FUEL'})).map(m => MONTH_NAMES[parseInt(m) - 1])
+                }
+            },
             seasonsMilageByMonth: {
                 title: 'Ajokausien keskikulutukset kuukausittain',
                 type: 'bar',
