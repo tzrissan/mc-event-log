@@ -362,11 +362,12 @@
                         const backgroundColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
                         const data = months.map(m => countDistance(seasonEvents, byMonth(m)))
                             .reduce((acc, dist) => {
-                                const increment = _.isNumber(dist) && !_.isNaN(dist) ? dist : 0;
-                                if (acc.length === 0) {
-                                    acc.push(increment);
+                                if (acc.length === 0 || !_.isNumber(acc[acc.length - 1]) || _.isNaN(acc[acc.length - 1])) {
+                                    acc.push(_.isNumber(dist) && !_.isNaN(dist) ? dist : undefined);
+                                } else if (_.isNumber(dist) && !_.isNaN(dist)) {
+                                    acc.push(acc[acc.length - 1] + dist);
                                 } else {
-                                    acc.push(acc[acc.length - 1] + increment);
+                                    acc.push(undefined);
                                 }
                                 return acc;
                             }, []);
