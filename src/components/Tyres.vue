@@ -133,13 +133,13 @@
             currentFrontTyreDistance: (bike, events) => {
                 const lastChange = _.chain(events)
                     .filter({bike: bike, type: 'TYRE_FRONT'})
-                    .sortBy('date')
+                    .sortBy(['odo', 'date'])
                     .last()
                     .get('odo', '0')
                     .value();
                 const latestUpdate = _.chain(events)
                     .filter({bike: bike})
-                    .sortBy('date')
+                    .sortBy(['odo', 'date'])
                     .last()
                     .get('odo', '0')
                     .value();

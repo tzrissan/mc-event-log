@@ -58,13 +58,13 @@
             currentMaintenanceDistance: (bike, events) =>  {
                 const lastMaintenance = _.chain(events)
                     .filter({bike: bike, type: 'MAINTENANCE'})
-                    .sortBy('date')
+                    .sortBy(['odo', 'date'])
                     .last()
                     .get('odo', '0')
                     .value();
                 const latestUpdate = _.chain(events)
                     .filter({bike: bike})
-                    .sortBy('date')
+                    .sortBy(['odo', 'date'])
                     .last()
                     .get('odo', '0')
                     .value();
