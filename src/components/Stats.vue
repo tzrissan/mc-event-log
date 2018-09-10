@@ -11,22 +11,22 @@
         </div>
         <BarChart
                 v-if="isCurrentStatType(local.selectedStatistic, 'bar')"
-                v-bind:data="chartData(global.events)"
-                v-bind:options="chartOptions(local.selectedStatistic)"></BarChart>
+                v-bind:data="chartData"
+                v-bind:options="chartOptions"></BarChart>
         <PieChart
                 v-if="isCurrentStatType(local.selectedStatistic, 'pie')"
-                v-bind:data="chartData(global.events)"
-                v-bind:options="chartOptions(local.selectedStatistic)"></PieChart>
+                v-bind:data="chartData"
+                v-bind:options="chartOptions"></PieChart>
     </div>
 
 </template>
 
 <script>
     import _ from 'lodash';
-    import GasLogData from '../data'
-    import {MONTH_NAMES, DATE_REGEX} from '../data'
-    import {CHART_COLORS, nextColor, currentColor} from './ChartColors'
-    import BarChart from './BarChart'
+    import GasLogData from '../data';
+    import {MONTH_NAMES, DATE_REGEX} from '../data';
+    import {CHART_COLORS, nextColor, currentColor} from './ChartColors';
+    import BarChart from './BarChart';
     import PieChart from './PieChart';
 
 
@@ -57,20 +57,6 @@
                             .value()
                     }
 
-                    /*function averageMilage(bike, events) {
-                        const bikeEvents = _.filter(events, {bike, type: 'FUEL'});
-                        const totalDistance = _.chain(bikeEvents)
-                            .map(e => e.dist)
-                            .filter(n => _.isNumber(n) && !_.isNaN(n))
-                            .reduce((sum, dist) => sum + dist, 0).value();
-                        const totalFuel = _.chain(bikeEvents)
-                            .map(e => e.fuelused)
-                            .filter(n => _.isNumber(n) && !_.isNaN(n))
-                            .reduce((sum, fuel) => sum + fuel, 0).value();
-                        const avgMilage = 100 * totalFuel / totalDistance;
-                        return _.isNaN(avgMilage) ? undefined : avgMilage;
-                    }*/
-
                     function seasonCount(bike, events) {
                         return _.chain(events)
                             .filter({bike})
@@ -90,12 +76,7 @@
                         borderColor: local.allBikes.map(bike => bike.borderColor),
                         backgroundColor: local.allBikes.map(bike => bike.backgroundColor),
                         data: global.bikes.map(bike => totalFuel(bike, events))
-                    }, /*{
-                        label: `keskikulutus`,
-                        borderColor: local.allBikes.map(bike => bike.borderColor),
-                        backgroundColor: local.allBikes.map(bike => bike.backgroundColor),
-                        data: global.bikes.map(bike => averageMilage(bike, events))
-                    },*/ {
+                    }, {
                         label: `ajokausia`,
                         borderColor: local.allBikes.map(bike => bike.borderColor),
                         backgroundColor: local.allBikes.map(bike => bike.backgroundColor),
@@ -525,6 +506,11 @@
             return {local, global};
         },
         methods: {
+            isCurrentStatType(selected, typeToTest) {
+                return local.statisticOptions[selected].type === typeToTest;
+            }
+        },
+        computed: {
             chartOptions() {
                 return {
                     responsive: true,
@@ -537,14 +523,11 @@
                     }
                 }
             },
-            isCurrentStatType(selected, typeToTest) {
-                return local.statisticOptions[selected].type === typeToTest;
-            },
-            chartData(events) {
+            chartData() {
                 const stat = local.statisticOptions[local.selectedStatistic];
                 return {
-                    labels: stat.labels(events),
-                    datasets: stat.datasets(events)
+                    labels: stat.labels(global.events),
+                    datasets: stat.datasets(global.events)
                 }
             }
         }
