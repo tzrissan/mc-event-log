@@ -288,21 +288,36 @@
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
-                    return seasons.map(season => {
-                        const seasonEvents = _.filter(fuelEvents, bySeason(season));
-                        const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
-                        const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
-                        const backgroundColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
+                    return local.fuelledBikes.map(bike => {
+                        const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
                         return {
-                            label: `${season}, ${seasonBikes} (${distance} km)`,
-                            borderColor: nextColor(),
-                            backgroundColor: backgroundColor,
-                            data: months.map(m => countDistance(seasonEvents, byMonth(m))),
+                            label: `${bike.name} average`,
+                            borderColor: bike.borderColor,
+                            backgroundColor: 'rgb(255,255,255,0)',
+                            data: months.map(m => countAverageDistance(bikeEvents, byMonth(m))),
+                            hidden: bike.name !== latestBike,
                             yAxisID: "km",
-                            hidden: !seasonBikes.includes(latestBike),
-                            type: 'line'
+                            type: 'line',
+                            fill: false,
+                            borderDash: [10,5]
                         };
                     }).concat(
+                        seasons.map(season => {
+                            const seasonEvents = _.filter(fuelEvents, bySeason(season));
+                            const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
+                            const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
+                            const backgroundColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
+                            return {
+                                label: `${season}, ${seasonBikes} (${distance} km)`,
+                                borderColor: nextColor(),
+                                backgroundColor: backgroundColor,
+                                data: months.map(m => countDistance(seasonEvents, byMonth(m))),
+                                yAxisID: "km",
+                                hidden: !seasonBikes.includes(latestBike),
+                                type: 'line'
+                            };
+                        })
+                    ).concat(
                         local.fuelledBikes.map(bike => {
                             const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
                             const monthCount = _.chain(bikeEvents)
@@ -316,13 +331,16 @@
                             const avgDist = parseFloat((totalDistance / monthCount).toFixed());
 
                             return {
-                                label: `${bike.name} average (${avgDist} km)`,
+                                label: `${bike.name} total average (${avgDist} km)`,
                                 borderColor: bike.borderColor,
+                                backgroundColor: 'rgb(255,255,255,0)',
                                 data: months.map(() => avgDist),
+                                hidden: bike.name !== latestBike,
                                 yAxisID: "km",
                                 type: 'line',
                                 fill: false,
-                                radius: 0
+                                radius: 0,
+                                borderDash: [3,5]
                             };
                         })
                     );
@@ -382,7 +400,20 @@
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
-                    return seasons.map(season => {
+                    return local.fuelledBikes.map(bike => {
+                        const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
+                        return {
+                            label: `${bike.name} average`,
+                            borderColor: bike.borderColor,
+                            backgroundColor: 'rgb(255,255,255,0)',
+                            data: months.map(m => milageByMonth(bikeEvents, m)),
+                            hidden: bike.name !== latestBike,
+                            yAxisID: "milage",
+                            type: 'line',
+                            fill: false,
+                            borderDash: [10,5]
+                        };
+                    }).concat(seasons.map(season => {
                         const seasonEvents = _.filter(fuelEvents, e => e.date.replace(DATE_REGEX, '$1') === season);
                         const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
                         const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
@@ -398,7 +429,7 @@
                             fill: false,
                             yAxisID: "milage"
                         };
-                    }).concat(
+                    })).concat(
                         local.fuelledBikes.map(bike => {
                             const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
                             const totalDistance = _.chain(bikeEvents)
@@ -416,10 +447,12 @@
                                 borderColor: bike.borderColor,
                                 backgroundColor: bike.backgroundColor,
                                 data: months.map(() => avgMilage),
+                                hidden: bike.name !== latestBike,
                                 type: 'line',
                                 fill: false,
                                 yAxisID: "milage",
-                                radius: 0
+                                radius: 0,
+                                borderDash: [3,5]
                             };
                         })
                     );
@@ -468,6 +501,20 @@
             .reduce((sum, dist) => sum + dist, 0)
             .value();
         return dist && dist > 30 ? dist : undefined;
+    }
+
+    function countAverageDistance(events, filter) {
+        const filteredEvents = _.filter(events, filter);
+        const monthCount = _.chain(filteredEvents)
+            .map(e => e.date)
+            .map(d => d.replace(DATE_REGEX, '$1-$2'))
+            .uniq()
+            .value().length;
+        const totalDistance = _.chain(filteredEvents)
+            .map(e => e.dist).filter(n => _.isNumber(n) && !_.isNaN(n))
+            .reduce((sum, dist) => sum + dist, 0).value();
+        const avgDist = parseFloat((totalDistance / monthCount).toFixed());
+        return avgDist;
     }
 
     function countFuel(events, filter) {
