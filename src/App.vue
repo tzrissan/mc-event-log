@@ -1,6 +1,5 @@
 <template>
     <div id="app">
-
         <div class="tabs">
             <div class="tab add-new"
                  v-bind:class="{ active: selectedTab === 'NewEvent'}"

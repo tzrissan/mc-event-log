@@ -11,22 +11,22 @@
         </div>
         <BarChart
                 v-if="isCurrentStatType(local.selectedStatistic, 'bar')"
-                v-bind:data="chartData(global.events)"
-                v-bind:options="chartOptions(local.selectedStatistic)"></BarChart>
+                v-bind:data="chartData"
+                v-bind:options="chartOptions"></BarChart>
         <PieChart
                 v-if="isCurrentStatType(local.selectedStatistic, 'pie')"
-                v-bind:data="chartData(global.events)"
-                v-bind:options="chartOptions(local.selectedStatistic)"></PieChart>
+                v-bind:data="chartData"
+                v-bind:options="chartOptions"></PieChart>
     </div>
 
 </template>
 
 <script>
     import _ from 'lodash';
-    import GasLogData from '../data'
-    import {MONTH_NAMES, DATE_REGEX} from '../data'
-    import {CHART_COLORS, nextColor, currentColor} from './ChartColors'
-    import BarChart from './BarChart'
+    import GasLogData from '../data';
+    import {MONTH_NAMES, DATE_REGEX} from '../data';
+    import {CHART_COLORS, nextColor, currentColor} from './ChartColors';
+    import BarChart from './BarChart';
     import PieChart from './PieChart';
 
 
@@ -57,20 +57,6 @@
                             .value()
                     }
 
-                    /*function averageMilage(bike, events) {
-                        const bikeEvents = _.filter(events, {bike, type: 'FUEL'});
-                        const totalDistance = _.chain(bikeEvents)
-                            .map(e => e.dist)
-                            .filter(n => _.isNumber(n) && !_.isNaN(n))
-                            .reduce((sum, dist) => sum + dist, 0).value();
-                        const totalFuel = _.chain(bikeEvents)
-                            .map(e => e.fuelused)
-                            .filter(n => _.isNumber(n) && !_.isNaN(n))
-                            .reduce((sum, fuel) => sum + fuel, 0).value();
-                        const avgMilage = 100 * totalFuel / totalDistance;
-                        return _.isNaN(avgMilage) ? undefined : avgMilage;
-                    }*/
-
                     function seasonCount(bike, events) {
                         return _.chain(events)
                             .filter({bike})
@@ -90,12 +76,7 @@
                         borderColor: local.allBikes.map(bike => bike.borderColor),
                         backgroundColor: local.allBikes.map(bike => bike.backgroundColor),
                         data: global.bikes.map(bike => totalFuel(bike, events))
-                    }, /*{
-                        label: `keskikulutus`,
-                        borderColor: local.allBikes.map(bike => bike.borderColor),
-                        backgroundColor: local.allBikes.map(bike => bike.backgroundColor),
-                        data: global.bikes.map(bike => averageMilage(bike, events))
-                    },*/ {
+                    }, {
                         label: `ajokausia`,
                         borderColor: local.allBikes.map(bike => bike.borderColor),
                         backgroundColor: local.allBikes.map(bike => bike.backgroundColor),
@@ -133,6 +114,7 @@
                             borderColor: bike.borderColor,
                             backgroundColor: bike.backgroundColor,
                             data: months.map(m => countFuel(bikeEvents, byMonth(m))),
+                            hidden: true,
                             yAxisID: "ltr"
                         });
                         datasets.push({
@@ -176,7 +158,8 @@
                             borderColor: 'rgb(255, 105, 180)',
                             backgroundColor: 'rgb(255, 105, 180, 0.6)',
                             data: months.map(m => countFuel(fuelEvents, byMonth(m))),
-                            yAxisID: "ltr"
+                            yAxisID: "ltr",
+                            hidden: true
                         },
                         {
                             label: 'Litraa satasella',
@@ -251,6 +234,7 @@
                         borderColor: CHART_COLORS.pink(),
                         backgroundColor: CHART_COLORS.pink(0.6),
                         data: fuels,
+                        hidden: true,
                         yAxisID: "ltr"
                     }, {
                         label: `litraa satasella`,
@@ -274,6 +258,7 @@
                         borderColor: CHART_COLORS.pink(),
                         backgroundColor: CHART_COLORS.pink(0.6),
                         data: seasons.map(() => avgFuel),
+                        hidden: true,
                         type: 'line',
                         fill: false,
                         yAxisID: "ltr",
@@ -299,24 +284,40 @@
                 yAxes: [
                     {id: 'km', type: 'linear'}
                 ],
-                datasets(events) {
+                datasets(events, latestBike) {
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
-                    return seasons.map(season => {
-                        const seasonEvents = _.filter(fuelEvents, bySeason(season));
-                        const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
-                        const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
-                        const backgroundColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
+                    return local.fuelledBikes.map(bike => {
+                        const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
                         return {
-                            label: `${season}, ${seasonBikes} (${distance} km)`,
-                            borderColor: nextColor(),
-                            backgroundColor: backgroundColor,
-                            data: months.map(m => countDistance(seasonEvents, byMonth(m))),
+                            label: `${bike.name} average`,
+                            borderColor: bike.borderColor,
+                            backgroundColor: 'rgb(255,255,255,0)',
+                            data: months.map(m => countAverageDistance(bikeEvents, byMonth(m))),
+                            hidden: bike.name !== latestBike,
                             yAxisID: "km",
-                            type: 'line'
+                            type: 'line',
+                            fill: false,
+                            borderDash: [10,5]
                         };
                     }).concat(
+                        seasons.map(season => {
+                            const seasonEvents = _.filter(fuelEvents, bySeason(season));
+                            const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
+                            const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
+                            const backgroundColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
+                            return {
+                                label: `${season}, ${seasonBikes} (${distance} km)`,
+                                borderColor: nextColor(),
+                                backgroundColor: backgroundColor,
+                                data: months.map(m => countDistance(seasonEvents, byMonth(m))),
+                                yAxisID: "km",
+                                hidden: !seasonBikes.includes(latestBike),
+                                type: 'line'
+                            };
+                        })
+                    ).concat(
                         local.fuelledBikes.map(bike => {
                             const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
                             const monthCount = _.chain(bikeEvents)
@@ -330,13 +331,16 @@
                             const avgDist = parseFloat((totalDistance / monthCount).toFixed());
 
                             return {
-                                label: `${bike.name} average (${avgDist} km)`,
+                                label: `${bike.name} total average (${avgDist} km)`,
                                 borderColor: bike.borderColor,
+                                backgroundColor: 'rgb(255,255,255,0)',
                                 data: months.map(() => avgDist),
+                                hidden: bike.name !== latestBike,
                                 yAxisID: "km",
                                 type: 'line',
                                 fill: false,
-                                radius: 0
+                                radius: 0,
+                                borderDash: [3,5]
                             };
                         })
                     );
@@ -351,7 +355,7 @@
                 yAxes: [
                     {id: 'km', type: 'linear'}
                 ],
-                datasets(events) {
+                datasets(events, latestBike) {
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
@@ -376,6 +380,7 @@
                             borderColor: nextColor(),
                             backgroundColor: backgroundColor,
                             data,
+                            hidden: !seasonBikes.includes(latestBike),
                             yAxisID: "km",
                             type: 'line'
                         };
@@ -391,24 +396,40 @@
                 yAxes: [
                     {id: 'milage', type: 'linear'}
                 ],
-                datasets(events) {
+                datasets(events, latestBike) {
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
-                    return seasons.map(season => {
+                    return local.fuelledBikes.map(bike => {
+                        const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
+                        return {
+                            label: `${bike.name} average`,
+                            borderColor: bike.borderColor,
+                            backgroundColor: 'rgb(255,255,255,0)',
+                            data: months.map(m => milageByMonth(bikeEvents, m)),
+                            hidden: bike.name !== latestBike,
+                            yAxisID: "milage",
+                            type: 'line',
+                            fill: false,
+                            borderDash: [10,5]
+                        };
+                    }).concat(seasons.map(season => {
                         const seasonEvents = _.filter(fuelEvents, e => e.date.replace(DATE_REGEX, '$1') === season);
                         const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
                         const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
                         const borderColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].borderColor', 'rgb(183,184,182,0.3)');
+                        const backgroundColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
                         return {
                             label: `${season}, ${seasonBikes} (${distance} km)`,
                             borderColor: borderColor,
+                            backgroundColor: backgroundColor,
                             data: months.map(m => milageByMonth(seasonEvents, m)),
+                            hidden: !seasonBikes.includes(latestBike),
                             type: 'line',
                             fill: false,
                             yAxisID: "milage"
                         };
-                    }).concat(
+                    })).concat(
                         local.fuelledBikes.map(bike => {
                             const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
                             const totalDistance = _.chain(bikeEvents)
@@ -424,11 +445,14 @@
                             return {
                                 label: `${bike.name} average (${avgMilage} litraa satasella)`,
                                 borderColor: bike.borderColor,
+                                backgroundColor: bike.backgroundColor,
                                 data: months.map(() => avgMilage),
+                                hidden: bike.name !== latestBike,
                                 type: 'line',
                                 fill: false,
                                 yAxisID: "milage",
-                                radius: 0
+                                radius: 0,
+                                borderDash: [3,5]
                             };
                         })
                     );
@@ -479,6 +503,20 @@
         return dist && dist > 30 ? dist : undefined;
     }
 
+    function countAverageDistance(events, filter) {
+        const filteredEvents = _.filter(events, filter);
+        const monthCount = _.chain(filteredEvents)
+            .map(e => e.date)
+            .map(d => d.replace(DATE_REGEX, '$1-$2'))
+            .uniq()
+            .value().length;
+        const totalDistance = _.chain(filteredEvents)
+            .map(e => e.dist).filter(n => _.isNumber(n) && !_.isNaN(n))
+            .reduce((sum, dist) => sum + dist, 0).value();
+        const avgDist = parseFloat((totalDistance / monthCount).toFixed());
+        return avgDist;
+    }
+
     function countFuel(events, filter) {
         const fuel = _.chain(events)
             .filter(filter)
@@ -525,26 +563,28 @@
             return {local, global};
         },
         methods: {
+            isCurrentStatType(selected, typeToTest) {
+                return local.statisticOptions[selected].type === typeToTest;
+            }
+        },
+        computed: {
             chartOptions() {
                 return {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        yAxes: local.statisticOptions[local.selectedStatistic].yAxes
+                        yAxes: this.local.statisticOptions[this.local.selectedStatistic].yAxes
                     },
                     legend: {
                         position: 'bottom'
                     }
                 }
             },
-            isCurrentStatType(selected, typeToTest) {
-                return local.statisticOptions[selected].type === typeToTest;
-            },
-            chartData(events) {
-                const stat = local.statisticOptions[local.selectedStatistic];
+            chartData() {
+                const stat = this.local.statisticOptions[this.local.selectedStatistic];
                 return {
-                    labels: stat.labels(events),
-                    datasets: stat.datasets(events)
+                    labels: stat.labels(this.global.events),
+                    datasets: stat.datasets(this.global.events, this.global.latestBike)
                 }
             }
         }
