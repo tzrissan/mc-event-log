@@ -114,6 +114,7 @@
                             borderColor: bike.borderColor,
                             backgroundColor: bike.backgroundColor,
                             data: months.map(m => countFuel(bikeEvents, byMonth(m))),
+                            hidden: true,
                             yAxisID: "ltr"
                         });
                         datasets.push({
@@ -157,7 +158,8 @@
                             borderColor: 'rgb(255, 105, 180)',
                             backgroundColor: 'rgb(255, 105, 180, 0.6)',
                             data: months.map(m => countFuel(fuelEvents, byMonth(m))),
-                            yAxisID: "ltr"
+                            yAxisID: "ltr",
+                            hidden: true
                         },
                         {
                             label: 'Litraa satasella',
@@ -232,6 +234,7 @@
                         borderColor: CHART_COLORS.pink(),
                         backgroundColor: CHART_COLORS.pink(0.6),
                         data: fuels,
+                        hidden: true,
                         yAxisID: "ltr"
                     }, {
                         label: `litraa satasella`,
@@ -255,6 +258,7 @@
                         borderColor: CHART_COLORS.pink(),
                         backgroundColor: CHART_COLORS.pink(0.6),
                         data: seasons.map(() => avgFuel),
+                        hidden: true,
                         type: 'line',
                         fill: false,
                         yAxisID: "ltr",
@@ -280,7 +284,7 @@
                 yAxes: [
                     {id: 'km', type: 'linear'}
                 ],
-                datasets(events) {
+                datasets(events, latestBike) {
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
@@ -295,6 +299,7 @@
                             backgroundColor: backgroundColor,
                             data: months.map(m => countDistance(seasonEvents, byMonth(m))),
                             yAxisID: "km",
+                            hidden: !seasonBikes.includes(latestBike),
                             type: 'line'
                         };
                     }).concat(
@@ -332,7 +337,7 @@
                 yAxes: [
                     {id: 'km', type: 'linear'}
                 ],
-                datasets(events) {
+                datasets(events, latestBike) {
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
@@ -357,6 +362,7 @@
                             borderColor: nextColor(),
                             backgroundColor: backgroundColor,
                             data,
+                            hidden: !seasonBikes.includes(latestBike),
                             yAxisID: "km",
                             type: 'line'
                         };
@@ -372,7 +378,7 @@
                 yAxes: [
                     {id: 'milage', type: 'linear'}
                 ],
-                datasets(events) {
+                datasets(events, latestBike) {
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
@@ -381,10 +387,13 @@
                         const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
                         const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
                         const borderColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].borderColor', 'rgb(183,184,182,0.3)');
+                        const backgroundColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
                         return {
                             label: `${season}, ${seasonBikes} (${distance} km)`,
                             borderColor: borderColor,
+                            backgroundColor: backgroundColor,
                             data: months.map(m => milageByMonth(seasonEvents, m)),
+                            hidden: !seasonBikes.includes(latestBike),
                             type: 'line',
                             fill: false,
                             yAxisID: "milage"
@@ -405,6 +414,7 @@
                             return {
                                 label: `${bike.name} average (${avgMilage} litraa satasella)`,
                                 borderColor: bike.borderColor,
+                                backgroundColor: bike.backgroundColor,
                                 data: months.map(() => avgMilage),
                                 type: 'line',
                                 fill: false,
@@ -516,7 +526,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        yAxes: local.statisticOptions[local.selectedStatistic].yAxes
+                        yAxes: this.local.statisticOptions[this.local.selectedStatistic].yAxes
                     },
                     legend: {
                         position: 'bottom'
@@ -524,10 +534,10 @@
                 }
             },
             chartData() {
-                const stat = local.statisticOptions[local.selectedStatistic];
+                const stat = this.local.statisticOptions[this.local.selectedStatistic];
                 return {
-                    labels: stat.labels(global.events),
-                    datasets: stat.datasets(global.events)
+                    labels: stat.labels(this.global.events),
+                    datasets: stat.datasets(this.global.events, this.global.latestBike)
                 }
             }
         }
