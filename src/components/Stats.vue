@@ -318,6 +318,7 @@
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
+                    const currentSeason = seasons[0];
                     return local.fuelledBikes.map(bike => {
                         const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
                         return {
@@ -342,6 +343,7 @@
                                 label: `${season}, ${seasonBikes} (${distance} km)`,
                                 borderColor,
                                 backgroundColor: backgroundColor,
+                                borderWidth: season === currentSeason ? 4: 2,
                                 fill: false,
                                 data: months.map(m => countDistance(seasonEvents, byMonth(m))),
                                 yAxisID: "km",
@@ -391,6 +393,7 @@
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
+                    const currentSeason = seasons[0];
                     return seasons.map(season => {
                         const seasonEvents = _.filter(fuelEvents, bySeason(season));
                         const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
@@ -412,6 +415,7 @@
                             label: `${season}, ${seasonBikes} (${seasonTotalDist} km)`,
                             borderColor,
                             backgroundColor: backgroundColor,
+                            borderWidth: season === currentSeason ? 4: 2,
                             data,
                             hidden: !seasonBikes.includes(latestBike),
                             yAxisID: "km",
@@ -434,6 +438,7 @@
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
+                    const currentSeason = seasons[0];
                     return local.fuelledBikes.map(bike => {
                         const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
                         return {
@@ -457,6 +462,7 @@
                             label: `${season}, ${seasonBikes} (${distance} km)`,
                             borderColor: borderColor,
                             backgroundColor: backgroundColor,
+                            borderWidth: season === currentSeason ? 4: 2,
                             data: months.map(m => milageByMonth(seasonEvents, m)),
                             hidden: !seasonBikes.includes(latestBike),
                             type: 'line',
@@ -479,7 +485,7 @@
                             return {
                                 label: `${bike.name} average (${avgMilage} litraa satasella)`,
                                 borderColor: bike.borderColor,
-                                backgroundColor: bike.backgroundColor,
+                                backgroundColor: 'rgb(255,255,255,0)',
                                 data: months.map(() => avgMilage),
                                 hidden: bike.name !== latestBike,
                                 type: 'line',
