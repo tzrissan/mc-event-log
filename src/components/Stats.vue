@@ -12,7 +12,8 @@
         <BarChart
                 v-if="isCurrentStatType(local.selectedStatistic, 'bar')"
                 v-bind:data="chartData"
-                v-bind:options="chartOptions"></BarChart>
+                v-bind:options="chartOptions"
+                v-bind:styles="styles"></BarChart>
         <PieChart
                 v-if="isCurrentStatType(local.selectedStatistic, 'pie')"
                 v-bind:data="chartData"
@@ -28,7 +29,7 @@
     import {CHART_COLORS, nextColor, currentColor} from './ChartColors';
     import BarChart from './BarChart';
     import PieChart from './PieChart';
-
+    import moment from 'moment';
 
     const local = {
         selectedStatistic: 'seasonsDistanceByMonth',
@@ -181,7 +182,8 @@
                 type: 'bar',
                 yAxes: [
                     {id: 'km', type: 'linear', position: 'left', ticks: {min: 0}},
-                    {id: 'ltr', type: 'linear', position: 'left', gridLines: {display: false}, ticks: {min: 0}},
+                    {id: 'length', type: 'linear', position: 'left', gridLines: {display: false}, ticks: {min: 0}},
+                    {id: 'ltr', type: 'linear', position: 'right', gridLines: {display: false}, ticks: {min: 0}},
                     {id: 'milage', type: 'linear', position: 'right', gridLines: {display: false}}
                 ],
                 datasets(events) {
@@ -190,20 +192,31 @@
                         const seasonEvents = _.filter(events, bySeason(season));
                         const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().value();
 
-                        return seasonBikes.map(bike => {
-                            const bikeEvents = _.filter(seasonEvents, {bike});
-                            const minOdo = _.chain(bikeEvents).map(e => e.odo).min().value();
-                            const maxOdo = _.chain(bikeEvents).map(e => e.odo).max().value();
-                            return maxOdo - minOdo;
-                        }).reduce((sum, dist) => _.isNumber(dist) && !_.isNaN(dist) ? sum + dist : sum, 0);
+                        function seasonLength() {
+                            const dates = seasonEvents.map(e => e.date).sort();
+                            return moment(dates[dates.length-1]).diff(moment(dates[0]), 'days');
+                        }
+
+                        return {
+                            distance: seasonBikes.map(bike => {
+                                    const bikeEvents = _.filter(seasonEvents, {bike});
+                                    const minOdo = _.chain(bikeEvents).map(e => e.odo).min().value();
+                                    const maxOdo = _.chain(bikeEvents).map(e => e.odo).max().value();
+                                    return maxOdo - minOdo;
+                                }).reduce((sum, dist) => _.isNumber(dist) && !_.isNaN(dist) ? sum + dist : sum, 0),
+                            length: seasonLength()
+                        };
                     }
 
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const seasons = seasonsWithEvents(events).reverse();
-                    const distances = seasons.map(s => totalDistance(s, events));
+                    const distancesAndLengths = seasons.map(s => totalDistance(s, events));
+                    const distances = distancesAndLengths.map(season => season.distance);
+                    const lengths = distancesAndLengths.map(season => season.length);
                     const fuels = seasons.map(s => countFuel(fuelEvents, bySeason(s)));
                     const milages = _.zip(fuels, distances).map(z => (100 * z[0] / z[1]));
                     const avgDistance = (distances.reduce((s, d) => s + d, 0) / distances.length).toFixed(0);
+                    const avgLength = (lengths.reduce((s, d) => s + d, 0) / lengths.length).toFixed(0);
                     const avgFuel = _.chain(fuels)
                         .filter(f => _.isNumber(f) && !_.isNaN(f))
                         .reduce((acc, fuel) => ({
@@ -213,7 +226,7 @@
                         }), {sum: 0.0, count: 0})
                         .value().avg()
                         .toFixed();
-                    const avgMilage = _.chain(_.zip(fuels, distances))
+                    const avgMilage = _.chain(_.zip(fuels, distances ))
                         .filter(z => _.isNumber(z[0]) && !_.isNaN(z[0]))
                         .filter(z => _.isNumber(z[1]) && !_.isNaN(z[1]))
                         .reduce((acc, z) => ({
@@ -229,6 +242,14 @@
                         type: 'line',
                         data: distances,
                         yAxisID: "km"
+                    },{
+                        label: `päivää`,
+                        borderColor: CHART_COLORS.green(),
+                        backgroundColor: CHART_COLORS.green(0.6),
+                        type: 'line',
+                        fill: false,
+                        data: lengths,
+                        yAxisID: "length"
                     }, {
                         label: `litraa`,
                         borderColor: CHART_COLORS.pink(),
@@ -252,6 +273,15 @@
                         type: 'line',
                         fill: false,
                         yAxisID: "km",
+                        radius: 0
+                    }, {
+                        label: `keskiarvo (${avgLength} päivää)`,
+                        borderColor: CHART_COLORS.green(),
+                        backgroundColor: CHART_COLORS.green(0.6),
+                        data: seasons.map(() => avgLength),
+                        type: 'line',
+                        fill: false,
+                        yAxisID: "length",
                         radius: 0
                     }, {
                         label: `keskiarvo (${avgFuel} ltr)`,
@@ -288,6 +318,7 @@
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
+                    const currentSeason = seasons[0];
                     return local.fuelledBikes.map(bike => {
                         const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
                         return {
@@ -306,11 +337,14 @@
                             const seasonEvents = _.filter(fuelEvents, bySeason(season));
                             const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
                             const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
+                            const borderColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].borderColor', 'rgb(183,184,182)');
                             const backgroundColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
                             return {
                                 label: `${season}, ${seasonBikes} (${distance} km)`,
-                                borderColor: nextColor(),
+                                borderColor,
                                 backgroundColor: backgroundColor,
+                                borderWidth: season === currentSeason ? 4: 2,
+                                fill: false,
                                 data: months.map(m => countDistance(seasonEvents, byMonth(m))),
                                 yAxisID: "km",
                                 hidden: !seasonBikes.includes(latestBike),
@@ -359,10 +393,12 @@
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
+                    const currentSeason = seasons[0];
                     return seasons.map(season => {
                         const seasonEvents = _.filter(fuelEvents, bySeason(season));
                         const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
                         const seasonTotalDist = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
+                        const borderColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].borderColor', 'rgb(183,184,182)');
                         const backgroundColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
                         const data = months.map(m => countDistance(seasonEvents, byMonth(m)))
                             .reduce((acc, dist) => {
@@ -377,12 +413,14 @@
                             }, []);
                         return {
                             label: `${season}, ${seasonBikes} (${seasonTotalDist} km)`,
-                            borderColor: nextColor(),
+                            borderColor,
                             backgroundColor: backgroundColor,
+                            borderWidth: season === currentSeason ? 4: 2,
                             data,
                             hidden: !seasonBikes.includes(latestBike),
                             yAxisID: "km",
-                            type: 'line'
+                            type: 'line',
+                            fill: false
                         };
                     });
                 },
@@ -400,6 +438,7 @@
                     const fuelEvents = _.filter(events, {type: 'FUEL'});
                     const months = monthsWithEvents(fuelEvents);
                     const seasons = seasonsWithEvents(fuelEvents);
+                    const currentSeason = seasons[0];
                     return local.fuelledBikes.map(bike => {
                         const bikeEvents = _.filter(fuelEvents, {bike: bike.name});
                         return {
@@ -423,6 +462,7 @@
                             label: `${season}, ${seasonBikes} (${distance} km)`,
                             borderColor: borderColor,
                             backgroundColor: backgroundColor,
+                            borderWidth: season === currentSeason ? 4: 2,
                             data: months.map(m => milageByMonth(seasonEvents, m)),
                             hidden: !seasonBikes.includes(latestBike),
                             type: 'line',
@@ -445,7 +485,7 @@
                             return {
                                 label: `${bike.name} average (${avgMilage} litraa satasella)`,
                                 borderColor: bike.borderColor,
-                                backgroundColor: bike.backgroundColor,
+                                backgroundColor: 'rgb(255,255,255,0)',
                                 data: months.map(() => avgMilage),
                                 hidden: bike.name !== latestBike,
                                 type: 'line',
@@ -584,7 +624,16 @@
                 const stat = this.local.statisticOptions[this.local.selectedStatistic];
                 return {
                     labels: stat.labels(this.global.events),
-                    datasets: stat.datasets(this.global.events, this.global.latestBike)
+                    datasets: stat.datasets(this.global.events, this.global.latestBike),
+                    maintainAspectRatio: false
+                }
+            },
+            styles() {
+                return {
+                    width: '90vw',
+                    height: '70vh',
+                    'min-height': '500px',
+                    'min-width': '800px'
                 }
             }
         }
