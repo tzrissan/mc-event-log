@@ -12,7 +12,8 @@
         <BarChart
                 v-if="isCurrentStatType(local.selectedStatistic, 'bar')"
                 v-bind:data="chartData"
-                v-bind:options="chartOptions"></BarChart>
+                v-bind:options="chartOptions"
+                v-bind:styles="styles"></BarChart>
         <PieChart
                 v-if="isCurrentStatType(local.selectedStatistic, 'pie')"
                 v-bind:data="chartData"
@@ -335,11 +336,13 @@
                             const seasonEvents = _.filter(fuelEvents, bySeason(season));
                             const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
                             const distance = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
+                            const borderColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].borderColor', 'rgb(183,184,182)');
                             const backgroundColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
                             return {
                                 label: `${season}, ${seasonBikes} (${distance} km)`,
-                                borderColor: nextColor(),
+                                borderColor,
                                 backgroundColor: backgroundColor,
+                                fill: false,
                                 data: months.map(m => countDistance(seasonEvents, byMonth(m))),
                                 yAxisID: "km",
                                 hidden: !seasonBikes.includes(latestBike),
@@ -392,6 +395,7 @@
                         const seasonEvents = _.filter(fuelEvents, bySeason(season));
                         const seasonBikes = _.chain(seasonEvents).map(e => e.bike).uniq().sort().value().join(', ');
                         const seasonTotalDist = _.reduce(seasonEvents, (sum, event) => sum + _.get(event, 'dist', 0), 0);
+                        const borderColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].borderColor', 'rgb(183,184,182)');
                         const backgroundColor = _.get(_.filter(local.fuelledBikes, {name: seasonBikes}), '[0].backgroundColor', 'rgb(183,184,182,0.3)');
                         const data = months.map(m => countDistance(seasonEvents, byMonth(m)))
                             .reduce((acc, dist) => {
@@ -406,12 +410,13 @@
                             }, []);
                         return {
                             label: `${season}, ${seasonBikes} (${seasonTotalDist} km)`,
-                            borderColor: nextColor(),
+                            borderColor,
                             backgroundColor: backgroundColor,
                             data,
                             hidden: !seasonBikes.includes(latestBike),
                             yAxisID: "km",
-                            type: 'line'
+                            type: 'line',
+                            fill: false
                         };
                     });
                 },
@@ -613,7 +618,16 @@
                 const stat = this.local.statisticOptions[this.local.selectedStatistic];
                 return {
                     labels: stat.labels(this.global.events),
-                    datasets: stat.datasets(this.global.events, this.global.latestBike)
+                    datasets: stat.datasets(this.global.events, this.global.latestBike),
+                    maintainAspectRatio: false
+                }
+            },
+            styles() {
+                return {
+                    width: '90vw',
+                    height: '70vh',
+                    'min-height': '500px',
+                    'min-width': '800px'
                 }
             }
         }
