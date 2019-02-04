@@ -12,38 +12,38 @@
 </template>
 
 <script>
-    import { ROOT_ROUTES } from '@/router.js'
+  import { ROOT_ROUTES } from '@/router.js'
 
-    export default {
-        name: 'app',
-        data: () => ({
-          selectedTab: 'NewEvent',
-          rootRoutes: ROOT_ROUTES
-        })
-    }
+  export default {
+    name: 'app',
+    data: () => ({
+      selectedTab: 'NewEvent',
+      rootRoutes: ROOT_ROUTES
+    })
+  }
 </script>
 
-
 <style>
-    body {
-        margin: 0;
-        min-width: 600px;
-    }
-    .blueSky {
-      color: #4CB5F5
-    }
+  body {
+    margin: 0;
+    min-width: 600px;
+  }
 
-    .granite {
-      color: #B7B8B6
-    }
+  .blueSky {
+    color: #4CB5F5
+  }
 
-    .pine {
-      color: #34675C
-    }
+  .granite {
+    color: #B7B8B6
+  }
 
-    .fields {
-      color: #B3C100
-    }
+  .pine {
+    color: #34675C
+  }
+
+  .fields {
+    color: #B3C100
+  }
 </style>
 
 <style lang="scss" scoped>
@@ -63,16 +63,19 @@
       text-align: center;
       line-height: 45px;
       background-color: white;
+
       a {
         display: block;
         margin: 0;
         text-decoration: none;
         color: black;
+
         &.router-link-active {
           color: white;
           background-color: #4CB5F5 !important;
         }
       }
+
       &:first-child a {
         color: #B3C100;
         font-size: 30px;
@@ -83,4 +86,3 @@
   }
 
 </style>
-

@@ -50,6 +50,6 @@ const routes = [
   }
 ]
 
-export default new Router({routes})
+export default new Router({ routes })
 
 export const ROOT_ROUTES = routes.filter(r => !r.redirect).map(r => ({ path: r.path, title: r.title }))
