@@ -227,7 +227,6 @@
   }
 
   .info {
-    white-space: pre-wrap;
     text-align: left;
     border-left: 1px solid black;
   }
