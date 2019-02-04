@@ -5,7 +5,7 @@
         <div class="grid-item"
              v-for="bike in global.bikes"
              v-on:click="selectBike(bike)"
-             v-bind:class="{selected: local.selectedBike === bike}"
+             v-bind:class="{selected: selectedBike === bike}"
              v-bind:key="bike"
         >{{ bike }}
         </div>
@@ -47,17 +47,17 @@
         <circle r="55" cx="70" cy="233" stroke="black" stroke-width="20" fill="none"/>
 
         <!-- actual information -->
-        <text v-if="local.selectedBike" x="415" y="217" dy="-0.3em" text-anchor="middle">{{
-          currentFrontTyreDistance(local.selectedBike, global.events) }} km
+        <text v-if="selectedBike && currentFrontTyreDistance" x="415" y="217" dy="-0.3em" text-anchor="middle">{{
+          currentFrontTyreDistance }} km
         </text>
-        <text v-if="local.selectedBike" x="415" y="217" dy="0.9em" text-anchor="middle">{{
-          lastFrontTyreChange(local.selectedBike, global.events) | moment("D.M.YYYY") }}
+        <text v-if="selectedBike && lastFrontTyreChange" x="415" y="217" dy="0.9em" text-anchor="middle">{{
+          lastFrontTyreChange | moment("D.M.YYYY") }}
         </text>
-        <text v-if="local.selectedBike" x="70" y="233" dy="-0.3em" text-anchor="middle">{{
-          currentRearTyreDistance(local.selectedBike, global.events) }} km
+        <text v-if="selectedBike && currentRearTyreDistance" x="70" y="233" dy="-0.3em" text-anchor="middle">{{
+          currentRearTyreDistance }} km
         </text>
-        <text v-if="local.selectedBike" x="70" y="233" dy="0.9em" text-anchor="middle">{{
-          lastRearTyreChange(local.selectedBike, global.events) | moment("D.M.YYYY") }}
+        <text v-if="selectedBike && lastRearTyreChange" x="70" y="233" dy="0.9em" text-anchor="middle">{{
+          lastRearTyreChange | moment("D.M.YYYY") }}
         </text>
       </svg>
 
@@ -65,7 +65,7 @@
         <div class="grid-item">
           <h1>Takarenkaan vaihdot</h1>
           <div class="tyreChange"
-               v-for="event in filterRearTyreChanges(local.selectedBike, global.events)"
+               v-for="event in rearTyreChanges"
                v-bind:key="event.odo">
             <div class="odo" v-if="event.odo">{{event.odo}}</div>
             <div class="date">{{event.date | moment("D.M.YYYY") }}</div>
@@ -76,7 +76,7 @@
         <div class="grid-item">
           <h1>Eturenkaan vaihdot</h1>
           <div class="tyreChange"
-               v-for="event in filterFrontTyreChanges(local.selectedBike, global.events)"
+               v-for="event in frontTyreChanges"
                v-bind:key="event.odo">
             <div class="odo" v-if="event.odo">{{event.odo}}</div>
             <div class="date">{{event.date | moment("D.M.YYYY") }}</div>
@@ -101,73 +101,77 @@
     name: 'Tyres',
     data: function () {
       const global = GasLogData.get()
-      local.selectedBike = global.latestBike
       return { local, global }
     },
-    methods: {
-      selectBike: (bike) => {
-        local.selectedBike = bike
+    computed: {
+      selectedBike: function () {
+        return local.selectedBike ? local.selectedBike : this.global.latestBike
       },
-      lastFrontTyreChange: (bike, events) => {
-        return _.chain(events)
-          .filter({ bike: bike, type: 'TYRE_FRONT' })
+      frontTyreChanges: function () {
+        return _.chain(this.global.events)
+          .filter({ bike: this.selectedBike, type: 'TYRE_FRONT' })
+          .sortBy('date')
+          .reverse()
+          .value()
+      },
+      rearTyreChanges: function () {
+        return _.chain(this.global.events)
+          .filter({ bike: this.selectedBike, type: 'TYRE_REAR' })
+          .sortBy('date')
+          .reverse()
+          .value()
+      },
+      lastFrontTyreChange: function () {
+        return _.chain(this.global.events)
+          .filter({ bike: this.selectedBike, type: 'TYRE_FRONT' })
           .sortBy('date')
           .last()
           .get('date')
           .value()
       },
-      lastRearTyreChange: (bike, events) => {
-        return _.chain(events)
-          .filter({ bike: bike, type: 'TYRE_REAR' })
+      lastRearTyreChange: function () {
+        return _.chain(this.global.events)
+          .filter({ bike: this.selectedBike, type: 'TYRE_REAR' })
           .sortBy('date')
           .last()
           .get('date')
           .value()
       },
-      filterFrontTyreChanges: (bike, events) => {
-        return _.chain(events)
-          .filter({ bike: bike, type: 'TYRE_FRONT' })
-          .sortBy('date')
-          .reverse()
-          .value()
-      },
-      filterRearTyreChanges: (bike, events) => {
-        return _.chain(events)
-          .filter({ bike: bike, type: 'TYRE_REAR' })
-          .sortBy('date')
-          .reverse()
-          .value()
-      },
-      currentFrontTyreDistance: (bike, events) => {
-        const lastChange = _.chain(events)
-          .filter({ bike: bike, type: 'TYRE_FRONT' })
+      currentFrontTyreDistance: function () {
+        const lastChange = _.chain(this.global.events)
+          .filter({ bike: this.selectedBike, type: 'TYRE_FRONT' })
           .sortBy(['odo', 'date'])
           .last()
           .get('odo', '0')
           .value()
-        const latestUpdate = _.chain(events)
-          .filter({ bike: bike })
+        const latestUpdate = _.chain(this.global.events)
+          .filter({ bike: this.selectedBike })
           .sortBy(['odo', 'date'])
           .last()
           .get('odo', '0')
           .value()
         return parseInt(latestUpdate) - parseInt(lastChange)
       },
-      currentRearTyreDistance: (bike, events) => {
-        const lastChange = _.chain(events)
-          .filter({ bike: bike, type: 'TYRE_REAR' })
+      currentRearTyreDistance: function () {
+        const lastChange = _.chain(this.global.events)
+          .filter({ bike: this.selectedBike, type: 'TYRE_REAR' })
           .sortBy('date')
           .last()
           .get('odo', '0')
           .value()
-        const latestUpdate = _.chain(events)
-          .filter({ bike: bike })
+        const latestUpdate = _.chain(this.global.events)
+          .filter({ bike: this.selectedBike })
           .sortBy('date')
           .last()
           .get('odo', '0')
           .value()
         return parseInt(latestUpdate) - parseInt(lastChange)
       }
+    },
+    methods: {
+      selectBike: (bike) => {
+        local.selectedBike = bike
+      },
 
     }
   }
