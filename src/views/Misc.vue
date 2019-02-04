@@ -5,7 +5,7 @@
         <div class="grid-item"
              v-for="bike in global.bikes"
              v-on:click="selectBike(bike)"
-             v-bind:class="{selected: local.selectedBike === bike}"
+             v-bind:class="{selected: selectedBike === bike}"
              v-bind:key="bike"
         >{{ bike }}
         </div>
@@ -21,7 +21,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="event in otherEvents(local.selectedBike, global.events)" v-bind:key="key(event)">
+      <tr v-for="event in otherEvents" v-bind:key="key(event)">
         <td>{{ event.date | moment("D.M.YYYY") }}</td>
         <td>{{ event.odo }}
           <small>km</small>
@@ -46,19 +46,24 @@
     name: 'Misc',
     data: function () {
       const global = GasLogData.get()
-      local.selectedBike = global.latestBike
       return { local, global }
+    },
+    computed: {
+      selectedBike: function () {
+        return local.selectedBike ? local.selectedBike : this.global.latestBike
+      },
+      otherEvents: function () {
+        return _.chain(this.global.events)
+          .filter({ bike: this.selectedBike, type: 'OTHER' })
+          .sortBy('date')
+          .reverse()
+          .value()
+      }
     },
     methods: {
       selectBike: (bike) => {
         local.selectedBike = bike
       },
-      otherEvents: (bike, events) =>
-        _.chain(events)
-          .filter({ bike: bike, type: 'OTHER' })
-          .sortBy('date')
-          .reverse()
-          .value(),
       key: (event) => {
         return event.bike + event.odo + event.info
       }
