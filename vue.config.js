@@ -1,3 +1,14 @@
 module.exports = {
-    baseUrl: '/dev/'
+    baseUrl: '/dev/',
+    configureWebpack: {
+        module: {
+            rules: [
+                {
+                    exclude: [
+                        /sample-data\.json/
+                    ]
+                }
+            ]
+        }
+    }
 }
