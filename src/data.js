@@ -8,7 +8,7 @@ const _data = {
     years: [],
     months: [],
     latestBike: undefined,
-    events: PROD ? [] : require('./sample-data.json')
+    events: []
 };
 
 function countMilages(events) {
@@ -100,9 +100,7 @@ function reload() {
         });
 }
 
-!PROD && countExtraInformationFromData();
-
-PROD && reload();
+reload();
 
 const GasLogData = {
     get() {
