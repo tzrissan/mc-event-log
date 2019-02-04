@@ -1,23 +1,55 @@
-import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+import NewEvent from './views/NewEvent.vue'
+import GasLog from './views/GasLog.vue'
+import Maintenance from './views/Maintenance.vue'
+import Tyres from './views/Tyres.vue'
+import Stats from './views/Stats.vue'
+import Misc from './views/Misc.vue'
 
-Vue.use(Router)
+const routes = [
+  {
+    path: '/',
+    redirect: '/newevent'
+  },
+  {
+    path: '/newevent',
 
-export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
-    }
-  ]
-})
+    name: 'newevent',
+    title: '+',
+    component: NewEvent
+  },
+  {
+    path: '/gaslog',
+    name: 'gaslog',
+    title: 'Tankkaukset',
+    component: GasLog
+  },
+  {
+    path: '/maintenance',
+    name: 'maintenance',
+    title: 'Huollot',
+    component: Maintenance
+  },
+  {
+    path: '/tyres',
+    name: 'tyres',
+    title: 'Renkaat',
+    component: Tyres
+  },
+  {
+    path: '/stats',
+    name: 'stats',
+    title: 'Tilastot',
+    component: Stats
+  },
+  {
+    path: '/misc',
+    name: 'misc',
+    title: 'Muut',
+    component: Misc
+  }
+]
+
+export default new Router({routes})
+
+export const ROOT_ROUTES = routes.filter(r => !r.redirect).map(r => ({ path: r.path, title: r.title }))
