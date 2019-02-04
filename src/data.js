@@ -1,9 +1,9 @@
-import axios from 'axios';
-import _ from 'lodash';
+import axios from 'axios'
+import _ from 'lodash'
 
 export const PROD = !window.location.href.match(/localhost/)
-export const DATE_REGEX = /(\d{4})-(\d{2})-(\d{2})/;
-export const MONTH_NAMES = ['Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu'];
+export const DATE_REGEX = /(\d{4})-(\d{2})-(\d{2})/
+export const MONTH_NAMES = ['Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu']
 
 const _data = {
   bikes: [],
@@ -73,8 +73,6 @@ function countMilages (events) {
   })
 }
 
-
-
 function countExtraInformationFromData () {
   _data.bikes = _.toPairs(_data.events.reduce((acc, event) => {
     if (!acc[event.bike] || acc[event.bike] < event.date) {
@@ -112,4 +110,4 @@ const GasLogData = {
   countExtraInformationFromData
 }
 
-export default GasLogData;
+export default GasLogData
