@@ -67,6 +67,7 @@
         display: block;
         margin: 0;
         text-decoration: none;
+        color: black;
         &.router-link-active {
           color: white;
           background-color: #4CB5F5 !important;
