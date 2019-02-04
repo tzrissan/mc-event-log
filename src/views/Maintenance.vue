@@ -5,7 +5,7 @@
         <div class="grid-item"
              v-for="bike in global.bikes"
              v-on:click="selectBike(bike)"
-             v-bind:class="{selected: local.selectedBike === bike}"
+             v-bind:class="{selected: selectedBike === bike}"
              v-bind:key="bike"
         >{{ bike }}
         </div>
@@ -15,14 +15,14 @@
     <div class="mc">
       <div class="maintenence current">
         <div class="info">Viimeisin havainto pyörästä:<br>
-          odo: {{ latestOdo(local.selectedBike, global.events) }} <br>
-          pvm: {{ latestDate(local.selectedBike, global.events) | moment("D.M.YYYY") }}
+          odo: {{ latestOdo }} <br>
+          pvm: {{ latestDate | moment("D.M.YYYY") }}
         </div>
         <span class="updownarrow">&#x2195;</span>
-        <span class="dist"> {{ currentMaintenanceDistance(local.selectedBike, global.events) }} km</span>
+        <span class="dist"> {{ currentMaintenanceDistance }} km</span>
       </div>
       <div class="maintenence"
-           v-for="event in filterMaintenence(local.selectedBike, global.events)"
+           v-for="event in maintenanceEvents"
            v-bind:key="event.odo">
         <div class="info">{{event.odo}} | {{event.date | moment("D.M.YYYY") }} | {{event.info}}</div>
         <span class="updownarrow" v-if="event.dist">&#x2195;</span>
@@ -43,47 +43,55 @@
   export default {
     name: 'Maintenance',
     data: function () {
-      const global = GasLogData.get()
-      local.selectedBike = global.latestBike
-      return { local, global }
+      return { local, global: GasLogData.get() }
     },
-    methods: {
-      selectBike: (bike) => {
-        local.selectedBike = bike
+    computed: {
+      selectedBike: function () {
+        return local.selectedBike ? local.selectedBike : this.global.latestBike
       },
-      filterMaintenence: (bike, events) =>
-        _.chain(events)
-          .filter({ bike: bike, type: 'MAINTENANCE' })
+      maintenanceEvents: function () {
+        return _.chain(this.global.events)
+          .filter({ bike: this.selectedBike, type: 'MAINTENANCE' })
           .sortBy('date')
           .reverse()
-          .value(),
-      currentMaintenanceDistance: (bike, events) => {
-        const lastMaintenance = _.chain(events)
-          .filter({ bike: bike, type: 'MAINTENANCE' })
+          .value()
+      },
+      currentMaintenanceDistance: function () {
+        const lastMaintenance = _.chain(this.global.events)
+          .filter({ bike: this.selectedBike, type: 'MAINTENANCE' })
           .sortBy(['odo', 'date'])
           .last()
           .get('odo', '0')
           .value()
-        const latestUpdate = _.chain(events)
-          .filter({ bike: bike })
+        const latestUpdate = _.chain(this.global.events)
+          .filter({ bike: this.selectedBike })
           .sortBy(['odo', 'date'])
           .last()
           .get('odo', '0')
           .value()
         return parseInt(latestUpdate) - parseInt(lastMaintenance)
       },
-      latestOdo: (bike, events) => _.chain(events)
-        .filter({ bike: bike })
-        .sortBy('date')
-        .last()
-        .get('odo', '0')
-        .value(),
-      latestDate: (bike, events) => _.chain(events)
-        .filter({ bike: bike })
-        .sortBy('date')
-        .last()
-        .get('date')
-        .value()
+      latestOdo: function () {
+        return _.chain(this.global.events)
+          .filter({ bike: this.selectedBike })
+          .sortBy('date')
+          .last()
+          .get('odo', '0')
+          .value()
+      },
+      latestDate: function () {
+        return _.chain(this.global.events)
+          .filter({ bike: this.selectedBike })
+          .sortBy('date')
+          .last()
+          .get('date')
+          .value()
+      }
+    },
+    methods: {
+      selectBike: (bike) => {
+        local.selectedBike = bike
+      }
     }
   }
 
