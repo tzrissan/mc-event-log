@@ -7,17 +7,17 @@
 
 <script>
 
-    export default {
-        name: 'ColumnSortIndicator',
-        props: {
-            asc: Boolean
-        }
+  export default {
+    name: 'ColumnSortIndicator',
+    props: {
+      asc: Boolean
     }
+  }
 
 </script>
 
 <style scoped>
-    .sort-arrow {
-        font-weight: bold;
-    }
+  .sort-arrow {
+    font-weight: bold;
+  }
 </style>
