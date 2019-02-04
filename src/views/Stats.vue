@@ -26,9 +26,9 @@
     import _ from 'lodash';
     import GasLogData from '../data';
     import {MONTH_NAMES, DATE_REGEX} from '../data';
-    import {CHART_COLORS, nextColor, currentColor} from './ChartColors';
-    import BarChart from './BarChart';
-    import PieChart from './PieChart';
+    import {CHART_COLORS, nextColor, currentColor} from '../components/ChartColors';
+    import BarChart from '../components/BarChart';
+    import PieChart from '../components/PieChart';
     import moment from 'moment';
 
     const local = {

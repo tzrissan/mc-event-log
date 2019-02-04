@@ -37,12 +37,12 @@
 </template>
 
 <script>
-    import NewEvent from './components/NewEvent'
-    import GasLog from './components/GasLog'
-    import Tyres from './components/Tyres'
-    import Maintenance from './components/Maintenance'
-    import Misc from './components/Misc'
-    import Stats from './components/Stats'
+    import NewEvent from './views/NewEvent'
+    import GasLog from './views/GasLog'
+    import Tyres from './views/Tyres'
+    import Maintenance from './views/Maintenance'
+    import Misc from './views/Misc'
+    import Stats from './views/Stats'
 
 
     export default {

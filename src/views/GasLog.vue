@@ -46,8 +46,8 @@
 <script>
     import _ from 'lodash';
     import GasLogData from '../data.js'
-    import ColumnSortIndicator from "./ColumnSortIndicator";
-    import GasLogFilterSelector from "./GasLogFilterSelector";
+    import ColumnSortIndicator from "../components/ColumnSortIndicator";
+    import GasLogFilterSelector from "../components/GasLogFilterSelector";
 
     const currentYear = new Date().getFullYear().toString();
 
