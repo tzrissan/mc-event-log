@@ -64,6 +64,13 @@
       line-height: 45px;
       background-color: white;
 
+      &:first-child a {
+        color: #B3C100;
+        font-size: 30px;
+        font-weight: bolder;
+        padding: 0 20px;
+      }
+
       a {
         display: block;
         margin: 0;
@@ -76,12 +83,6 @@
         }
       }
 
-      &:first-child a {
-        color: #B3C100;
-        font-size: 30px;
-        font-weight: bolder;
-        padding: 0 20px;
-      }
     }
   }
 
