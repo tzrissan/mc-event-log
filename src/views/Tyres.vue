@@ -171,8 +171,7 @@
     methods: {
       selectBike: (bike) => {
         local.selectedBike = bike
-      },
-
+      }
     }
   }
 
