@@ -21,12 +21,20 @@
         <span class="updownarrow">&#x2195;</span>
         <span class="dist"> {{ currentMaintenanceDistance }} km</span>
       </div>
-      <div class="maintenence"
-           v-for="event in maintenanceEvents"
-           v-bind:key="event.odo">
-        <div class="info">{{event.odo}} | {{event.date | moment("D.M.YYYY") }} | {{event.info}}</div>
-        <span class="updownarrow" v-if="event.dist">&#x2195;</span>
-        <span class="dist" v-if="event.dist"> {{event.dist}} km</span>
+    </div>
+    <div class="mc">
+      <div class="graph">
+        <div v-for="event in maintenanceEvents"
+             :key="event.odo"
+             :style="width(event.dist, latestOdo)"
+             class="maintenence">
+          <div class="distance">{{ event.dist }} km</div>
+          <div class="desc">
+            {{ event.date | moment("D.M.YYYY") }}<br>
+            {{ event.info }}<br>
+            {{ event.odo }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -53,7 +61,6 @@
         return _.chain(this.global.events)
           .filter({ bike: this.selectedBike, type: 'MAINTENANCE' })
           .sortBy('date')
-          .reverse()
           .value()
       },
       currentMaintenanceDistance: function () {
@@ -70,6 +77,14 @@
           .get('odo', '0')
           .value()
         return parseInt(latestUpdate) - parseInt(lastMaintenance)
+      },
+      firstOdo: function () {
+        return _.chain(this.global.events)
+          .filter({ bike: this.selectedBike })
+          .sortBy('date')
+          .first()
+          .get('odo', '0')
+          .value()
       },
       latestOdo: function () {
         return _.chain(this.global.events)
@@ -91,44 +106,102 @@
     methods: {
       selectBike: (bike) => {
         local.selectedBike = bike
+      },
+      width (dist, totalDist) {
+        const width = Math.trunc((dist / totalDist) * 10000) / 100
+        return `width: calc(${width}% - 2px);`
       }
     }
   }
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
   .bike-selection {
     text-align: center;
-    #border-bottom: 1px solid lightgray;
     padding: 20px
-  }
-
-  .mc {
-    align: center;
-    padding: 20px;
   }
 
   .current {
     border-bottom: 1px solid lightgray;
   }
 
-  .maintenence div.info {
+  .mc {
     align: center;
-    padding: 5px;
-    margin: 0 50px;
+    padding: 20px;
+
+    .graph {
+      margin-top: 100px;
+      margin-right: 50px;
+      background-color: #4CB5F5;
+    }
+
+    .maintenence {
+      display: inline-block;
+      height: 30px;
+      padding-top: 5px;
+      border-right: 2px solid white;
+      position: relative;
+      .distance {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 5px;
+        text-align: center;
+      }
+      .desc {
+        padding: 3px 10px 2px 5px;
+        font-size: small;
+        height: 50px;
+        color: white;
+        background-color: #4CB5F5;
+        border: 1px solid #4CB5F5;
+        position: absolute;
+        top: -66px;
+        right: -22px;
+        white-space: nowrap;
+        &::before {
+          content: "";
+          width: 2px;
+          height: 57px;
+          border: 0;
+          background-color: white;
+          position: absolute;
+          left: -2px;
+          top: -1px;
+        }
+        &::after {
+          content: "";
+          width: 0px;
+          height: 0px;
+          border: 10px solid transparent;
+          position: absolute;
+          right: 10px;
+          bottom: -21px;
+          border-top: 10px solid #4CB5F5;
+        }
+      }
+    }
   }
 
-  .maintenence span.dist {
-    padding: 5px;
-    font-size: small;
-  }
+  .maintenence {
+    div.info {
+      align: center;
+      padding: 5px;
+      margin: 0 50px;
+    }
 
-  .maintenence span.updownarrow {
-    font-size: x-large;
-    padding: 0;
-    margin: 0 0 0 80px;
+    span.dist {
+      padding: 5px;
+      font-size: small;
+    }
+
+    span.updownarrow {
+      font-size: x-large;
+      padding: 0;
+      margin: 0 0 0 80px;
+    }
   }
 
   .bike-selection-grid {
