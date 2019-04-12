@@ -177,11 +177,12 @@
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
+  @import "../assets/colors";
 
   .bike-selection {
     text-align: center;
-    #border-bottom: 1px solid lightgray;
     padding: 20px
   }
 
@@ -228,19 +229,17 @@
     grid-template-columns: auto auto;
     grid-row-gap: 5px;
     grid-column-gap: 5px;
-  }
-
-  .tyre-history-grid .grid-item {
-    border: none;
-  }
-
-  .tyre-history-grid h1 {
-    font-size: large;
+    grid-item {
+      border: none;
+    }
+    h1 {
+      font-size: large;
+    }
   }
 
   .selected {
     border: 0;
-    background-color: #4CB5F5;
+    background-color: $blueSky;
     color: white;
     font-weight: bold;
   }

@@ -38,7 +38,7 @@
 
 <script>
   import _ from 'lodash'
-  import GasLogData, { MONTH_NAMES } from '@/data'
+  import GasLogData, {MONTH_NAMES} from '@/data'
   import FilterGlyph from './FilterGlyph'
 
   const local = {
@@ -47,7 +47,7 @@
 
   export default {
     name: 'GasLogFilterSelector',
-    components: { FilterGlyph },
+    components: {FilterGlyph},
     props: {
       filters: {
         type: Array,
@@ -58,7 +58,7 @@
       local.selectedFilterYear = _.get(this.filters.find(e => e.date && e.date.year), 'date.year')
       local.selectedFilterMonth = _.get(this.filters.find(e => e.date && e.date.month), 'date.month')
       local.selectedFilterBike = _.get(this.filters.find(e => e.bike), 'bike')
-      return { local, global: GasLogData.get() }
+      return {local, global: GasLogData.get()}
     },
     methods: {
       toggleShowFilters: () => {
@@ -80,7 +80,7 @@
       selectYear: (filters, year) => {
         let yearFilter = filters.find(e => e.date && e.date.year)
         if (!yearFilter) {
-          yearFilter = { date: { year: undefined, regex: /.*/ } }
+          yearFilter = {date: {year: undefined, regex: /.*/}}
           filters.push(yearFilter)
         }
         if (yearFilter.date.year === year.year) {
@@ -97,7 +97,7 @@
       selectMonth: (filters, month) => {
         let monthFilter = filters.find(e => e.date && e.date.month)
         if (!monthFilter) {
-          monthFilter = { date: { month: undefined, regex: /.*/ } }
+          monthFilter = {date: {month: undefined, regex: /.*/}}
           filters.push(monthFilter)
         }
         if (monthFilter.date.month === month.num) {
@@ -114,7 +114,7 @@
       selectBike: (filters, bike) => {
         let bikeFilter = filters.find(e => e.bike)
         if (!bikeFilter) {
-          bikeFilter = { bike: undefined }
+          bikeFilter = {bike: undefined}
           filters.push(bikeFilter)
         }
         if (bikeFilter.bike === bike.name) {
@@ -132,16 +132,20 @@
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
+  @import "../assets/colors";
 
   .settings {
     text-align: right;
     padding: 2px 0;
   }
 
-  .settings .selectedFilters, .settings .filter-icon {
-    display: inline-block;
-    margin: 0 10px
+  .settings {
+    .selectedFilters, .filter-icon {
+      display: inline-block;
+      margin: 0 10px
+    }
   }
 
   .filter-modal {
@@ -171,7 +175,7 @@
 
   .selected {
     border: 0;
-    background-color: #4CB5F5;
+    background-color: $blueSky;
     color: white;
     font-weight: bold;
   }

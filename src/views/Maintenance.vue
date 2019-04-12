@@ -118,6 +118,8 @@
 
 <style scoped lang="scss">
 
+  @import "../assets/colors";
+
   .bike-selection {
     text-align: center;
     padding: 20px
@@ -134,7 +136,7 @@
     .graph {
       margin-top: 100px;
       margin-right: 50px;
-      background-color: #4CB5F5;
+      background-color: $blueSky;
     }
 
     .maintenence {
@@ -155,8 +157,8 @@
         font-size: small;
         height: 50px;
         color: white;
-        background-color: #4CB5F5;
-        border: 1px solid #4CB5F5;
+        background-color: $blueSky;
+        border: 1px solid $blueSky;
         position: absolute;
         top: -66px;
         right: -22px;
@@ -179,7 +181,7 @@
           position: absolute;
           right: 10px;
           bottom: -21px;
-          border-top: 10px solid #4CB5F5;
+          border-top: 10px solid $blueSky;
         }
       }
     }
@@ -219,7 +221,7 @@
 
   .selected {
     border: 0;
-    background-color: #4CB5F5;
+    background-color: $blueSky;
     color: white;
     font-weight: bold;
   }

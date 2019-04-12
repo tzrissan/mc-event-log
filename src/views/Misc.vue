@@ -72,7 +72,9 @@
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
+  @import "../assets/colors";
 
   table {
     border: 1px solid black;
@@ -129,7 +131,6 @@
 
   .bike-selection {
     text-align: center;
-    #border-bottom: 1px solid lightgray;
     padding: 20px
   }
 
@@ -148,7 +149,7 @@
 
   .selected {
     border: 0;
-    background-color: #4CB5F5;
+    background-color: $blueSky;
     color: white;
     font-weight: bold;
   }

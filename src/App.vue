@@ -28,25 +28,11 @@
     margin: 0;
     min-width: 600px;
   }
-
-  .blueSky {
-    color: #4CB5F5
-  }
-
-  .granite {
-    color: #B7B8B6
-  }
-
-  .pine {
-    color: #34675C
-  }
-
-  .fields {
-    color: #B3C100
-  }
 </style>
 
 <style lang="scss" scoped>
+
+  @import "./assets/colors";
 
   div.tabs {
     display: grid;
@@ -65,7 +51,7 @@
       background-color: white;
 
       &:first-child a {
-        color: #B3C100;
+        color: $fields;
         font-size: 30px;
         font-weight: bolder;
         padding: 0 20px;
@@ -79,7 +65,7 @@
 
         &.router-link-active {
           color: white;
-          background-color: #4CB5F5 !important;
+          background-color: $blueSky !important;
         }
       }
 

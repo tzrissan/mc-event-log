@@ -42,7 +42,7 @@
 <script>
 
   import _ from 'lodash'
-  import GasLogData, { PROD } from '@/data'
+  import GasLogData, {PROD} from '@/data'
   import axios from 'axios'
 
   const local = {
@@ -60,14 +60,14 @@
 
   let global
 
-  function resetForm () {
+  function resetForm() {
     local.date = new Date().toISOString().split('T')[0]
     local.fuel = undefined
     local.odo = undefined
     local.info = 'Malmi-Hki'
   }
 
-  function updateNewEventsToGlobalData (local, global, newEvents) {
+  function updateNewEventsToGlobalData(local, global, newEvents) {
     newEvents.forEach(
       function (newEvent) {
         local.newEvent = newEvent
@@ -84,20 +84,20 @@
   const readDataFromGlobalToLocal = (local, global) => {
     local.currentBike = global.latestBike
     local.isLoading = _.isUndefined(local.currentBike)
-    local.minOdo = _.chain(global.events).filter({ bike: local.currentBike }).sortBy('odo').map(e => e.odo).last().value() || 0
+    local.minOdo = _.chain(global.events).filter({bike: local.currentBike}).sortBy('odo').map(e => e.odo).last().value() || 0
     local.maxOdo = local.minOdo + 1000
   }
 
   export default {
     name: 'NewEvent',
-    data () {
+    data() {
       global = GasLogData.get()
       resetForm()
       readDataFromGlobalToLocal(local, global)
-      return { local, global }
+      return {local, global}
     },
     methods: {
-      saveNewLine (e) {
+      saveNewLine(e) {
         e.preventDefault()
         local.isSaving = true
         if (!PROD) {
@@ -116,7 +116,7 @@
       }
     },
     watch: {
-      'global.latestBike' () {
+      'global.latestBike'() {
         readDataFromGlobalToLocal(local, global)
       }
     }
@@ -124,7 +124,10 @@
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
+  @import "../assets/colors";
+
   fieldset {
     border: 0;
     width: 400px
@@ -134,9 +137,11 @@
     color: graytext;
   }
 
-  .new-line label {
-    width: 80px;
-    display: inline-block;
+  .new-line {
+    label {
+      width: 80px;
+      display: inline-block;
+    }
   }
 
   input {
@@ -155,14 +160,14 @@
 
   input[type="submit"], input[type="button"] {
     height: 1.8em;
-    background: #4CB5F5;
+    background: $blueSky;
     width: 172px;
     font-size: large;
     font-weight: bold;
   }
 
   input[type="submit"]:disabled {
-    background: #B7B8B6;
+    background: $granite;
   }
 
   .newEvent {
@@ -171,14 +176,16 @@
     padding: 20px
   }
 
-  .newEvent .title {
-    font-size: large;
-    font-weight: bold;
-    margin-bottom: 10px
-  }
+  .newEvent {
+    .title {
+      font-size: large;
+      font-weight: bold;
+      margin-bottom: 10px
+    }
 
-  .newEvent input[type="button"] {
-    margin-top: 20px;
+    input[type="button"] {
+      margin-top: 20px;
+    }
   }
 
 </style>
