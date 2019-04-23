@@ -54,7 +54,7 @@ function countMilages (events) {
 
   function countDistancesForMaintenance (bike) {
     const bikeMaintenanceEvents = _.chain(events).filter({ type: 'MAINTENANCE', bike: bike }).sortBy('odo').value()
-    var prev
+    let prev = _.chain(events).filter({ bike: bike }).sortBy('odo').first().value()
     _.each(bikeMaintenanceEvents, function (current) {
       if (prev) {
         current.dist = current.odo - prev.odo

@@ -1,41 +1,28 @@
 <template>
   <div>
-    <div class="bike-selection">
-      <div class="bike-selection-grid">
-        <div class="grid-item"
-             v-for="bike in global.bikes"
-             v-on:click="selectBike(bike)"
-             v-bind:class="{selected: selectedBike === bike}"
-             v-bind:key="bike"
-        >{{ bike }}
-        </div>
-      </div>
-    </div>
-
     <div class="mc">
-      <div class="maintenence current">
-        <div class="info">Viimeisin havainto pyörästä:<br>
-          odo: {{ latestOdo }} <br>
-          pvm: {{ latestDate | moment("D.M.YYYY") }}
-        </div>
-        <span class="updownarrow">&#x2195;</span>
-        <span class="dist"> {{ currentMaintenanceDistance }} km</span>
-      </div>
-    </div>
-    <div class="mc">
-      <div class="graph">
-        <div v-for="event in maintenanceEvents"
-             :key="event.odo"
-             :style="width(event.dist, latestOdo)"
-             class="maintenence">
-          <div class="distance">{{ event.dist }} km</div>
-          <div class="desc">
-            {{ event.date | moment("D.M.YYYY") }}<br>
-            {{ event.info }}<br>
-            {{ event.odo }}
-          </div>
-        </div>
-      </div>
+      <table>
+        <col width="80"/>
+        <col/>
+        <tr class="bike" v-for="bike in allData" :key="bike.bike">
+          <td class="bike-name">{{bike.bike}}</td>
+          <td>
+            <div class="graph">
+              <div v-for="event in bike.maintenances"
+                   :key="event.odo"
+                   :style="event.style"
+                   :class="{ maintenence: true, myEvent: event.myEvent, firstEvent: event.firstEvent, current: event.current }">
+                <div class="desc">
+                  <div class="date">{{ event.date | moment("D.M.YYYY") }}</div>
+                  <div>{{ event.info }}</div>
+                  <div>{{ event.odo }}</div>
+                  <div v-if="event.dist">{{ event.dist }} km</div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </template>
@@ -51,36 +38,83 @@
   export default {
     name: 'Maintenance',
     data: function () {
-      return { local, global: GasLogData.get() }
+      return {local, global: GasLogData.get()}
     },
     computed: {
+      allData() {
+        const events = this.global.events
+        const maxOdo = Math.max(...this.global.events.map(e => e.odo))
+        const width = (dist) => {
+          const width = Math.trunc((dist / maxOdo) * 10000) / 100
+          return `width: calc(${width}% - 2px);`
+        }
+        return this.global.bikes
+          .map(bike => {
+            const bikeEvents = _.filter(events, {bike})
+            const odos = bikeEvents.map(e => e.odo)
+            const dates = bikeEvents.map(e => e.date).sort()
+            const minOdo = Math.min(...odos)
+            const maxOdo = Math.max(...odos)
+            const minDate = _.first(dates)
+            const maxDate = _.last(dates)
+            const maintenances = _.filter(bikeEvents, {type: 'MAINTENANCE'}).map(e => ({
+              odo: e.odo,
+              dist: e.dist,
+              info: e.info,
+              date: e.date,
+              myEvent: true,
+              firstEvent: false,
+              current: false,
+              style: width(e.dist)
+            }))
+            const spacer = {
+              odo: minOdo,
+              info: 'Enimmäinen merkintä',
+              date: minDate,
+              myEvent: false,
+              firstEvent: true,
+              current: false,
+              style: width(minOdo)
+            }
+            const lastMaintenanceOdo = maintenances.length > 0 ? Math.max(...maintenances.map(m => m.odo)) : minOdo
+            const currentMaintenanceDistance = maxOdo - lastMaintenanceOdo
+            const upcoming = {
+              odo: maxOdo,
+              dist: currentMaintenanceDistance,
+              info: 'Viimeisin merkintä',
+              date: maxDate,
+              myEvent: false,
+              firstEvent: false,
+              current: true,
+              style: width(currentMaintenanceDistance)
+            }
+            maintenances.push(upcoming)
+            return {
+              bike, minOdo, maxOdo, maintenances: [spacer, ...maintenances]
+            }
+          })
+          .reverse()
+      },
+      // -----------------------------------------------------------------------------------
       selectedBike: function () {
         return local.selectedBike ? local.selectedBike : this.global.latestBike
       },
       maintenanceEvents: function () {
         return _.chain(this.global.events)
-          .filter({ bike: this.selectedBike, type: 'MAINTENANCE' })
-          .sortBy('date')
+          .filter({bike: this.selectedBike, type: 'MAINTENANCE'})
+          .sortBy(['odo', 'date'])
           .value()
       },
       currentMaintenanceDistance: function () {
-        const lastMaintenance = _.chain(this.global.events)
-          .filter({ bike: this.selectedBike, type: 'MAINTENANCE' })
-          .sortBy(['odo', 'date'])
+        const lastMaintenance = _.chain(this.maintenanceEvents)
           .last()
           .get('odo', '0')
           .value()
-        const latestUpdate = _.chain(this.global.events)
-          .filter({ bike: this.selectedBike })
-          .sortBy(['odo', 'date'])
-          .last()
-          .get('odo', '0')
-          .value()
-        return parseInt(latestUpdate) - parseInt(lastMaintenance)
+        return parseInt(this.latestOdo) - parseInt(lastMaintenance)
       },
       firstOdo: function () {
         return _.chain(this.global.events)
-          .filter({ bike: this.selectedBike })
+          .filter({bike: this.selectedBike})
           .sortBy('date')
           .first()
           .get('odo', '0')
@@ -88,15 +122,15 @@
       },
       latestOdo: function () {
         return _.chain(this.global.events)
-          .filter({ bike: this.selectedBike })
-          .sortBy('date')
+          .filter({bike: this.selectedBike})
+          .sortBy(['odo', 'date'])
           .last()
           .get('odo', '0')
           .value()
       },
       latestDate: function () {
         return _.chain(this.global.events)
-          .filter({ bike: this.selectedBike })
+          .filter({bike: this.selectedBike})
           .sortBy('date')
           .last()
           .get('date')
@@ -104,10 +138,10 @@
       }
     },
     methods: {
-      selectBike: (bike) => {
+      selectBike(bike) {
         local.selectedBike = bike
       },
-      width (dist, totalDist) {
+      width(dist, totalDist) {
         const width = Math.trunc((dist / totalDist) * 10000) / 100
         return `width: calc(${width}% - 2px);`
       }
@@ -120,68 +154,118 @@
 
   @import "../assets/colors";
 
-  .bike-selection {
-    text-align: center;
-    padding: 20px
-  }
-
-  .current {
-    border-bottom: 1px solid lightgray;
-  }
-
   .mc {
-    align: center;
-    padding: 20px;
+    margin-top: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
 
-    .graph {
-      margin-top: 100px;
-      margin-right: 50px;
-      background-color: $blueSky;
-    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
 
-    .maintenence {
-      display: inline-block;
-      height: 30px;
-      padding-top: 5px;
-      border-right: 2px solid white;
-      position: relative;
-      .distance {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        padding: 5px;
-        text-align: center;
-      }
-      .desc {
-        padding: 3px 10px 2px 5px;
-        font-size: small;
-        height: 50px;
-        color: white;
-        background-color: $blueSky;
-        border: 1px solid $blueSky;
-        position: absolute;
-        top: -66px;
-        right: -22px;
-        white-space: nowrap;
-        &::before {
-          content: "";
-          width: 2px;
-          height: 57px;
-          border: 0;
-          background-color: white;
-          position: absolute;
-          left: -2px;
-          top: -1px;
+      .bike {
+
+        .bike-name {
+          text-align: center;
+          vertical-align: center;
         }
-        &::after {
-          content: "";
-          width: 0px;
-          height: 0px;
-          border: 10px solid transparent;
-          position: absolute;
-          right: 10px;
-          bottom: -21px;
-          border-top: 10px solid $blueSky;
+
+        .graph {
+          padding-top: 90px;
+          padding-bottom: 90px;
+
+          .maintenence {
+            display: inline-block;
+            height: 30px;
+            padding-top: 5px;
+            border: none;
+            border-right: 2px solid white;
+            background-color: lightgrey;
+            text-align: center;
+            position: relative;
+
+            .desc {
+              padding: 3px 10px 2px 5px;
+              font-size: small;
+              height: 65px;
+              background-color: white;
+              border: 2px solid $blueSky;
+              position: absolute;
+              top: -83px;
+              right: -22px;
+              white-space: nowrap;
+              z-index: 4;
+              text-align: right;
+
+              &:hover {
+                z-index: 5;
+              }
+
+              .date {
+                border-bottom: 1px solid lightgrey;
+              }
+            }
+
+            &.myEvent {
+              background-color: $blueSky;
+
+              .desc::after {
+                content: "";
+                width: 0px;
+                height: 0px;
+                border: 10px solid transparent;
+                position: absolute;
+                right: 10px;
+                bottom: -21px;
+                border-top-color: $blueSky;
+              }
+            }
+
+            &.current {
+              background-color: $fields;
+              font-size: initial;
+
+              .desc {
+                top: initial;
+                bottom: -83px;
+                border-color: $fields;
+
+                &::after {
+                  content: "";
+                  width: 0px;
+                  height: 0px;
+                  border: 10px solid transparent;
+                  position: absolute;
+                  right: 12px;
+                  top: -21px;
+                  border-bottom-color: $fields;
+                }
+              }
+            }
+
+            &.firstEvent {
+              background-color: lightgrey;
+              font-size: initial;
+
+              .desc {
+                top: initial;
+                bottom: -83px;
+                border-color: lightgrey;
+                right: -70px;
+
+                &::after {
+                  content: "";
+                  width: 0px;
+                  height: 0px;
+                  border: 10px solid transparent;
+                  position: absolute;
+                  right: 57px;
+                  top: -21px;
+                  border-bottom-color: lightgrey;
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -204,26 +288,6 @@
       padding: 0;
       margin: 0 0 0 80px;
     }
-  }
-
-  .bike-selection-grid {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    grid-row-gap: 5px;
-    grid-column-gap: 5px;
-  }
-
-  .grid-item {
-    border: 1px solid black;
-    text-align: center;
-    padding: 10px;
-  }
-
-  .selected {
-    border: 0;
-    background-color: $blueSky;
-    color: white;
-    font-weight: bold;
   }
 
 </style>
