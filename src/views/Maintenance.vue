@@ -34,7 +34,9 @@
   export default {
     name: 'Maintenance',
     data: function () {
-      return {global: GasLogData.get()}
+      return {
+        global: GasLogData.get()
+      }
     },
     computed: {
       allData() {

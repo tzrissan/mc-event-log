@@ -1,90 +1,45 @@
 <template>
   <div>
-    <div class="bike-selection">
-      <div class="bike-selection-grid">
-        <div class="grid-item"
-             v-for="bike in global.bikes"
-             v-on:click="selectBike(bike)"
-             v-bind:class="{selected: selectedBike === bike}"
-             v-bind:key="bike"
-        >{{ bike }}
-        </div>
-      </div>
-    </div>
-
     <div class="mc">
-      <svg width="500" height="300">
-
-        <!-- Frame -->
-        <polygon points="210,160 280,270, 130,270, 100,160" style="fill:black"/>
-        <ellipse cx="150" cy="140" rx="70" ry="40" style="fill:white" transform="rotate(10, 150 140)"/>
-
-        <!-- V2-->
-        <polygon points="310,230, 290,220, 270,260, 290,270" style="fill:black"/>
-        <polygon points="250,230, 270,220, 290,260, 270,270" stroke="white" stroke-width="5" style="fill:red"/>
-        <polygon points="250,230, 270,220, 290,260, 270,270" style="fill:black"/>
-        <circle r="10" cx="280" cy="260" stroke="white" stroke-width="14" fill="white"/>
-        <circle r="10" cx="280" cy="260" stroke="black" stroke-width="10" fill="white"/>
-
-        <!-- Tank -->
-        <ellipse cx="250" cy="170" rx="85" ry="35" style="fill:white" transform="rotate(-20, 250 170)"/>
-        <ellipse cx="305" cy="167" rx="33" ry="40" style="fill:white"/>
-        <ellipse cx="263" cy="185" rx="70" ry="30" style="fill:white"/>
-        <polygon points="263,215 230,215 200,214, 250,205" style="fill:white"/>
-
-        <ellipse cx="250" cy="170" rx="80" ry="30" style="fill:black" transform="rotate(-20, 250 170)"/>
-        <ellipse cx="305" cy="167" rx="30" ry="35" style="fill:black"/>
-        <ellipse cx="263" cy="185" rx="65" ry="25" style="fill:black"/>
-        <polygon points="263,210 230,210 200,209, 250,200" style="fill:black"/>
-
-        <!-- Handlebars -->
-        <polygon points="360,174, 367,166, 280,88, 275,92" style="fill:black"/>
-        <polygon points="280,88, 285,94, 250,97 250,91" style="fill:black"/>
-
-        <!-- Tyres -->
-        <circle r="75" cx="415" cy="217" stroke="black" stroke-width="15" fill="none"/>
-        <circle r="55" cx="70" cy="233" stroke="white" stroke-width="30" fill="none"/>
-        <circle r="55" cx="70" cy="233" stroke="black" stroke-width="20" fill="none"/>
-
-        <!-- actual information -->
-        <text v-if="selectedBike && currentFrontTyreDistance" x="415" y="217" dy="-0.3em" text-anchor="middle">{{
-          currentFrontTyreDistance }} km
-        </text>
-        <text v-if="selectedBike && lastFrontTyreChange" x="415" y="217" dy="0.9em" text-anchor="middle">{{
-          lastFrontTyreChange | moment("D.M.YYYY") }}
-        </text>
-        <text v-if="selectedBike && currentRearTyreDistance" x="70" y="233" dy="-0.3em" text-anchor="middle">{{
-          currentRearTyreDistance }} km
-        </text>
-        <text v-if="selectedBike && lastRearTyreChange" x="70" y="233" dy="0.9em" text-anchor="middle">{{
-          lastRearTyreChange | moment("D.M.YYYY") }}
-        </text>
-      </svg>
-
-      <div class="tyre-history-grid">
-        <div class="grid-item">
-          <h1>Takarenkaan vaihdot</h1>
-          <div class="tyreChange"
-               v-for="event in rearTyreChanges"
-               v-bind:key="event.odo">
-            <div class="odo" v-if="event.odo">{{event.odo}}</div>
-            <div class="date">{{event.date | moment("D.M.YYYY") }}</div>
-            <div class="info">{{event.info}}</div>
-            <div class="dist" v-if="event.dist">{{event.dist}} km</div>
-          </div>
-        </div>
-        <div class="grid-item">
-          <h1>Eturenkaan vaihdot</h1>
-          <div class="tyreChange"
-               v-for="event in frontTyreChanges"
-               v-bind:key="event.odo">
-            <div class="odo" v-if="event.odo">{{event.odo}}</div>
-            <div class="date">{{event.date | moment("D.M.YYYY") }}</div>
-            <div class="info">{{event.info}}</div>
-            <div class="dist" v-if="event.dist">{{event.dist}} km</div>
-          </div>
-        </div>
-      </div>
+      <table>
+        <col width="80"/>
+        <col/>
+        <tr class="bike" v-for="bike in allData" :key="bike.bike">
+          <td class="bike-name">{{bike.bike}}</td>
+          <td>
+            <div class="graph">
+              <div class="front">
+                <div v-for="event in bike.TYRE_FRONT.maintenances"
+                     :key="event.odo"
+                     :style="event.style"
+                     class="tyre-front"
+                     :class="{ myEvent: event.myEvent, firstEvent: event.firstEvent, current: event.current }">
+                  <div class="desc">
+                    <div class="date">{{ event.date | moment("D.M.YYYY") }}</div>
+                    <div>{{ event.info }}</div>
+                    <div>{{ event.odo }}</div>
+                    <div v-if="event.dist">{{ event.dist }} km</div>
+                  </div>
+                </div>
+              </div>
+              <div class="rear">
+                <div v-for="event in bike.TYRE_REAR.maintenances"
+                     :key="event.odo"
+                     :style="event.style"
+                     class="tyre-rear"
+                     :class="{ myEvent: event.myEvent, firstEvent: event.firstEvent, current: event.current }">
+                  <div class="desc">
+                    <div class="date">{{ event.date | moment("D.M.YYYY") }}</div>
+                    <div>{{ event.info }}</div>
+                    <div>{{ event.odo }}</div>
+                    <div v-if="event.dist">{{ event.dist }} km</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </template>
@@ -93,84 +48,75 @@
   import _ from 'lodash'
   import GasLogData from '../data.js'
 
-  const local = {
-    selectedBike: undefined
-  }
-
   export default {
     name: 'Tyres',
     data: function () {
-      const global = GasLogData.get()
-      return { local, global }
+      return {
+        global: GasLogData.get()
+      }
     },
     computed: {
-      selectedBike: function () {
-        return local.selectedBike ? local.selectedBike : this.global.latestBike
+      maxOdo() {
+        return Math.max(...this.global.events.map(e => e.odo))
       },
-      frontTyreChanges: function () {
-        return _.chain(this.global.events)
-          .filter({ bike: this.selectedBike, type: 'TYRE_FRONT' })
-          .sortBy('date')
-          .reverse()
-          .value()
-      },
-      rearTyreChanges: function () {
-        return _.chain(this.global.events)
-          .filter({ bike: this.selectedBike, type: 'TYRE_REAR' })
-          .sortBy('date')
-          .reverse()
-          .value()
-      },
-      lastFrontTyreChange: function () {
-        return _.chain(this.global.events)
-          .filter({ bike: this.selectedBike, type: 'TYRE_FRONT' })
-          .sortBy('date')
-          .last()
-          .get('date')
-          .value()
-      },
-      lastRearTyreChange: function () {
-        return _.chain(this.global.events)
-          .filter({ bike: this.selectedBike, type: 'TYRE_REAR' })
-          .sortBy('date')
-          .last()
-          .get('date')
-          .value()
-      },
-      currentFrontTyreDistance: function () {
-        const lastChange = _.chain(this.global.events)
-          .filter({ bike: this.selectedBike, type: 'TYRE_FRONT' })
-          .sortBy(['odo', 'date'])
-          .last()
-          .get('odo', '0')
-          .value()
-        const latestUpdate = _.chain(this.global.events)
-          .filter({ bike: this.selectedBike })
-          .sortBy(['odo', 'date'])
-          .last()
-          .get('odo', '0')
-          .value()
-        return parseInt(latestUpdate) - parseInt(lastChange)
-      },
-      currentRearTyreDistance: function () {
-        const lastChange = _.chain(this.global.events)
-          .filter({ bike: this.selectedBike, type: 'TYRE_REAR' })
-          .sortBy('date')
-          .last()
-          .get('odo', '0')
-          .value()
-        const latestUpdate = _.chain(this.global.events)
-          .filter({ bike: this.selectedBike })
-          .sortBy('date')
-          .last()
-          .get('odo', '0')
-          .value()
-        return parseInt(latestUpdate) - parseInt(lastChange)
+      allData() {
+        return this.global.bikes
+          .flatMap(bike => ({
+              bike,
+              TYRE_FRONT: this.statsForBike(bike, 'TYRE_FRONT', 'eturengas'),
+              TYRE_REAR: this.statsForBike(bike, 'TYRE_REAR', 'takanakki')
+            })
+          ).reverse()
       }
     },
     methods: {
-      selectBike: (bike) => {
-        local.selectedBike = bike
+      statsForBike(bike, eventType, title) {
+        const bikeEvents = _.filter(this.global.events, {bike})
+        const odos = bikeEvents.map(e => e.odo)
+        const dates = bikeEvents.map(e => e.date).sort()
+        const minOdo = Math.min(...odos)
+        const maxOdo = Math.max(...odos)
+        const minDate = _.first(dates)
+        const maxDate = _.last(dates)
+        const width = this.width
+        const maintenances = _.filter(bikeEvents, {type: eventType}).map(e => ({
+          odo: e.odo,
+          dist: e.dist,
+          info: e.info,
+          date: e.date,
+          myEvent: true,
+          firstEvent: false,
+          current: false,
+          style: width(e.dist)
+        }))
+        const spacer = {
+          odo: minOdo,
+          info: 'Enimmäinen merkintä',
+          date: minDate,
+          myEvent: false,
+          firstEvent: true,
+          current: false,
+          style: width(minOdo)
+        }
+        const lastMaintenanceOdo = maintenances.length > 0 ? Math.max(...maintenances.map(m => m.odo)) : minOdo
+        const currentMaintenanceDistance = maxOdo - lastMaintenanceOdo
+        const upcoming = {
+          odo: maxOdo,
+          dist: currentMaintenanceDistance,
+          info: 'Viimeisin merkintä',
+          date: maxDate,
+          myEvent: false,
+          firstEvent: false,
+          current: true,
+          style: width(currentMaintenanceDistance)
+        }
+        return {
+          title: `${bike}, ${title}`, minOdo, maxOdo, maintenances: [spacer, ...maintenances, upcoming]
+        }
+      },
+      width(dist) {
+        const width = Math.trunc((dist / this.maxOdo) * 10000) / 100
+        return `width: calc(${width}% - 2px);`
       }
     }
   }
@@ -181,67 +127,198 @@
 
   @import "../assets/colors";
 
-  .bike-selection {
-    text-align: center;
-    padding: 20px
-  }
-
   .mc {
-    text-align: left;
-    width: 500px;
-    margin: 0 auto;
-  }
+    margin-top: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
 
-  .tyreChange:not(:last-child) {
-    border-bottom: 1px solid grey;
-    padding: 0 10px;
-  }
+    table {
+      width: 100%;
+      border-collapse: collapse;
 
-  .tyreChange div:not(:last-child) {
-    border-right: 1px solid grey;
-  }
+      .bike {
 
-  .odo, .dist, .info, .date {
-    display: inline-block;
-    white-space: nowrap;
-    padding: 0 5px;
-  }
+        border-bottom: 1px solid lightgrey;
 
-  .dist {
-    font-size: small;
-  }
+        .bike-name {
+          text-align: center;
+          vertical-align: center;
+        }
 
-  .bike-selection-grid {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    grid-row-gap: 5px;
-    grid-column-gap: 5px;
-  }
+        .graph {
+          padding-top: 110px;
+          padding-bottom: 110px;
 
-  .grid-item {
-    border: 1px solid black;
-    text-align: center;
-    padding: 10px;
-  }
+          .tyre-front, .tyre-rear {
+            display: inline-block;
+            height: 30px;
+            padding-top: 5px;
+            border: none;
+            border-right: 2px solid white;
+            background-color: lightgrey;
+            text-align: center;
+            position: relative;
 
-  .tyre-history-grid {
-    display: grid;
-    grid-template-columns: auto auto;
-    grid-row-gap: 5px;
-    grid-column-gap: 5px;
-    grid-item {
-      border: none;
+            .desc {
+              padding: 3px 10px 2px 5px;
+              font-size: small;
+              height: 65px;
+              background-color: white;
+              border: 2px solid $blueSky;
+              position: absolute;
+              top: -83px;
+              right: -22px;
+              white-space: nowrap;
+              z-index: 4;
+              text-align: right;
+
+              &:hover {
+                z-index: 5;
+              }
+
+              .date {
+                border-bottom: 1px solid lightgrey;
+              }
+            }
+
+            &.myEvent {
+              background-color: $blueSky;
+
+              .desc::after {
+                content: "";
+                width: 0px;
+                height: 0px;
+                border: 10px solid transparent;
+                position: absolute;
+                right: 10px;
+                bottom: -21px;
+                border-top-color: $blueSky;
+              }
+            }
+
+            &.current {
+              background-color: $fields;
+              font-size: initial;
+
+              .desc {
+                top: initial;
+                bottom: -83px;
+                border-color: $fields;
+
+                &::after {
+                  content: "";
+                  width: 0px;
+                  height: 0px;
+                  border: 10px solid transparent;
+                  position: absolute;
+                  right: 12px;
+                  top: -21px;
+                  border-bottom-color: $fields;
+                }
+
+                &::before {
+                  content: "";
+                  width: 0px;
+                  height: 0px;
+                  border: 10px solid transparent;
+                  position: absolute;
+                  right: 12px;
+                  bottom: -21px;
+                  border-top-color: $fields;
+                }
+              }
+            }
+
+            &.firstEvent {
+              background-color: lightgrey;
+              font-size: initial;
+
+              .desc {
+                top: initial;
+                bottom: -83px;
+                border-color: lightgrey;
+                right: -70px;
+
+                &::after {
+                  content: "";
+                  width: 0px;
+                  height: 0px;
+                  border: 10px solid transparent;
+                  position: absolute;
+                  right: 57px;
+                  top: -21px;
+                  border-bottom-color: lightgrey;
+                }
+
+                &::before {
+                  content: "";
+                  width: 0px;
+                  height: 0px;
+                  border: 10px solid transparent;
+                  position: absolute;
+                  right: 57px;
+                  bottom: -21px;
+                  border-top-color: lightgrey;
+                }
+              }
+            }
+          }
+
+          .rear {
+            padding-top: 90px;
+          }
+
+          .tyre-rear {
+            &.firstEvent, &.current {
+              color: red;
+
+              .desc {
+                display: none;
+              }
+            }
+
+            &.myEvent {
+              .desc {
+                top: initial;
+                bottom: -83px;
+                border-color: $blueSky;
+                right: -70px;
+
+                &::after {
+                  content: "";
+                  width: 0px;
+                  height: 0px;
+                  border: 10px solid transparent;
+                  position: absolute;
+                  right: 57px;
+                  top: -21px;
+                  border-bottom-color: $blueSky;
+                }
+              }
+            }
+          }
+        }
+      }
     }
-    h1 {
-      font-size: large;
-    }
   }
 
-  .selected {
-    border: 0;
-    background-color: $blueSky;
-    color: white;
-    font-weight: bold;
+  .maintenence {
+    div.info {
+      align: center;
+      padding: 5px;
+      margin: 0 50px;
+    }
+
+    span.dist {
+      padding: 5px;
+      font-size: small;
+    }
+
+    span.updownarrow {
+      font-size: x-large;
+      padding: 0;
+      margin: 0 0 0 80px;
+    }
   }
 
 </style>
