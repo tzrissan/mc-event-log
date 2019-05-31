@@ -4,6 +4,7 @@ import GasLog from './views/GasLog.vue'
 import Maintenance from './views/Maintenance.vue'
 import Tyres from './views/Tyres.vue'
 import Stats from './views/Stats.vue'
+import Taulukot from './views/Taulukot.vue'
 import Misc from './views/Misc.vue'
 
 const routes = [
@@ -37,10 +38,16 @@ const routes = [
     component: Tyres
   },
   {
+    path: '/graphs',
+    name: 'graphs',
+    title: 'Käppyrät',
+    component: Stats
+  },
+  {
     path: '/stats',
     name: 'stats',
-    title: 'Tilastot',
-    component: Stats
+    title: 'Taulukot',
+    component: Taulukot
   },
   {
     path: '/misc',

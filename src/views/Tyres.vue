@@ -15,7 +15,7 @@
                      class="tyre-front"
                      :class="{ myEvent: event.myEvent, firstEvent: event.firstEvent, current: event.current }">
                   <div class="desc">
-                    <div class="date">{{ event.date | moment("D.M.YYYY") }}</div>
+                    <div class="date">{{ event.date | moment('D.M.YYYY') }}</div>
                     <div>{{ event.info }}</div>
                     <div>{{ event.odo }}</div>
                     <div v-if="event.dist">{{ event.dist }} km</div>
@@ -29,7 +29,7 @@
                      class="tyre-rear"
                      :class="{ myEvent: event.myEvent, firstEvent: event.firstEvent, current: event.current }">
                   <div class="desc">
-                    <div class="date">{{ event.date | moment("D.M.YYYY") }}</div>
+                    <div class="date">{{ event.date | moment('D.M.YYYY') }}</div>
                     <div>{{ event.info }}</div>
                     <div>{{ event.odo }}</div>
                     <div v-if="event.dist">{{ event.dist }} km</div>
@@ -56,22 +56,22 @@
       }
     },
     computed: {
-      maxOdo() {
+      maxOdo () {
         return Math.max(...this.global.events.map(e => e.odo))
       },
-      allData() {
+      allData () {
         return this.global.bikes
           .flatMap(bike => ({
-              bike,
-              TYRE_FRONT: this.statsForBike(bike, 'TYRE_FRONT', 'eturengas'),
-              TYRE_REAR: this.statsForBike(bike, 'TYRE_REAR', 'takanakki')
-            })
-          ).reverse()
+            bike,
+            TYRE_FRONT: this.statsForBike(bike, 'TYRE_FRONT', 'eturengas'),
+            TYRE_REAR: this.statsForBike(bike, 'TYRE_REAR', 'takanakki')
+          }))
+          .reverse()
       }
     },
     methods: {
-      statsForBike(bike, eventType, title) {
-        const bikeEvents = _.filter(this.global.events, {bike})
+      statsForBike (bike, eventType, title) {
+        const bikeEvents = _.filter(this.global.events, { bike })
         const odos = bikeEvents.map(e => e.odo)
         const dates = bikeEvents.map(e => e.date).sort()
         const minOdo = Math.min(...odos)
@@ -79,7 +79,7 @@
         const minDate = _.first(dates)
         const maxDate = _.last(dates)
         const width = this.width
-        const maintenances = _.filter(bikeEvents, {type: eventType}).map(e => ({
+        const maintenances = _.filter(bikeEvents, { type: eventType }).map(e => ({
           odo: e.odo,
           dist: e.dist,
           info: e.info,
@@ -114,7 +114,7 @@
           title: `${bike}, ${title}`, minOdo, maxOdo, maintenances: [spacer, ...maintenances, upcoming]
         }
       },
-      width(dist) {
+      width (dist) {
         const width = Math.trunc((dist / this.maxOdo) * 10000) / 100
         return `width: calc(${width}% - 2px);`
       }
@@ -270,8 +270,6 @@
 
           .tyre-rear {
             &.firstEvent, &.current {
-              color: red;
-
               .desc {
                 display: none;
               }

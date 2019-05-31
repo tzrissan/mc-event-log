@@ -36,7 +36,7 @@
 
   div.tabs {
     display: grid;
-    grid-template-columns: 90px auto auto auto auto auto;
+    grid-template-columns: 90px auto auto auto auto auto auto;
     grid-row-gap: 1px;
     grid-column-gap: 1px;
     background-color: black;
