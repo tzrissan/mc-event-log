@@ -31,14 +31,10 @@
   import _ from 'lodash'
   import GasLogData from '../data.js'
 
-  const local = {
-    selectedBike: undefined
-  }
-
   export default {
     name: 'Maintenance',
     data: function () {
-      return {local, global: GasLogData.get()}
+      return {global: GasLogData.get()}
     },
     computed: {
       allData() {
@@ -94,56 +90,6 @@
             }
           })
           .reverse()
-      },
-      // -----------------------------------------------------------------------------------
-      selectedBike: function () {
-        return local.selectedBike ? local.selectedBike : this.global.latestBike
-      },
-      maintenanceEvents: function () {
-        return _.chain(this.global.events)
-          .filter({bike: this.selectedBike, type: 'MAINTENANCE'})
-          .sortBy(['odo', 'date'])
-          .value()
-      },
-      currentMaintenanceDistance: function () {
-        const lastMaintenance = _.chain(this.maintenanceEvents)
-          .last()
-          .get('odo', '0')
-          .value()
-        return parseInt(this.latestOdo) - parseInt(lastMaintenance)
-      },
-      firstOdo: function () {
-        return _.chain(this.global.events)
-          .filter({bike: this.selectedBike})
-          .sortBy('date')
-          .first()
-          .get('odo', '0')
-          .value()
-      },
-      latestOdo: function () {
-        return _.chain(this.global.events)
-          .filter({bike: this.selectedBike})
-          .sortBy(['odo', 'date'])
-          .last()
-          .get('odo', '0')
-          .value()
-      },
-      latestDate: function () {
-        return _.chain(this.global.events)
-          .filter({bike: this.selectedBike})
-          .sortBy('date')
-          .last()
-          .get('date')
-          .value()
-      }
-    },
-    methods: {
-      selectBike(bike) {
-        local.selectedBike = bike
-      },
-      width(dist, totalDist) {
-        const width = Math.trunc((dist / totalDist) * 10000) / 100
-        return `width: calc(${width}% - 2px);`
       }
     }
   }

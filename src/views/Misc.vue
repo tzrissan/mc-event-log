@@ -1,16 +1,5 @@
 <template>
   <div>
-    <div class="bike-selection">
-      <div class="bike-selection-grid">
-        <div class="grid-item"
-             v-for="bike in global.bikes"
-             v-on:click="selectBike(bike)"
-             v-bind:class="{selected: selectedBike === bike}"
-             v-bind:key="bike"
-        >{{ bike }}
-        </div>
-      </div>
-    </div>
     <table>
       <thead>
       <tr>
@@ -38,32 +27,22 @@
   import _ from 'lodash'
   import GasLogData from '../data.js'
 
-  const local = {
-    selectedBike: undefined
-  }
-
   export default {
     name: 'Misc',
     data: function () {
       const global = GasLogData.get()
-      return { local, global }
+      return { global }
     },
     computed: {
-      selectedBike: function () {
-        return local.selectedBike ? local.selectedBike : this.global.latestBike
-      },
       otherEvents: function () {
         return _.chain(this.global.events)
-          .filter({ bike: this.selectedBike, type: 'OTHER' })
+          .filter({ type: 'OTHER' })
           .sortBy('date')
           .reverse()
           .value()
       }
     },
     methods: {
-      selectBike: (bike) => {
-        local.selectedBike = bike
-      },
       key: (event) => {
         return event.bike + event.odo + event.info
       }
