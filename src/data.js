@@ -13,9 +13,9 @@ const _data = {
   events: []
 }
 
-function countMilages(events) {
-  function countDistancesAndMilageForFuelEvents(bike) {
-    const bikeFuelEvents = _.chain(events).filter({type: 'FUEL', bike: bike}).sortBy('odo').value()
+function countMilages (events) {
+  function countDistancesAndMilageForFuelEvents (bike) {
+    const bikeFuelEvents = _.chain(events).filter({ type: 'FUEL', bike: bike }).sortBy('odo').value()
     let prev
     _.each(bikeFuelEvents, function (current) {
       if (prev) {
@@ -26,9 +26,9 @@ function countMilages(events) {
     })
   }
 
-  function countDistancesForFrontTyres(bike) {
-    const bikeFrontTyreEvents = _.chain(events).filter({type: 'TYRE_FRONT', bike: bike}).sortBy('odo').value()
-    let prev = _.chain(events).filter({bike: bike}).sortBy('odo').first().value()
+  function countDistancesForFrontTyres (bike) {
+    const bikeFrontTyreEvents = _.chain(events).filter({ type: 'TYRE_FRONT', bike: bike }).sortBy('odo').value()
+    let prev = _.chain(events).filter({ bike: bike }).sortBy('odo').first().value()
     _.each(bikeFrontTyreEvents, function (current) {
       if (prev) {
         current.dist = current.odo - prev.odo
@@ -39,18 +39,18 @@ function countMilages(events) {
     })
   }
 
-  function countDistancesForRearTyres(bike) {
-    const bikeRearTyreEvents = _.chain(events).filter({type: 'TYRE_REAR', bike: bike}).sortBy('odo').value()
-    let prev = _.chain(events).filter({bike: bike}).sortBy('odo').first().value()
+  function countDistancesForRearTyres (bike) {
+    const bikeRearTyreEvents = _.chain(events).filter({ type: 'TYRE_REAR', bike: bike }).sortBy('odo').value()
+    let prev = _.chain(events).filter({ bike: bike }).sortBy('odo').first().value()
     _.each(bikeRearTyreEvents, function (current) {
       current.dist = current.odo - prev.odo
       prev = current
     })
   }
 
-  function countDistancesForMaintenance(bike) {
-    const bikeMaintenanceEvents = _.chain(events).filter({type: 'MAINTENANCE', bike: bike}).sortBy('odo').value()
-    let prev = _.chain(events).filter({bike: bike}).sortBy('odo').first().value()
+  function countDistancesForMaintenance (bike) {
+    const bikeMaintenanceEvents = _.chain(events).filter({ type: 'MAINTENANCE', bike: bike }).sortBy('odo').value()
+    let prev = _.chain(events).filter({ bike: bike }).sortBy('odo').first().value()
     _.each(bikeMaintenanceEvents, function (current) {
       current.dist = current.odo - prev.odo
       prev = current
@@ -65,7 +65,7 @@ function countMilages(events) {
   })
 }
 
-function countExtraInformationFromData() {
+function countExtraInformationFromData () {
   _data.bikes = _.toPairs(_data.events.reduce((acc, event) => {
     if (!acc[event.bike] || acc[event.bike] < event.date) {
       acc[event.bike] = event.date
@@ -78,13 +78,13 @@ function countExtraInformationFromData() {
   _data.years = _.chain(_data.events).map(e => e.date).map(d => d.replace(DATE_REGEX, '$1')).uniq().sort().reverse().value()
   _data.months = _.chain(_data.events).map(e => e.date).map(d => d.replace(DATE_REGEX, '$2')).uniq().sort().value()
   _data.latestBike = _.chain(_data.events)
-    .filter({type: 'FUEL'})
+    .filter({ type: 'FUEL' })
     .sortBy('date')
     .last().value().bike
   countMilages(_data.events)
 }
 
-function reload() {
+function reload () {
   axios.create().get('/data')
     .then((response) => {
       _data.events = response.data
@@ -95,7 +95,7 @@ function reload() {
 reload()
 
 const GasLogData = {
-  get() {
+  get () {
     return _data
   },
   reload,

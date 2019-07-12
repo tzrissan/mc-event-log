@@ -13,7 +13,7 @@
                    :style="event.style"
                    :class="{ maintenence: true, myEvent: event.myEvent, firstEvent: event.firstEvent, current: event.current }">
                 <div class="desc">
-                  <div class="date">{{ event.date | moment("D.M.YYYY") }}</div>
+                  <div class="date">{{ event.date | moment('D.M.YYYY') }}</div>
                   <div>{{ event.info }}</div>
                   <div>{{ event.odo }}</div>
                   <div v-if="event.dist">{{ event.dist }} km</div>
@@ -39,7 +39,7 @@
       }
     },
     computed: {
-      allData() {
+      allData () {
         const events = this.global.events
         const maxOdo = Math.max(...this.global.events.map(e => e.odo))
         const width = (dist) => {
@@ -48,14 +48,14 @@
         }
         return this.global.bikes
           .map(bike => {
-            const bikeEvents = _.filter(events, {bike})
+            const bikeEvents = _.filter(events, { bike })
             const odos = bikeEvents.map(e => e.odo)
             const dates = bikeEvents.map(e => e.date).sort()
             const minOdo = Math.min(...odos)
             const maxOdo = Math.max(...odos)
             const minDate = _.first(dates)
             const maxDate = _.last(dates)
-            const maintenances = _.filter(bikeEvents, {type: 'MAINTENANCE'}).map(e => ({
+            const maintenances = _.filter(bikeEvents, { type: 'MAINTENANCE' }).map(e => ({
               odo: e.odo,
               dist: e.dist,
               info: e.info,
