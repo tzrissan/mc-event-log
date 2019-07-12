@@ -4,37 +4,52 @@
       <table>
         <col width="80"/>
         <col/>
-        <tr class="bike" v-for="bike in allData" :key="bike.bike">
-          <td class="bike-name">{{bike.bike}}</td>
+        <tr class="bike" v-for="bike in allData" :key="bike.name">
+          <td class="bike-name">{{bike.name}}</td>
           <td>
             <div class="graph">
               <div class="front">
-                <div v-for="event in bike.TYRE_FRONT.maintenances"
+                <div class="tyre-front firstEvent" :style="bike.firstEvent.style">
+                  <div class="desc">
+                    <div class="date">{{ bike.firstEvent.date | moment('D.M.YYYY') }}</div>
+                    <div>{{ bike.firstEvent.info }}</div>
+                    <div>{{ bike.firstEvent.odo }}</div>
+                    <div v-if="bike.firstEvent.dist">{{ bike.firstEvent.dist }} km</div>
+                  </div>
+                </div>
+                <div v-for="event in bike.TYRE_FRONT.tyreEvents"
                      :key="event.odo"
                      :style="event.style"
                      class="tyre-front"
-                     :class="{ myEvent: event.myEvent, firstEvent: event.firstEvent, current: event.current }">
+                     :class="{ myEvent: event.myEvent}">
                   <div class="desc">
-                    <div class="date">{{ event.date | moment('D.M.YYYY') }}</div>
+                    <div class="date">{{ event.date | moment('D.M.YYYY') }} | {{ event.odo }}</div>
                     <div>{{ event.info }}</div>
-                    <div>{{ event.odo }}</div>
                     <div v-if="event.dist">{{ event.dist }} km</div>
+                  </div>
+                </div>
+                <div class="tyre-front lastEvent" :style="bike.lastEvent.frontStyle">
+                  <div class="desc">
+                    <div class="date">{{ bike.lastEvent.date | moment('D.M.YYYY') }} | {{ bike.lastEvent.odo }}</div>
+                    <div>Eturengas: {{ bike.lastEvent.frontDist }} km</div>
+                    <div>Takarengas: {{ bike.lastEvent.rearDist }} km</div>
                   </div>
                 </div>
               </div>
               <div class="rear">
-                <div v-for="event in bike.TYRE_REAR.maintenances"
+                <div class="tyre-rear firstEvent" :style="bike.firstEvent.style"></div>
+                <div v-for="event in bike.TYRE_REAR.tyreEvents"
                      :key="event.odo"
                      :style="event.style"
                      class="tyre-rear"
                      :class="{ myEvent: event.myEvent, firstEvent: event.firstEvent, current: event.current }">
                   <div class="desc">
-                    <div class="date">{{ event.date | moment('D.M.YYYY') }}</div>
+                    <div class="date">{{ event.date | moment('D.M.YYYY') }} | {{ event.odo }}</div>
                     <div>{{ event.info }}</div>
-                    <div>{{ event.odo }}</div>
                     <div v-if="event.dist">{{ event.dist }} km</div>
                   </div>
                 </div>
+                <div class="tyre-rear lastEvent" :style="bike.lastEvent.rearStyle"></div>
               </div>
             </div>
           </td>
@@ -61,25 +76,59 @@
       },
       allData () {
         return this.global.bikes
+          .map(bike => ({
+            name: bike,
+            events: _.filter(this.global.events, { bike })
+          }))
           .flatMap(bike => ({
-            bike,
-            TYRE_FRONT: this.statsForBike(bike, 'TYRE_FRONT', 'eturengas'),
-            TYRE_REAR: this.statsForBike(bike, 'TYRE_REAR', 'takanakki')
+            name: bike.name,
+            firstEvent: this.firstEvent(bike.events),
+            lastEvent: this.lastEvent(bike.events),
+            TYRE_FRONT: this.statsForBike(bike.events, 'TYRE_FRONT'),
+            TYRE_REAR: this.statsForBike(bike.events, 'TYRE_REAR')
           }))
           .reverse()
       }
     },
     methods: {
-      statsForBike (bike, eventType, title) {
-        const bikeEvents = _.filter(this.global.events, { bike })
+      firstEvent (bikeEvents) {
+        const minOdo = Math.min(...bikeEvents.map(e => e.odo))
+        return {
+          odo: minOdo,
+          info: 'Enimmäinen merkintä',
+          date: _.first(bikeEvents.map(e => e.date).sort()),
+          myEvent: false,
+          firstEvent: true,
+          current: false,
+          style: this.width(minOdo)
+        }
+      },
+      lastEvent (bikeEvents) {
+        const minOdo = Math.min(...bikeEvents.map(e => e.odo))
+        const maxOdo = Math.max(...bikeEvents.map(e => e.odo))
+        const lastFrontChange = _.chain(bikeEvents).filter({ type: 'TYRE_FRONT' }).sortBy('odo').last().get('odo', minOdo).value()
+        const frontDist = maxOdo - lastFrontChange
+        const lastRearChange = _.chain(bikeEvents).filter({ type: 'TYRE_REAR' }).sortBy('odo').last().get('odo', minOdo).value()
+        const rearDist = maxOdo - lastRearChange
+        return {
+          odo: maxOdo,
+          frontDist,
+          rearDist,
+          info: 'Viimeisin merkintä',
+          date: _.last(bikeEvents.map(e => e.date).sort()),
+          myEvent: false,
+          firstEvent: true,
+          current: false,
+          frontStyle: this.width(frontDist),
+          rearStyle: this.width(rearDist)
+        }
+      },
+      statsForBike (bikeEvents, eventType) {
         const odos = bikeEvents.map(e => e.odo)
-        const dates = bikeEvents.map(e => e.date).sort()
         const minOdo = Math.min(...odos)
         const maxOdo = Math.max(...odos)
-        const minDate = _.first(dates)
-        const maxDate = _.last(dates)
         const width = this.width
-        const maintenances = _.filter(bikeEvents, { type: eventType }).map(e => ({
+        const tyreEvents = _.filter(bikeEvents, { type: eventType }).map(e => ({
           odo: e.odo,
           dist: e.dist,
           info: e.info,
@@ -89,29 +138,8 @@
           current: false,
           style: width(e.dist)
         }))
-        const spacer = {
-          odo: minOdo,
-          info: 'Enimmäinen merkintä',
-          date: minDate,
-          myEvent: false,
-          firstEvent: true,
-          current: false,
-          style: width(minOdo)
-        }
-        const lastMaintenanceOdo = maintenances.length > 0 ? Math.max(...maintenances.map(m => m.odo)) : minOdo
-        const currentMaintenanceDistance = maxOdo - lastMaintenanceOdo
-        const upcoming = {
-          odo: maxOdo,
-          dist: currentMaintenanceDistance,
-          info: 'Viimeisin merkintä',
-          date: maxDate,
-          myEvent: false,
-          firstEvent: false,
-          current: true,
-          style: width(currentMaintenanceDistance)
-        }
         return {
-          title: `${bike}, ${title}`, minOdo, maxOdo, maintenances: [spacer, ...maintenances, upcoming]
+          minOdo, maxOdo, tyreEvents
         }
       },
       width (dist) {
@@ -146,8 +174,8 @@
         }
 
         .graph {
-          padding-top: 110px;
-          padding-bottom: 110px;
+          padding-top: 90px;
+          padding-bottom: 90px;
 
           .tyre-front, .tyre-rear {
             display: inline-block;
@@ -162,11 +190,11 @@
             .desc {
               padding: 3px 10px 2px 5px;
               font-size: small;
-              height: 65px;
+              height: 50px;
               background-color: white;
               border: 2px solid $blueSky;
               position: absolute;
-              top: -83px;
+              top: -70px;
               right: -22px;
               white-space: nowrap;
               z-index: 4;
@@ -196,13 +224,13 @@
               }
             }
 
-            &.current {
+            &.lastEvent {
               background-color: $fields;
               font-size: initial;
 
               .desc {
                 top: initial;
-                bottom: -83px;
+                bottom: -70px;
                 border-color: $fields;
 
                 &::after {
@@ -235,7 +263,7 @@
 
               .desc {
                 top: initial;
-                bottom: -83px;
+                bottom: -70px;
                 border-color: lightgrey;
                 right: -70px;
 
@@ -265,7 +293,7 @@
           }
 
           .rear {
-            padding-top: 90px;
+            padding-top: 78px;
           }
 
           .tyre-rear {
@@ -278,7 +306,7 @@
             &.myEvent {
               .desc {
                 top: initial;
-                bottom: -83px;
+                bottom: -70px;
                 border-color: $blueSky;
                 right: -70px;
 
