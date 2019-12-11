@@ -348,7 +348,7 @@
                 fill: false,
                 data: months.map(m => countDistance(seasonEvents, byMonth(m))),
                 yAxisID: 'km',
-                hidden: !seasonBikes.includes(latestBike),
+                hidden: !(seasons.slice(0, 3).includes(season)),
                 type: 'line'
               }
             })
@@ -418,7 +418,7 @@
               backgroundColor: backgroundColor,
               borderWidth: season === currentSeason ? 4 : 2,
               data,
-              hidden: !seasonBikes.includes(latestBike),
+              hidden: !(seasons.slice(0, 3).includes(season)),
               yAxisID: 'km',
               type: 'line',
               fill: false
@@ -465,7 +465,7 @@
               backgroundColor: backgroundColor,
               borderWidth: season === currentSeason ? 4 : 2,
               data: months.map(m => milageByMonth(seasonEvents, m)),
-              hidden: !seasonBikes.includes(latestBike),
+              hidden: !(seasons.slice(0, 3).includes(season)),
               type: 'line',
               fill: false,
               yAxisID: 'milage'
