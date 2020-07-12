@@ -631,10 +631,10 @@
       },
       styles () {
         return {
-          width: '90vw',
-          height: '70vh',
-          'min-height': '500px',
-          'min-width': '800px'
+          // width: '90vw',
+          // height: '70vh',
+          // 'min-height': '500px',
+          // 'min-width': '800px'
         }
       }
     }
