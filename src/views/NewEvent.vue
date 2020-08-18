@@ -130,7 +130,6 @@
 
   fieldset {
     border: 0;
-    width: 400px
   }
 
   fieldset[disabled] {
@@ -149,7 +148,7 @@
     padding: 1px 10px;
     margin: 2px 5px;
     border: 1px solid black;
-    width: 250px;
+    width: calc(100% - 130px);
     background: white;
     display: inline-block;
   }
@@ -161,7 +160,7 @@
   input[type="submit"], input[type="button"] {
     height: 1.8em;
     background: $blueSky;
-    width: 172px;
+    width: 100%;
     font-size: large;
     font-weight: bold;
   }
