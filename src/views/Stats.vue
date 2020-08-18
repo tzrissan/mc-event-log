@@ -35,19 +35,21 @@ const local = {
   statisticOptions: {
     compareBikes: {
       title: 'Pyörät',
-      type: 'pie',
-      yAxes: [],
+      type: 'bar',
+      yAxes: [
+        { id: 'km', type: 'linear', position: 'left', ticks: { min: 0 } },
+        { id: 'ltr', type: 'linear', position: 'right', gridLines: { display: false }, ticks: { min: 0 } },
+        { id: 'kpl', type: 'linear', position: 'right', gridLines: { display: false }, ticks: { min: 0 } },
+      ],
       datasets (events) {
-        const global = GasLogData.get()
-
-        function totalDistance (bike, events) {
+        function totalDistance (bike) {
           const bikeEvents = _.filter(events, { bike })
           const minOdo = _.chain(bikeEvents).map(e => e.odo).min().value()
           const maxOdo = _.chain(bikeEvents).map(e => e.odo).max().value()
           return maxOdo - minOdo
         }
 
-        function totalFuel (bike, events) {
+        function totalFuel (bike) {
           return _.chain(events)
             .filter({ bike })
             .map(e => e.fuelused)
@@ -56,7 +58,7 @@ const local = {
             .value()
         }
 
-        function seasonCount (bike, events) {
+        function seasonCount (bike) {
           return _.chain(events)
             .filter({ bike })
             .map(e => e.date)
@@ -65,25 +67,44 @@ const local = {
             .value().length
         }
 
-        return [{
-          label: `kilometriä`,
-          borderColor: local.allBikes.map(bike => bike.borderColor),
-          backgroundColor: local.allBikes.map(bike => bike.backgroundColor),
-          data: global.bikes.map(bike => totalDistance(bike, events))
-        }, {
-          label: `litraa`,
-          borderColor: local.allBikes.map(bike => bike.borderColor),
-          backgroundColor: local.allBikes.map(bike => bike.backgroundColor),
-          data: global.bikes.map(bike => totalFuel(bike, events))
-        }, {
-          label: `ajokausia`,
-          borderColor: local.allBikes.map(bike => bike.borderColor),
-          backgroundColor: local.allBikes.map(bike => bike.backgroundColor),
-          data: global.bikes.map(bike => seasonCount(bike, events))
-        }]
+        function maintenanceCount (bike) {
+          return _.chain(events)
+            .filter({ bike })
+            .filter({ type: 'MAINTENANCE' })
+            .value().length
+        }
+
+        function tyreCount (bike) {
+          return _.chain(events)
+            .filter({ bike })
+            .filter(e => (e.type === 'TYRE_FRONT' || e.type === 'TYRE_REAR'))
+            .value().length
+        }
+
+        return _.flatten(local.allBikes.map(bike => {
+          return [{
+            label: bike.name,
+            borderColor: bike.borderColor,
+            backgroundColor: bike.backgroundColor,
+            yAxisID: 'km',
+            data: [totalDistance(bike.name)]
+          }, {
+            label: bike.name,
+            borderColor: bike.borderColor,
+            backgroundColor: bike.backgroundColor,
+            yAxisID: 'ltr',
+            data: [0, totalFuel(bike.name)]
+          }, {
+            label: bike.name,
+            borderColor: bike.borderColor,
+            backgroundColor: bike.backgroundColor,
+            yAxisID: 'kpl',
+            data: [0, 0, seasonCount(bike.name), maintenanceCount(bike.name), tyreCount(bike.name)]
+          }]
+        }))
       },
       labels () {
-        return GasLogData.get().bikes
+        return ['kilometriä', 'litraa', 'ajokausia', 'huoltoja', 'renkaita']
       }
     },
     compareBikesByMonth: {
@@ -96,7 +117,7 @@ const local = {
       ],
       datasets (events) {
         const fuelEvents = _.filter(events, { type: 'FUEL' })
-        const months = monthsWithEvents(fuelEvents)
+        const months = monthsWithEvents(events)
         const datasets = []
         local.fuelledBikes.forEach(bike => {
           const bikeEvents = _.filter(fuelEvents, { bike: bike.name })
@@ -127,49 +148,6 @@ const local = {
           })
         })
         return datasets
-      },
-      labels (events) {
-        return monthsWithEvents(_.filter(events, { type: 'FUEL' })).map(m => MONTH_NAMES[parseInt(m) - 1])
-      }
-    },
-    allByMonth: {
-      title: 'Pyörät yhteensä kuukausittain',
-      type: 'bar',
-      yAxes: [
-        { id: 'km', type: 'linear', position: 'left' },
-        { id: 'ltr', type: 'linear', position: 'left', gridLines: { display: false } },
-        { id: 'milage', type: 'linear', position: 'right', gridLines: { display: false } }
-      ],
-      datasets (events) {
-        const fuelEvents = _.filter(events, { type: 'FUEL' })
-        const months = monthsWithEvents(fuelEvents)
-        return [
-          {
-            label: 'Ajettu matka',
-            borderColor: 'rgb(76, 181, 245)',
-            backgroundColor: 'rgb(76, 181, 245, 0.6)',
-            data: months.map(m => countDistance(fuelEvents, byMonth(m))),
-            yAxisID: 'km',
-            type: 'line'
-          },
-          {
-            label: 'Käytetty polttoaine',
-            borderColor: 'rgb(255, 105, 180)',
-            backgroundColor: 'rgb(255, 105, 180, 0.6)',
-            data: months.map(m => countFuel(fuelEvents, byMonth(m))),
-            yAxisID: 'ltr',
-            hidden: true
-          },
-          {
-            label: 'Litraa satasella',
-            borderColor: '#B3C100',
-            backgroundColor: '#B3C100',
-            data: months.map(m => milageByMonth(fuelEvents, m)),
-            type: 'line',
-            fill: false,
-            yAxisID: 'milage'
-          }
-        ]
       },
       labels (events) {
         return monthsWithEvents(_.filter(events, { type: 'FUEL' })).map(m => MONTH_NAMES[parseInt(m) - 1])
@@ -310,7 +288,7 @@ const local = {
       }
     },
     seasonsDistanceByMonth: {
-      title: 'Ajokausien matkat kuukausittain ASDASD',
+      title: 'Ajokausien matkat kuukausittain',
       type: 'bar',
       yAxes: [
         { id: 'km', type: 'linear' }
@@ -379,7 +357,7 @@ const local = {
       }
     },
     seasonsDistanceSumByMonth: {
-      title: 'Ajokausien matkat yhteensä kuukausittain',
+      title: 'Ajokausien matkat kuukausittain (kumulatiivinen)',
       type: 'bar',
       yAxes: [
         { id: 'km', type: 'linear' }
