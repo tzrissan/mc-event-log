@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from '@/components/HelloWorld.vue'
+import { api } from "./api";
+
+api.lataaTapahtumat();
+
 </script>
 
 <template>
 
-<header>
+  <header>
 
     <nav>
       <RouterLink to="/">Home</RouterLink>

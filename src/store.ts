@@ -1,27 +1,46 @@
 import { reactive } from 'vue'
-
-class Tankkaus {
-  constructor() {
-    this.pvm = new Date();
-    this.odo = 12345;
-    this.matka = 123;
-    this.bensa = 12.34;
-    this.kulutus = 123 / 33;
-    this.info = "TODO load content";
-  }
-  pvm: Date;
-  odo: number;
-  matka: number;
-  bensa: number;
-  kulutus: number;
-  info: string;
-}
+import moment from 'moment';
+import { Tankkaus, TapahtumanTyyppi, ApiFuelLogEvent } from './schema';
+import {
+  ensimmainenApiTankkaus2Tankkaus,
+  apiTankkaus2Tankkaus
+} from './konversiot';
 
 class Store {
   constructor() {
-    this.tankkaukset = [new Tankkaus(), new Tankkaus(), new Tankkaus()];
+    this.tankkaukset = [];
   }
   tankkaukset: Tankkaus[]
 }
 
+
 export const store = reactive<Store>(new Store())
+
+export function paivitaData(tapahtumat: ApiFuelLogEvent[]) {
+
+  let tankkaukset = tapahtumat
+    .filter((tankkaus: ApiFuelLogEvent) => tankkaus.type === TapahtumanTyyppi.Tankkaus)
+    .sort((a: ApiFuelLogEvent, b: ApiFuelLogEvent) => {
+      if (a.date === b.date) {
+        return a.odo - b.odo;
+      } else if (a.date > b.date) {
+        return 1;
+      } else {
+        return -1;
+      }
+    })
+    .reduce((tankkaukset: Tankkaus[], tankkausTapahtuma: ApiFuelLogEvent): Tankkaus[] => {
+
+      if (tankkaukset.length === 0) {
+        // historian alku; matkaa tai kulutusta ei tiedetä
+        return [ensimmainenApiTankkaus2Tankkaus(tankkausTapahtuma)];
+      } else {
+        const edellinenTankkausTapahtuma = tankkaukset[tankkaukset.length - 1];
+        tankkaukset.push(apiTankkaus2Tankkaus(tankkausTapahtuma, edellinenTankkausTapahtuma));
+        return tankkaukset;
+      }
+
+    }, []);
+
+  store.tankkaukset = tankkaukset.reverse();
+}

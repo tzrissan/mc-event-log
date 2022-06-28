@@ -3,9 +3,9 @@
     <colgroup>
       <col class="pvm" />
       <col class="odo" />
-      <col class="matka"/>
-      <col class="bensa"/>
-      <col class="kulutus"/>
+      <col class="matka" />
+      <col class="bensa" />
+      <col class="kulutus" />
       <col />
     </colgroup>
     <thead>
@@ -21,11 +21,11 @@
     <tbody>
       <tr v-for="tankkaus in store.tankkaukset">
         <td class="pvm">{{ pvm(tankkaus.pvm) }}</td>
-        <td>{{ tankkaus.odo }} <small>km</small></td>
-        <td>{{ tankkaus.matka }} <small>km</small></td>
-        <td>{{ tankkaus.bensa }} <small>ltr</small></td>
+        <td class="yksikko-km">{{ tankkaus.odo }} </td>
+        <td class="yksikko-km">{{ tankkaus.matka }}</td>
+        <td class="yksikko-ltr">{{ desimaali(tankkaus.bensa) }}</td>
         <td>{{ desimaali(tankkaus.kulutus) }}
-          <div class="ltr-per-100-km"><br /></div>
+          <div v-if="tankkaus.kulutus !== undefined" class="yksikko-ltr-per-100-km"><br /></div>
         </td>
         <td class="info">{{ tankkaus.info }}</td>
       </tr>
@@ -39,17 +39,20 @@ import moment from 'moment';
 
 export default {
   data() {
-    console.log(store);
     return {
-      store: store
+      store
     }
   },
   methods: {
-    pvm( date: Date ) {
+    pvm(date: Date) {
       return moment(date).format('DD.MM.YYYY')
     },
-    desimaali( numero: number) {
-      return Math.round(numero * 100) / 100
+    desimaali(numero: number | undefined) {
+      if (numero === undefined) {
+        return '';
+      } else {
+        return numero.toFixed(2);
+      }
     }
   }
 }
@@ -79,6 +82,7 @@ td {
   text-align: right;
   border-right: 1px solid var(--color-border);
   padding: 0 0.2rem;
+  white-space: nowrap;
 }
 
 .pvm {
@@ -114,18 +118,60 @@ col.info {
   text-align: left;
 }
 
-.ltr-per-100-km {
+.yksikko-ltr-per-100-km {
   display: inline-block;
   font-size: 0.5rem;
   line-height: 0.5rem;
 }
 
 
-.ltr-per-100-km::before {
+.yksikko-ltr-per-100-km::before {
   content: "litraa /"
 }
 
-.ltr-per-100-km::after {
+.yksikko-ltr-per-100-km::after {
   content: "100 km"
+}
+
+
+@media (max-width: 412px) {
+  .yksikko-ltr-per-100-km {
+    display: none;
+  }
+}
+
+.yksikko-km:not(:empty)::after {
+  content: " km";
+  font-size: small;
+}
+
+@media (max-width: 768px) {
+  .yksikko-km:not(:empty)::after {
+    font-size: xx-small;
+  }
+}
+
+@media (max-width: 412px) {
+  .yksikko-km:not(:empty)::after {
+    content: "";
+  }
+}
+
+
+.yksikko-ltr::after {
+  content: " ltr";
+  font-size: small;
+}
+
+@media (max-width: 768px) {
+  .yksikko-ltr::after {
+    font-size: xx-small;
+  }
+}
+
+@media (max-width: 412px) {
+  .yksikko-ltr::after {
+    content: "";
+  }
 }
 </style>
