@@ -1,75 +1,119 @@
-<template>
-  <div id="app">
-    <div class="tabs">
-      <div v-for="route in rootRoutes" :key="route.path" class="tab">
-        <router-link :to="route.path">{{ route.title }}</router-link>
-      </div>
-    </div>
-    <div class="tab-content">
-      <router-view/>
-    </div>
-  </div>
-</template>
-
-<script>
-  import { ROOT_ROUTES } from '@/router.js'
-
-  export default {
-    name: 'app',
-    data: () => ({
-      selectedTab: 'NewEvent',
-      rootRoutes: ROOT_ROUTES
-    })
-  }
+<script setup lang="ts">
+import { RouterLink, RouterView } from 'vue-router'
+import HelloWorld from '@/components/HelloWorld.vue'
 </script>
 
+<template>
+  <header>
+    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+
+    <div class="wrapper">
+      <HelloWorld msg="You did it!" />
+
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/about">About</RouterLink>
+      </nav>
+    </div>
+  </header>
+
+  <RouterView />
+</template>
+
 <style>
+@import '@/assets/base.css';
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  font-weight: normal;
+}
+
+header {
+  line-height: 1.5;
+  max-height: 100vh;
+}
+
+.logo {
+  display: block;
+  margin: 0 auto 2rem;
+}
+
+a,
+.green {
+  text-decoration: none;
+  color: hsla(160, 100%, 37%, 1);
+  transition: 0.4s;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+}
+
+nav {
+  width: 100%;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+nav a.router-link-exact-active {
+  color: var(--color-text);
+}
+
+nav a.router-link-exact-active:hover {
+  background-color: transparent;
+}
+
+nav a {
+  display: inline-block;
+  padding: 0 1rem;
+  border-left: 1px solid var(--color-border);
+}
+
+nav a:first-of-type {
+  border: 0;
+}
+
+@media (min-width: 1024px) {
   body {
-    margin: 0;
-    min-width: 600px;
+    display: flex;
+    place-items: center;
   }
-</style>
 
-<style lang="scss" scoped>
-
-  @import "./assets/colors";
-
-  div.tabs {
+  #app {
     display: grid;
-    grid-template-columns: 90px auto auto auto auto auto auto;
-    grid-row-gap: 1px;
-    grid-column-gap: 1px;
-    background-color: black;
-
-    .tab {
-      border: none;
-      padding: 0;
-      margin: 0;
-      vertical-align: center;
-      text-align: center;
-      line-height: 45px;
-      background-color: white;
-
-      &:first-child a {
-        color: $fields;
-        font-size: 30px;
-        font-weight: bolder;
-        padding: 0 20px;
-      }
-
-      a {
-        display: block;
-        margin: 0;
-        text-decoration: none;
-        color: black;
-
-        &.router-link-active {
-          color: white;
-          background-color: $blueSky !important;
-        }
-      }
-
-    }
+    grid-template-columns: 1fr 1fr;
+    padding: 0 2rem;
   }
 
+  header {
+    display: flex;
+    place-items: center;
+    padding-right: calc(var(--section-gap) / 2);
+  }
+
+  header .wrapper {
+    display: flex;
+    place-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    margin: 0 2rem 0 0;
+  }
+
+  nav {
+    text-align: left;
+    margin-left: -1rem;
+    font-size: 1rem;
+
+    padding: 1rem 0;
+    margin-top: 1rem;
+  }
+}
 </style>
