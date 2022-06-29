@@ -120,3 +120,49 @@ export class TankkausTapahtumaLomake {
   }
 
 }
+
+
+
+export class RenkaanVaihto {
+
+  id: number;
+  pvm: Date;
+  pyora: string;
+  odo: number;
+  type: TapahtumanTyyppi.Eturengas | TapahtumanTyyppi.Takarengas | TapahtumanTyyppi.Muu;
+  info: string | undefined;
+
+  constructor(
+    id: number,
+    pvm: Date,
+    pyora: string,
+    odo: number,
+    type: TapahtumanTyyppi.Eturengas | TapahtumanTyyppi.Takarengas | TapahtumanTyyppi.Muu,
+    info: string | undefined,
+  ) {
+    this.id = id;
+    this.pvm = pvm;
+    this.pyora = pyora;
+    this.odo = odo;
+    this.type = type;
+    this.info = info;
+  }
+}
+
+export class Rengas {
+  asennettu: RenkaanVaihto;
+  poistettu?: RenkaanVaihto;
+  ikaPv?: number;
+  ikaKm?: number;
+  constructor(
+    asennettu: RenkaanVaihto,
+    poistettu?: RenkaanVaihto,
+    ikaPv?: number,
+    ikaKm?: number
+  ) {
+    this.asennettu = asennettu;
+    this.poistettu = poistettu;
+    this.ikaPv = ikaPv;
+    this.ikaKm = ikaKm;
+  }
+}

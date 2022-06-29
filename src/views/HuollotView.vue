@@ -1,5 +1,4 @@
 <template>
-  <h1>huollot</h1>
   <table>
     <colgroup>
       <col class="pvm" />
