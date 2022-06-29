@@ -43,7 +43,7 @@ export class Tankkaus {
   pvm: Date;
   pyora: string;
   odo: number;
-  type: TapahtumanTyyppi;
+  type: TapahtumanTyyppi.Tankkaus;
   info: string | undefined;
   bensa: number;
   matka: number | undefined;
@@ -54,7 +54,7 @@ export class Tankkaus {
     pvm: Date,
     pyora: string,
     odo: number,
-    type: TapahtumanTyyppi,
+    type: TapahtumanTyyppi.Tankkaus,
     info: string | undefined,
     bensa: number,
     matka: number | undefined,
@@ -70,6 +70,35 @@ export class Tankkaus {
     this.matka = matka;
     this.kulutus = kulutus;
   }
+}
+
+export class Huolto {
+  id: number;
+  pvm: Date;
+  pyora: string;
+  odo: number;
+  type: TapahtumanTyyppi.Huolto;
+  info: string | undefined;
+  matka: number | undefined;
+
+  constructor(
+    id: number,
+    pvm: Date,
+    pyora: string,
+    odo: number,
+    type: TapahtumanTyyppi.Huolto,
+    info: string | undefined,
+    matka: number | undefined
+  ) {
+    this.id = id;
+    this.pvm = pvm;
+    this.pyora = pyora;
+    this.odo = odo;
+    this.type = type;
+    this.info = info;
+    this.matka = matka;
+  }
+
 }
 
 export class TankkausTapahtumaLomake {

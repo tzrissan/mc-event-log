@@ -1,37 +1,35 @@
 <template>
+  <h1>huollot</h1>
   <table>
     <colgroup>
       <col class="pvm" />
+      <col class="pyora" />
       <col class="odo" />
       <col class="matka" />
-      <col class="bensa" />
-      <col class="kulutus" />
+      <col />
       <col />
     </colgroup>
     <thead>
       <tr>
         <th class="pvm">Pvm</th>
+        <th class="pyora">Pyörä</th>
         <th class="odo">Odo</th>
-        <th>Matka</th>
-        <th>Bensa</th>
-        <th>Kulutus</th>
+        <th class="matka">Matka</th>
         <th class="info">Info</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="tankkaus in store.tankkaukset">
-        <td class="pvm">{{ pvm(tankkaus.pvm) }}</td>
-        <td class="yksikko-km">{{ tankkaus.odo }} </td>
-        <td class="yksikko-km">{{ tankkaus.matka }}</td>
-        <td class="yksikko-ltr">{{ desimaali(tankkaus.bensa) }}</td>
-        <td>{{ desimaali(tankkaus.kulutus) }}
-          <div v-if="tankkaus.kulutus !== undefined" class="yksikko-ltr-per-100-km"><br /></div>
-        </td>
-        <td class="info">{{ tankkaus.info }}</td>
+      <tr v-for="huolto in store.huollot">
+        <td class="pvm">{{ pvm(huolto.pvm) }}</td>
+        <td>{{ huolto.pyora }}</td>
+        <td class="yksikko-km">{{ huolto.odo }}</td>
+        <td class="yksikko-km">{{ huolto.matka }}</td>
+        <td class="info">{{ huolto.info }}</td>
       </tr>
     </tbody>
   </table>
 </template>
+
 
 <script lang="ts">
 import { store } from '../store.js';

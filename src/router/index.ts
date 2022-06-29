@@ -22,7 +22,15 @@ const router = createRouter({
       path: '/tankkaukset',
       name: 'tankkaukset',
       component: TankkauksetView
-    }
+    },
+    {
+      path: '/huollot',
+      name: 'huollot',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/HuollotView.vue')
+    },
   ]
 })
 
