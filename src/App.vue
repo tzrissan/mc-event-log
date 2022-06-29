@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from '@/components/HelloWorld.vue'
 import { api } from "./api";
 
 api.lataaTapahtumat();
@@ -12,9 +11,7 @@ api.lataaTapahtumat();
   <header>
 
     <nav>
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
-      <RouterLink to="/uusi">+</RouterLink>
+      <RouterLink to="/">+</RouterLink>
       <RouterLink to="/tankkaukset">Tankkaukset</RouterLink>
     </nav>
 
