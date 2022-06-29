@@ -41,7 +41,9 @@ function apiTankkaus2Tankkaus(tankkausTapahtuma: ApiFuelLogEvent, edellinenTankk
   const tankkaus = luoTankkaus(tankkausTapahtuma)
   if (edellinenTankkausTapahtuma && tankkausTapahtuma.bike === edellinenTankkausTapahtuma.pyora) {
     tankkaus.matka = tankkaus.odo - edellinenTankkausTapahtuma.odo;
-    tankkaus.kulutus = tankkaus.bensa / tankkaus.matka * 100;
+    if (tankkaus.matka > 50) { // hyvin lyhyet matkat tuottaa epäluotettavia arvoja
+      tankkaus.kulutus = tankkaus.bensa / tankkaus.matka * 100;
+    }
   }
   return tankkaus;
 }

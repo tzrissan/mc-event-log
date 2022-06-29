@@ -10,7 +10,6 @@ class Store {
   tiedotLadattu: boolean = false;
 }
 
-
 export const store = reactive<Store>(new Store())
 
 
@@ -26,7 +25,7 @@ export function paivitaData(tapahtumat: ApiFuelLogEvent[]): void {
     store.tankkaukset = tankkaukset.reverse();
     store.huollot = huollot.reverse();
     store.renkaat = renkaat.reverse();
-    store.ajossaOlevaPyora = store.tankkaukset[0].pyora;
+    store.ajossaOlevaPyora = tankkaukset[0].pyora;
     store.tiedotLadattu = true;
 
   }
