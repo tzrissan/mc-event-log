@@ -71,3 +71,23 @@ export class Tankkaus {
     this.kulutus = kulutus;
   }
 }
+
+export class TankkausTapahtumaLomake {
+  pvm: string;
+  bensa: number | undefined;
+  odo: number | undefined;
+  info: string | undefined;
+
+  constructor(
+    pvm: string,
+    bensa: number | undefined,
+    odo: number | undefined,
+    info: string | undefined
+  ) {
+    this.pvm = pvm;
+    this.odo = odo;
+    this.info = info;
+    this.bensa = bensa;
+  }
+
+}

@@ -14,6 +14,7 @@ api.lataaTapahtumat();
     <nav>
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/about">About</RouterLink>
+      <RouterLink to="/uusi">+</RouterLink>
       <RouterLink to="/tankkaukset">Tankkaukset</RouterLink>
     </nav>
 
