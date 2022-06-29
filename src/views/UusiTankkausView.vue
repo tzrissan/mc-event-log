@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="tallennaTapahtuma" name="uusi-tankkaus-lomake">
-    <fieldset xxx-v-bind:disabled="lomake.tallennusKaynnissa || lomake.latausKaynnissa">
+    <fieldset :disabled="lomakeLukittu">
 
       <label for="pvm">Pvm</label>
       <input id="pvm" type="date" required v-model="lomake.pvm" />
@@ -17,6 +17,9 @@
 
       <input type="submit" value="Lähetä" />
     </fieldset>
+
+    <div v-if="tallennusKaynnissa">Tallennetaan....</div>
+
   </form>
 
 </template>
@@ -26,7 +29,8 @@
 import moment from 'moment';
 import { ref } from 'vue'
 import { api } from "../api";
-import { TankkausTapahtumaLomake } from '../schema'
+import { TankkausTapahtumaLomake } from '../schema';
+import { store } from '../store';
 
 const lomake = ref(new TankkausTapahtumaLomake(
   moment(new Date()).format('YYYY-MM-DD'),
@@ -35,8 +39,26 @@ const lomake = ref(new TankkausTapahtumaLomake(
   "Malmi-Hki"
 ))
 
+const tallennusKaynnissa = ref(false);
+
 function tallennaTapahtuma() {
+  tallennusKaynnissa.value = true;
   api.tallennaTankkausTapahtuma(lomake.value)
+}
+
+</script>
+
+<script lang="ts">
+
+export default {
+  computed: {
+    latausKaynnissa() {
+      return !store.tiedotLadattu;
+    },
+    lomakeLukittu() {
+      return this.tallennusKaynnissa || !store.tiedotLadattu;
+    }
+  }
 }
 
 </script>

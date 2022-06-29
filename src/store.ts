@@ -11,6 +11,7 @@ class Store {
   }
   tankkaukset: Tankkaus[]
   ajossaOlevaPyora: string | undefined;
+  tiedotLadattu: boolean = false;
 }
 
 
@@ -46,5 +47,7 @@ export function paivitaData(tapahtumat: ApiFuelLogEvent[]) {
 
     store.tankkaukset = tankkaukset.reverse();
     store.ajossaOlevaPyora = store.tankkaukset[0].pyora;
+    store.tiedotLadattu = true;
+
   }
 }
