@@ -29,9 +29,9 @@
     <tbody>
       <tr v-for="rengas in naytettavatRenkaat">
         <td>{{ rengas.asennettu.pyora }}</td>
-        <td :class="{ 'valittu-suodatin': onkoSuodatinValittu(rengas.asennettu.type) }"
-          @click="valitseSuodatin(rengas.asennettu.type)" class="linkki">{{
-              luettavaTyyppi(rengas.asennettu.type)
+        <td :class="{ 'valittu-suodatin': onkoSuodatinValittu(rengas.asennettu.tyyppi) }"
+          @click="valitseSuodatin(rengas.asennettu.tyyppi)" class="linkki">{{
+              luettavaTyyppi(rengas.asennettu.tyyppi)
           }}</td>
         <td class="pvm">{{ pvm(rengas.asennettu.pvm) }}
           -
@@ -93,10 +93,8 @@ class Suodattimet {
 
 function suodata(renkaat: Rengas[], suodattimet: Suodattimet): Rengas[] {
   if (suodattimet.tyyppi) {
-    console.log("a")
     return renkaat.filter(rengas => rengas.tyyppi === suodattimet.tyyppi);
   } else {
-    console.log("b")
     return renkaat;
   }
 }
@@ -133,14 +131,14 @@ export default {
     onTakarengas(tyyppi: TapahtumanTyyppi): boolean {
       return tyyppi === TapahtumanTyyppi.Takarengas
     },
-    valitseSuodatin(tyyppi: TapahtumanTyyppi) {
-      if (this.suodatin.tyyppi === tyyppi) {
+    valitseSuodatin(tyyppi: TapahtumanTyyppi.Eturengas | TapahtumanTyyppi.Takarengas | TapahtumanTyyppi.Muu) {
+      if (this.suodatin.tyyppi === tyyppi || tyyppi === TapahtumanTyyppi.Muu) {
         this.suodatin.tyyppi = undefined
       } else {
         this.suodatin.tyyppi = tyyppi;
       }
     },
-    onkoSuodatinValittu(tyyppi: TapahtumanTyyppi) {
+    onkoSuodatinValittu(tyyppi: TapahtumanTyyppi): boolean {
       return this.suodatin.tyyppi === tyyppi;
     }
   },
@@ -150,7 +148,7 @@ export default {
     },
     etuRenkaanKmKeskiarvo(): number {
       const matkat = store.renkaat
-        .filter(r => r.asennettu.type === TapahtumanTyyppi.Eturengas)
+        .filter(r => r.asennettu.tyyppi === TapahtumanTyyppi.Eturengas)
         .map(r => r.ikaKm)
         .filter(ikaKm => ikaKm !== undefined) as number[];
       return keskiarvo(matkat);
@@ -160,7 +158,7 @@ export default {
     },
     takaRenkaanKmKeskiarvo(): number {
       const matkat = store.renkaat
-        .filter(r => r.asennettu.type === TapahtumanTyyppi.Takarengas)
+        .filter(r => r.asennettu.tyyppi === TapahtumanTyyppi.Takarengas)
         .map(r => r.ikaKm)
         .filter(ikaKm => ikaKm !== undefined) as number[];
       return keskiarvo(matkat);
@@ -171,7 +169,7 @@ export default {
 
     etuRenkaanPvKeskiarvo(): number {
       const matkat = store.renkaat
-        .filter(r => r.asennettu.type === TapahtumanTyyppi.Eturengas)
+        .filter(r => r.asennettu.tyyppi === TapahtumanTyyppi.Eturengas)
         .map(r => r.ikaPv)
         .filter(ikaPv => ikaPv !== undefined) as number[];
       return keskiarvo(matkat);
@@ -181,7 +179,7 @@ export default {
     },
     takaRenkaanPvKeskiarvo(): number {
       const matkat = store.renkaat
-        .filter(r => r.asennettu.type === TapahtumanTyyppi.Takarengas)
+        .filter(r => r.asennettu.tyyppi === TapahtumanTyyppi.Takarengas)
         .map(r => r.ikaPv)
         .filter(ikaPv => ikaPv !== undefined) as number[];
       return keskiarvo(matkat);

@@ -43,7 +43,7 @@ export class Tankkaus {
   pvm: Date;
   pyora: string;
   odo: number;
-  type: TapahtumanTyyppi.Tankkaus;
+  tyyppi: TapahtumanTyyppi.Tankkaus;
   info: string | undefined;
   bensa: number;
   matka: number | undefined;
@@ -54,7 +54,7 @@ export class Tankkaus {
     pvm: Date,
     pyora: string,
     odo: number,
-    type: TapahtumanTyyppi.Tankkaus,
+    tyyppi: TapahtumanTyyppi.Tankkaus,
     info: string | undefined,
     bensa: number,
     matka: number | undefined,
@@ -64,7 +64,7 @@ export class Tankkaus {
     this.pvm = pvm;
     this.pyora = pyora;
     this.odo = odo;
-    this.type = type;
+    this.tyyppi = tyyppi;
     this.info = info;
     this.bensa = bensa;
     this.matka = matka;
@@ -77,7 +77,7 @@ export class Huolto {
   pvm: Date;
   pyora: string;
   odo: number;
-  type: TapahtumanTyyppi.Huolto;
+  tyyppi: TapahtumanTyyppi.Huolto;
   info: string | undefined;
   matka: number | undefined;
 
@@ -86,7 +86,7 @@ export class Huolto {
     pvm: Date,
     pyora: string,
     odo: number,
-    type: TapahtumanTyyppi.Huolto,
+    tyyppi: TapahtumanTyyppi.Huolto,
     info: string | undefined,
     matka: number | undefined
   ) {
@@ -94,7 +94,7 @@ export class Huolto {
     this.pvm = pvm;
     this.pyora = pyora;
     this.odo = odo;
-    this.type = type;
+    this.tyyppi = tyyppi;
     this.info = info;
     this.matka = matka;
   }
@@ -129,7 +129,7 @@ export class RenkaanVaihto {
   pvm: Date;
   pyora: string;
   odo: number;
-  type: TapahtumanTyyppi.Eturengas | TapahtumanTyyppi.Takarengas | TapahtumanTyyppi.Muu;
+  tyyppi: TapahtumanTyyppi.Eturengas | TapahtumanTyyppi.Takarengas | TapahtumanTyyppi.Muu;
   info: string | undefined;
 
   constructor(
@@ -137,14 +137,14 @@ export class RenkaanVaihto {
     pvm: Date,
     pyora: string,
     odo: number,
-    type: TapahtumanTyyppi.Eturengas | TapahtumanTyyppi.Takarengas | TapahtumanTyyppi.Muu,
+    tyyppi: TapahtumanTyyppi.Eturengas | TapahtumanTyyppi.Takarengas | TapahtumanTyyppi.Muu,
     info: string | undefined,
   ) {
     this.id = id;
     this.pvm = pvm;
     this.pyora = pyora;
     this.odo = odo;
-    this.type = type;
+    this.tyyppi = tyyppi;
     this.info = info;
   }
 }
@@ -153,17 +153,17 @@ export class Rengas {
   asennettu: RenkaanVaihto;
   tyyppi: TapahtumanTyyppi.Eturengas | TapahtumanTyyppi.Takarengas | TapahtumanTyyppi.Muu;
   poistettu?: RenkaanVaihto;
-  ikaPv?: number;
-  ikaKm?: number;
+  ikaPv: number;
+  ikaKm: number;
   constructor(
     asennettu: RenkaanVaihto,
+    ikaPv: number,
+    ikaKm: number,
     poistettu?: RenkaanVaihto,
-    ikaPv?: number,
-    ikaKm?: number
   ) {
     this.asennettu = asennettu;
     this.poistettu = poistettu;
-    this.tyyppi = asennettu.type;
+    this.tyyppi = asennettu.tyyppi;
     this.ikaPv = ikaPv;
     this.ikaKm = ikaKm;
   }

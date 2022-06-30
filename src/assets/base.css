@@ -91,10 +91,5 @@ a:active,
 a:hover,
 .linkki:hover {
   text-decoration: underline;
-  background: ;
-}
-
-a:hover,
-.linkki:hover {
-  background-color: hsla(135, 51%, 34%, 0.2);
+  background-color: hsla(135, 100%, 37%, 0.2);
 }

@@ -153,13 +153,33 @@ function luoRengas(asennusTapahtuma: ApiFuelLogEvent, poistoTapahtuma?: ApiFuelL
 
     if (poistettu) {
       const matka = poistettu.odo - asennettu.odo
-      return new Rengas(asennettu, poistettu, ika, matka)
+      return new Rengas(asennettu, ika, matka, poistettu)
     } else {
-      return new Rengas(asennettu, undefined, ika, undefined)
+      return new Rengas(asennettu, ika, 0)
     }
   }
 }
 
+
+//FIXME: Lisää dataan tyypitetty tieto pyörän hankinnasta ja myynnistä
+/**  @deprecated */
+const uusiRengasAlleHackLista: string[] = [
+  'Veikkaus banditin hankinnasta. Veikattu 2.12.2014',
+  'V-Stromin hankinta',
+  'Versys osto'
+]
+
+//FIXME: Lisää dataan tyypitetty tieto pyörän hankinnasta ja myynnistä
+/**  @deprecated */
+const renkaanLopputapahtumaHackLista: string[] = [
+  'Banditin myynti. Arvio heitettu 2.12.2014',
+  'Myyty'
+]
+
+//FIXME: Lisää dataan tyypitetty tieto pyörän hankinnasta ja myynnistä
+/**  @deprecated */
+const muutTapahtumatJotkaVaikuttaaRenkaisiin: string[] =
+  uusiRengasAlleHackLista.concat(renkaanLopputapahtumaHackLista);
 
 
 export function tapahtumat2renkaat(tapahtumat: ApiFuelLogEvent[]): Rengas[] {
@@ -170,27 +190,19 @@ export function tapahtumat2renkaat(tapahtumat: ApiFuelLogEvent[]): Rengas[] {
 
       //FIXME: Lisää dataan tyypitetty tieto pyörän hankinnasta ja myynnistä
       || (renkaanVaihto.type === TapahtumanTyyppi.Muu
-        && (renkaanVaihto.info === 'Veikkaus banditin hankinnasta. Veikattu 2.12.2014'
-          || renkaanVaihto.info === 'Banditin myynti. Arvio heitettu 2.12.2014'
-          || renkaanVaihto.info === 'V-Stromin hankinta'
-          || renkaanVaihto.info === 'Myyty'
-          || renkaanVaihto.info === 'Versys osto'))
+        && muutTapahtumatJotkaVaikuttaaRenkaisiin.includes(renkaanVaihto.info || ''))
     ))
     .flatMap(tapahtuma => {
-      if (tapahtuma.type === TapahtumanTyyppi.Muu) {
-        if (tapahtuma.info === 'Veikkaus banditin hankinnasta. Veikattu 2.12.2014'
-          || tapahtuma.info === 'Versys osto'
-          || tapahtuma.info === 'V-Stromin hankinta') {
+      if (tapahtuma.type === TapahtumanTyyppi.Muu
+        && uusiRengasAlleHackLista.includes(tapahtuma.info || '')) {
 
-          const ostetunPyoranMukanaTullutEturengas = { ...tapahtuma };
-          ostetunPyoranMukanaTullutEturengas.type = TapahtumanTyyppi.Eturengas;
+        const ostetunPyoranMukanaTullutEturengas = { ...tapahtuma };
+        ostetunPyoranMukanaTullutEturengas.type = TapahtumanTyyppi.Eturengas;
 
-          const ostetunPyoranMukanaTullutTakarengas = { ...tapahtuma };
-          ostetunPyoranMukanaTullutTakarengas.type = TapahtumanTyyppi.Takarengas;
+        const ostetunPyoranMukanaTullutTakarengas = { ...tapahtuma };
+        ostetunPyoranMukanaTullutTakarengas.type = TapahtumanTyyppi.Takarengas;
 
-          return [ostetunPyoranMukanaTullutEturengas, ostetunPyoranMukanaTullutTakarengas];
-
-        }
+        return [ostetunPyoranMukanaTullutEturengas, ostetunPyoranMukanaTullutTakarengas];
       }
       return [tapahtuma];
     })
@@ -208,8 +220,8 @@ export function tapahtumat2renkaat(tapahtumat: ApiFuelLogEvent[]): Rengas[] {
     .filter((x: any) => x !== undefined) as Rengas[];
 
   const uusinTapahtuma = tapahtumat.sort(tapahtumienOletusVertailu).reverse()[0];
-  const viimeisinEtuRenkaanvaihto = renkaat.filter(() => true).reverse().find(rengas => rengas.asennettu.type === TapahtumanTyyppi.Eturengas);
-  const viimeisinTakaRenkaanvaihto = renkaat.filter(() => true).reverse().find(rengas => rengas.asennettu.type === TapahtumanTyyppi.Takarengas);
+  const viimeisinEtuRenkaanvaihto = renkaat.filter(() => true).reverse().find(rengas => rengas.asennettu.tyyppi === TapahtumanTyyppi.Eturengas);
+  const viimeisinTakaRenkaanvaihto = renkaat.filter(() => true).reverse().find(rengas => rengas.asennettu.tyyppi === TapahtumanTyyppi.Takarengas);
 
   if (viimeisinEtuRenkaanvaihto) {
     viimeisinEtuRenkaanvaihto.ikaKm = uusinTapahtuma.odo - viimeisinEtuRenkaanvaihto.asennettu.odo

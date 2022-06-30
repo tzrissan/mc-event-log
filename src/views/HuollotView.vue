@@ -40,7 +40,7 @@
 
 
 <script lang="ts">
-import { store, lueListastaNumerot, keskiarvo } from '../store.js';
+import { store, keskiarvo } from '../store.js';
 import moment from 'moment';
 
 function huollonKuvaajanLeveys(matka: number): string {
@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     huoltojenKeskiarvo(): number {
-      const matkat = store.huollot.map(h => h.matka).filter(m => m !== undefined) as number[];
+      const matkat = this.store.huollot.map(h => h.matka).filter(m => m !== undefined) as number[];
       return keskiarvo(matkat);
     },
     huoltojenKeskiarvonLeveys(): string {
