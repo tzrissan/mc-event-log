@@ -30,3 +30,28 @@ export function paivitaData(tapahtumat: ApiFuelLogEvent[]): void {
 
   }
 }
+
+function lueNumero(o: Tankkaus, k: keyof Tankkaus): number | undefined {
+  const value = o[k];
+  if (typeof value === 'number') {
+    return value;
+  }
+};
+
+export function lueListastaNumerot(objects: Tankkaus[], key: keyof Tankkaus): number[] {
+  return objects
+    .map(o => lueNumero(o, key))
+    .filter(val => val !== undefined) as number[];
+};
+
+export function keskiarvo(numerot: number[]): number {
+  // Tulkitaan kaikki puuttuvat arvot nolliksi
+  const yhteensa = numerot.reduce((a, b) => ((a || 0) + (b || 0)), 0);
+  const lukumaara = numerot.length;
+
+  if (lukumaara > 0) {
+    return yhteensa / lukumaara;
+  } else {
+    return 0;
+  }
+};

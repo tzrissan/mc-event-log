@@ -56,9 +56,8 @@
 </template>
 
 <script lang="ts">
-import { store } from '../store.js';
+import { store, lueListastaNumerot, keskiarvo } from '../store.js';
 import moment from 'moment';
-import type { Tankkaus } from '@/schema.js';
 
 function matkanKuvaajanLeveys(matka: number): string {
   return (matka / 4).toFixed(0) + 'px'
@@ -70,31 +69,6 @@ function bensanKuvaajanLeveys(bensa: number): string {
 
 function kulutuksenKuvaajanLeveys(kulutus: number): string {
   return (kulutus * 10).toFixed(0) + 'px'
-};
-
-function lueNumero(o: Tankkaus, k: keyof Tankkaus): number | undefined {
-  const value = o[k];
-  if (typeof value === 'number') {
-    return value;
-  }
-};
-
-function lueListastaNumerot(objects: Tankkaus[], key: keyof Tankkaus): number[] {
-  return objects
-    .map(o => lueNumero(o, key))
-    .filter(val => val !== undefined) as number[];
-};
-
-function keskiarvo(numerot: number[]): number {
-  // Tulkitaan kaikki puuttuvat arvot nolliksi
-  const yhteensa = numerot.reduce((a, b) => ((a || 0) + (b || 0)), 0);
-  const lukumaara = numerot.length;
-
-  if (lukumaara > 0) {
-    return yhteensa / lukumaara;
-  } else {
-    return 0;
-  }
 };
 
 export default {
@@ -120,22 +94,22 @@ export default {
   },
   computed: {
     matkojenKeskiarvo(): number {
-      const matkat = lueListastaNumerot(store.tankkaukset, 'matka')
-      return keskiarvo(matkat)
+      const matkat = lueListastaNumerot(store.tankkaukset, 'matka');
+      return keskiarvo(matkat);
     },
     matkanKeskiarvonLeveys(): string {
       return matkanKuvaajanLeveys(this.matkojenKeskiarvo);
     },
     bensanKeskiarvo(): number {
-      const bensat = lueListastaNumerot(store.tankkaukset, 'bensa')
-      return keskiarvo(bensat)
+      const bensat = lueListastaNumerot(store.tankkaukset, 'bensa');
+      return keskiarvo(bensat);
     },
     bensanKeskiarvonLeveys(): string {
       return bensanKuvaajanLeveys(this.bensanKeskiarvo);
     },
     kulutuksenKeskiarvo(): number {
-      const bensat = lueListastaNumerot(store.tankkaukset, 'kulutus')
-      return keskiarvo(bensat)
+      const bensat = lueListastaNumerot(store.tankkaukset, 'kulutus');
+      return keskiarvo(bensat);
     },
     kulutuksenKeskiarvonLeveys(): string {
       return kulutuksenKuvaajanLeveys(this.kulutuksenKeskiarvo);
@@ -144,34 +118,3 @@ export default {
 }
 </script>
 
-<style scoped>
-.kuvaaja {
-  border: none;
-  border-right: 2px solid rgba(151, 151, 151, 0.1);
-  background-color: rgba(235, 235, 235, 0.64);
-  overflow: visible;
-  margin: 0.2em 0;
-  z-index: 2;
-  text-align: left;
-}
-
-.keskiarvo {
-  border: none;
-  border-right: 2px solid rgba(151, 151, 151, 0.1);
-  height: 100%;
-  z-index: 1;
-  position: absolute;
-  background: none;
-  pointer-events: none;
-}
-
-.kuvaaja.hyva-arvo {
-  border-right: 2px solid rgba(8, 165, 21, 0.5);
-  background-color: rgba(8, 165, 21, 0.23);
-}
-
-.kuvaaja.huono-arvo {
-  border-right: 2px solid rgba(204, 0, 0, 0.5);
-  background-color: rgba(204, 0, 0, 0.23);
-}
-</style>

@@ -22,7 +22,16 @@
         <td class="pvm">{{ pvm(huolto.pvm) }}</td>
         <td>{{ huolto.pyora }}</td>
         <td class="yksikko-km">{{ huolto.odo }}</td>
-        <td class="yksikko-km">{{ huolto.matka }}</td>
+
+        <td v-if="huolto.matka">
+          <div class="yksikko-km kuvaaja" v-bind:style="{ width: huollonKuvaajanLeveys(huolto.matka) }">
+            <div v-if="huoltojenKeskiarvo < huolto.matka" class="keskiarvo"
+              v-bind:style="{ width: huoltojenKeskiarvonLeveys }"></div>
+            {{ huolto.matka }}
+          </div>
+        </td>
+        <td v-else></td>
+
         <td class="info">{{ huolto.info }}</td>
       </tr>
     </tbody>
@@ -31,8 +40,12 @@
 
 
 <script lang="ts">
-import { store } from '../store.js';
+import { store, lueListastaNumerot, keskiarvo } from '../store.js';
 import moment from 'moment';
+
+function huollonKuvaajanLeveys(matka: number): string {
+  return (matka / 80).toFixed(0) + 'px'
+};
 
 export default {
   data() {
@@ -44,12 +57,15 @@ export default {
     pvm(date: Date) {
       return moment(date).format('DD.MM.YYYY')
     },
-    desimaali(numero: number | undefined) {
-      if (numero === undefined) {
-        return '';
-      } else {
-        return numero.toFixed(2);
-      }
+    huollonKuvaajanLeveys
+  },
+  computed: {
+    huoltojenKeskiarvo(): number {
+      const matkat = store.huollot.map(h => h.matka).filter(m => m !== undefined) as number[];
+      return keskiarvo(matkat);
+    },
+    huoltojenKeskiarvonLeveys(): string {
+      return huollonKuvaajanLeveys(this.huoltojenKeskiarvo);
     }
   }
 }

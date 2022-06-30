@@ -195,4 +195,34 @@ col.info {
     content: "";
   }
 }
+
+.kuvaaja {
+  border: none;
+  border-right: 2px solid rgba(151, 151, 151, 0.1);
+  background-color: rgba(235, 235, 235, 0.64);
+  overflow: visible;
+  margin: 0.2em 0;
+  z-index: 2;
+  text-align: left;
+}
+
+.keskiarvo {
+  border: none;
+  border-right: 2px solid rgba(151, 151, 151, 0.1);
+  height: 100%;
+  z-index: 1;
+  position: absolute;
+  background: none;
+  pointer-events: none;
+}
+
+.kuvaaja.hyva-arvo {
+  border-right: 2px solid rgba(8, 165, 21, 0.5);
+  background-color: rgba(8, 165, 21, 0.23);
+}
+
+.kuvaaja.huono-arvo {
+  border-right: 2px solid rgba(204, 0, 0, 0.5);
+  background-color: rgba(204, 0, 0, 0.23);
+}
 </style>
