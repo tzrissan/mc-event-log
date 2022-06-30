@@ -28,12 +28,6 @@ api.lataaTapahtumat();
 <style>
 @import '@/assets/base.css';
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
 nav {
   width: 100%;
   font-size: 0.8rem;
@@ -113,7 +107,6 @@ col.pyora {
 col.pvm {
   width: 6rem;
 }
-
 
 col.odo {
   width: 6rem;

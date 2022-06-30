@@ -34,6 +34,9 @@
   --color-text: var(--vt-c-text-light-1);
 
   --section-gap: 160px;
+
+  --link-enabled: #265881;
+  --link-active: #37b6f1;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -70,4 +73,28 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+a,
+.linkki {
+  color: var(--link-enabled);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a:active,
+.linkki:active {
+  color: var(--link-active);
+  text-decoration: underline;
+}
+
+a:hover,
+.linkki:hover {
+  text-decoration: underline;
+  background: ;
+}
+
+a:hover,
+.linkki:hover {
+  background-color: hsla(135, 51%, 34%, 0.2);
 }

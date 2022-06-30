@@ -27,9 +27,12 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="rengas in store.renkaat">
+      <tr v-for="rengas in naytettavatRenkaat">
         <td>{{ rengas.asennettu.pyora }}</td>
-        <td>{{ luettavaTyyppi(rengas.asennettu.type) }}</td>
+        <td :class="{ 'valittu-suodatin': onkoSuodatinValittu(rengas.asennettu.type) }"
+          @click="valitseSuodatin(rengas.asennettu.type)" class="linkki">{{
+              luettavaTyyppi(rengas.asennettu.type)
+          }}</td>
         <td class="pvm">{{ pvm(rengas.asennettu.pvm) }}
           -
           <span v-if="rengas.poistettu">{{ pvm(rengas.poistettu.pvm) }}</span>
@@ -74,7 +77,7 @@
 <script lang="ts">
 import { store, keskiarvo } from '../store.js';
 import moment from 'moment';
-import { TapahtumanTyyppi } from '@/schema.js';
+import { Rengas, TapahtumanTyyppi } from '@/schema.js';
 
 function renkaanKmKuvaajanLeveys(matka: number): string {
   return (matka / 200).toFixed(0) + 'px'
@@ -84,10 +87,25 @@ function renkaanPvKuvaajanLeveys(aikaPv: number): string {
   return (aikaPv / 10).toFixed(0) + 'px'
 };
 
+class Suodattimet {
+  tyyppi: TapahtumanTyyppi.Eturengas | TapahtumanTyyppi.Takarengas | undefined;
+}
+
+function suodata(renkaat: Rengas[], suodattimet: Suodattimet): Rengas[] {
+  if (suodattimet.tyyppi) {
+    console.log("a")
+    return renkaat.filter(rengas => rengas.tyyppi === suodattimet.tyyppi);
+  } else {
+    console.log("b")
+    return renkaat;
+  }
+}
+
 export default {
   data() {
     return {
-      store
+      store,
+      suodatin: new Suodattimet
     }
   },
   methods: {
@@ -114,9 +132,22 @@ export default {
     },
     onTakarengas(tyyppi: TapahtumanTyyppi): boolean {
       return tyyppi === TapahtumanTyyppi.Takarengas
+    },
+    valitseSuodatin(tyyppi: TapahtumanTyyppi) {
+      if (this.suodatin.tyyppi === tyyppi) {
+        this.suodatin.tyyppi = undefined
+      } else {
+        this.suodatin.tyyppi = tyyppi;
+      }
+    },
+    onkoSuodatinValittu(tyyppi: TapahtumanTyyppi) {
+      return this.suodatin.tyyppi === tyyppi;
     }
   },
   computed: {
+    naytettavatRenkaat(): Rengas[] {
+      return suodata(this.store.renkaat, this.suodatin);
+    },
     etuRenkaanKmKeskiarvo(): number {
       const matkat = store.renkaat
         .filter(r => r.asennettu.type === TapahtumanTyyppi.Eturengas)
@@ -182,5 +213,9 @@ col.rengas {
   .yksikko-pv:not(:empty)::after {
     content: "";
   }
+}
+
+.valittu-suodatin {
+  font-weight: bold;
 }
 </style>
