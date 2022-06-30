@@ -25,8 +25,7 @@
 
         <td v-if="huolto.matka">
           <div class="yksikko-km kuvaaja" v-bind:style="{ width: huollonKuvaajanLeveys(huolto.matka) }">
-            <div v-if="huoltojenKeskiarvo < huolto.matka" class="keskiarvo"
-              v-bind:style="{ width: huoltojenKeskiarvonLeveys }"></div>
+            <div class="keskiarvo" v-bind:style="{ width: huoltojenKeskiarvonLeveys }"></div>
             {{ huolto.matka }}
           </div>
         </td>

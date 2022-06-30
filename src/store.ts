@@ -1,11 +1,12 @@
 import { reactive } from 'vue'
-import type { Tankkaus, Huolto, Rengas, ApiFuelLogEvent } from './schema';
-import { tapahtumat2tankkaukset, tapahtumat2huollot, tapahtumat2renkaat } from './konversiot';
+import type { Tankkaus, Huolto, Rengas, Ajokausi, ApiFuelLogEvent } from './schema';
+import { tapahtumat2tankkaukset, tapahtumat2huollot, tapahtumat2renkaat, tapahtumat2ajokaudet } from './konversiot';
 
 class Store {
   tankkaukset: Tankkaus[] = [];
   huollot: Huolto[] = [];
   renkaat: Rengas[] = [];
+  ajokaudet: Ajokausi[] = [];
   ajossaOlevaPyora: string | undefined;
   tiedotLadattu: boolean = false;
 }
@@ -21,10 +22,12 @@ export function paivitaData(tapahtumat: ApiFuelLogEvent[]): void {
     const tankkaukset = tapahtumat2tankkaukset(tapahtumat);
     const huollot = tapahtumat2huollot(tapahtumat);
     const renkaat = tapahtumat2renkaat(tapahtumat);
+    const ajokaudet = tapahtumat2ajokaudet(tapahtumat);
 
     store.tankkaukset = tankkaukset.reverse();
     store.huollot = huollot.reverse();
     store.renkaat = renkaat.reverse();
+    store.ajokaudet = ajokaudet;
     store.ajossaOlevaPyora = tankkaukset[0].pyora;
     store.tiedotLadattu = true;
 

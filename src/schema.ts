@@ -121,8 +121,6 @@ export class TankkausTapahtumaLomake {
 
 }
 
-
-
 export class RenkaanVaihto {
 
   id: number;
@@ -167,4 +165,52 @@ export class Rengas {
     this.ikaPv = ikaPv;
     this.ikaKm = ikaKm;
   }
+}
+
+export class AjokaudenPyora {
+  pyora: string;
+  alkuOdo: number;
+  loppuOdo: number;
+
+  constructor(
+    pyora: string,
+    alkuOdo: number,
+    loppuOdo: number
+  ) {
+    this.pyora = pyora;
+    this.alkuOdo = alkuOdo;
+    this.loppuOdo = loppuOdo;
+  }
+}
+
+
+export class Ajokausi {
+  vuosi: string;
+  alkuPvm: Date;
+  kesken: boolean;
+  pituusPaivissa: number;
+  pituusKilometreissa: number;
+  kilometrejaPaivassa: number;
+  pyorat: AjokaudenPyora[];
+  loppPvm?: Date;
+
+  constructor(
+    vuosi: string,
+    alkuPvm: Date,
+    kesken: boolean,
+    pituusPaivissa: number,
+    pituusKilometreissa: number,
+    pyorat: AjokaudenPyora[],
+    loppPvm?: Date
+  ) {
+    this.vuosi = vuosi;
+    this.alkuPvm = alkuPvm;
+    this.kesken = kesken;
+    this.pituusPaivissa = pituusPaivissa;
+    this.pituusKilometreissa = pituusKilometreissa;
+    this.kilometrejaPaivassa = pituusKilometreissa / pituusPaivissa;
+    this.pyorat = pyorat;
+    this.loppPvm = loppPvm;
+  }
+
 }

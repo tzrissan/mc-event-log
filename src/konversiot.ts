@@ -1,6 +1,6 @@
 
 import moment from 'moment';
-import { Tankkaus, Huolto, RenkaanVaihto, TapahtumanTyyppi, ApiFuelLogEvent, Rengas } from './schema';
+import { Tankkaus, Huolto, RenkaanVaihto, TapahtumanTyyppi, ApiFuelLogEvent, Rengas, Ajokausi, AjokaudenPyora } from './schema';
 
 /*
 * Oletusjärjestys on:
@@ -242,3 +242,42 @@ export function tapahtumat2renkaat(tapahtumat: ApiFuelLogEvent[]): Rengas[] {
   return renkaat;
 }
 
+export function tapahtumat2ajokaudet(tapahtumat: ApiFuelLogEvent[]): Ajokausi[] {
+  const kausienAlut = tapahtumat.filter(tapahtuma => tapahtuma.type === TapahtumanTyyppi.KaudenAloitus).sort(tapahtumienOletusVertailu);
+  const kausienLoput = tapahtumat.filter(tapahtuma => tapahtuma.type === TapahtumanTyyppi.KaudenLopetus).sort(tapahtumienOletusVertailu);
+  const viimeisinTapahtuma = tapahtumat.reduce((viimeisin: ApiFuelLogEvent, ehdokas: ApiFuelLogEvent) => {
+    if (ehdokas.date > viimeisin.date) {
+      return ehdokas;
+    } else {
+      return viimeisin;
+    }
+  })
+
+  return kausienAlut.map(alkuTapahtuma => {
+    const alkuPvm = moment(alkuTapahtuma.date, ['YYYY-MM-DD']);
+    const vuosi = alkuTapahtuma.date.split('-')[0];
+    const kaudenTapahtumat = tapahtumat.filter(tapahtuma => tapahtuma.date.startsWith(vuosi))
+    const kaudenLoppu = kaudenTapahtumat.find(tapahtuma => tapahtuma.type === TapahtumanTyyppi.KaudenLopetus)
+    const loppuPvm = kaudenLoppu ? moment(kaudenLoppu.date, ['YYYY-MM-DD']) : undefined;
+    const kaudellaKaytettyjenPyorienNimet = [... new Set(kaudenTapahtumat.map(tapahtuma => tapahtuma.bike))].sort();
+    const ajokaudenPyorat = kaudellaKaytettyjenPyorienNimet.map(pyora => {
+      const pyoranTapahtumat = kaudenTapahtumat.filter(tapahtuma => tapahtuma.bike === pyora);
+      const pyoranOdot = pyoranTapahtumat.map(tapahtuma => tapahtuma.odo);
+      const pyoranMinOdo = Math.min(...pyoranOdot);
+      const pyoranMaxOdo = Math.max(...pyoranOdot);
+      return new AjokaudenPyora(pyora, pyoranMinOdo, pyoranMaxOdo);
+    });
+    const ajokaudenPituuskilometreissa = ajokaudenPyorat.map(pyora => pyora.loppuOdo - pyora.alkuOdo).reduce((a, b) => (a || 0) + (b || 0), 0);
+
+    return new Ajokausi(
+      vuosi,
+      alkuPvm.toDate(),
+      !kaudenLoppu,
+      paiviaPaivienValissa(alkuPvm, loppuPvm || moment(new Date())),
+      ajokaudenPituuskilometreissa,
+      ajokaudenPyorat,
+      loppuPvm ? loppuPvm.toDate() : undefined
+    );
+  }
+  );
+}

@@ -15,6 +15,8 @@ api.lataaTapahtumat();
       <RouterLink to="/tankkaukset">Tankkaukset</RouterLink>
       <RouterLink to="/huollot">Huollot</RouterLink>
       <RouterLink to="/renkaat">Renkaat</RouterLink>
+      <RouterLink to="/ajokaudet">Ajokaudet</RouterLink>
+
     </nav>
 
   </header>
@@ -167,6 +169,23 @@ col.info {
 
 @media (max-width: 412px) {
   .yksikko-km:not(:empty)::after {
+    content: "";
+  }
+}
+
+.yksikko-pv:not(:empty)::after {
+  content: " pv";
+  font-size: small;
+}
+
+@media (max-width: 768px) {
+  .yksikko-pv:not(:empty)::after {
+    font-size: xx-small;
+  }
+}
+
+@media (max-width: 412px) {
+  .yksikko-pv:not(:empty)::after {
     content: "";
   }
 }

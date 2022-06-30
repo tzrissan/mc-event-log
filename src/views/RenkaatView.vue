@@ -196,23 +196,6 @@ col.rengas {
   width: 6rem;
 }
 
-.yksikko-pv:not(:empty)::after {
-  content: " pv";
-  font-size: small;
-}
-
-@media (max-width: 768px) {
-  .yksikko-pv:not(:empty)::after {
-    font-size: xx-small;
-  }
-}
-
-@media (max-width: 412px) {
-  .yksikko-pv:not(:empty)::after {
-    content: "";
-  }
-}
-
 .valittu-suodatin {
   font-weight: bold;
 }
