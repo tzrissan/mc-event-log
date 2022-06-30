@@ -151,6 +151,7 @@ export class RenkaanVaihto {
 
 export class Rengas {
   asennettu: RenkaanVaihto;
+  tyyppi: TapahtumanTyyppi.Eturengas | TapahtumanTyyppi.Takarengas | TapahtumanTyyppi.Muu;
   poistettu?: RenkaanVaihto;
   ikaPv?: number;
   ikaKm?: number;
@@ -162,6 +163,7 @@ export class Rengas {
   ) {
     this.asennettu = asennettu;
     this.poistettu = poistettu;
+    this.tyyppi = asennettu.type;
     this.ikaPv = ikaPv;
     this.ikaKm = ikaKm;
   }
