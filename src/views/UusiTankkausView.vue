@@ -10,7 +10,8 @@
         v-model.number="lomake.fuel" />
 
       <label for="odo">Odo</label>
-      <input id="odo" placeholder="matkamittarin lukema" type="number" required step=1 v-model.number="lomake.odo" />
+      <input id="odo" placeholder="matkamittarin lukema" type="number" required :min="minOdo" :max="maxOdoInput" step=1
+        v-model.number="lomake.odo" />
 
       <label for="info">Info</label>
       <input id="info" type="text" v-model="lomake.info" />
@@ -54,11 +55,17 @@ export default {
     }
   },
   computed: {
-    latausKaynnissa() {
+    latausKaynnissa(): boolean {
       return !store.tiedotLadattu;
     },
-    lomakeLukittu() {
+    lomakeLukittu(): boolean {
       return this.tallennusKaynnissa || !store.tiedotLadattu;
+    },
+    minOdo(): number {
+      return store.viimeisinTankkaus ? store.viimeisinTankkaus.odo : 0;
+    },
+    maxOdoInput(): number {
+      return this.minOdo + 500;
     }
   }
 }
@@ -68,5 +75,26 @@ export default {
 <style scoped>
 fieldset {
   display: grid;
+}
+
+label {
+  margin-top: 0.3rem;
+  font-size: 0.7rem;
+}
+
+input {
+  font-size: 1rem;
+}
+
+input[type=submit] {
+  margin-top: 1.5rem;
+  height: 1.8rem;
+  background: #4cb5f5;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: none;
+  border: 1px solid;
+  border-radius: 0.2rem;
 }
 </style>

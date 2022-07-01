@@ -7,6 +7,7 @@ class Store {
   huollot: Huolto[] = [];
   renkaat: Rengas[] = [];
   ajokaudet: Ajokausi[] = [];
+  viimeisinTankkaus: Tankkaus | undefined;
   ajossaOlevaPyora: string | undefined;
   tiedotLadattu: boolean = false;
 }
@@ -28,7 +29,9 @@ export function paivitaData(tapahtumat: ApiFuelLogEvent[]): void {
     store.huollot = huollot.reverse();
     store.renkaat = renkaat.reverse();
     store.ajokaudet = ajokaudet;
+    store.viimeisinTankkaus = tankkaukset[0];
     store.ajossaOlevaPyora = tankkaukset[0].pyora;
+
     store.tiedotLadattu = true;
 
   }
