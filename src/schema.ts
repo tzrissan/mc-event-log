@@ -102,21 +102,21 @@ export class Huolto {
 }
 
 export class TankkausTapahtumaLomake {
-  pvm: string;
-  bensa: number | undefined;
+  date: string;
+  fuel: number | undefined;
   odo: number | undefined;
   info: string | undefined;
 
   constructor(
-    pvm: string,
-    bensa: number | undefined,
+    date: string,
+    fuel: number | undefined,
     odo: number | undefined,
     info: string | undefined
   ) {
-    this.pvm = pvm;
+    this.date = date;
     this.odo = odo;
     this.info = info;
-    this.bensa = bensa;
+    this.fuel = fuel;
   }
 
 }

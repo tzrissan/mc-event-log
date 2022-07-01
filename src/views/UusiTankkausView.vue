@@ -3,11 +3,11 @@
     <fieldset :disabled="lomakeLukittu">
 
       <label for="pvm">Pvm</label>
-      <input id="pvm" type="date" required v-model="lomake.pvm" />
+      <input id="pvm" type="date" required v-model="lomake.date" />
 
       <label for="fuel">Tankattu</label>
       <input id="fuel" placeholder="litraa" type="number" required min=0 max=30 step=0.01
-        v-model.number="lomake.bensa" />
+        v-model.number="lomake.fuel" />
 
       <label for="odo">Odo</label>
       <input id="odo" placeholder="matkamittarin lukema" type="number" required step=1 v-model.number="lomake.odo" />
@@ -27,30 +27,32 @@
 <script setup lang="ts">
 
 import moment from 'moment';
-import { ref } from 'vue'
 import { api } from "../api";
 import { TankkausTapahtumaLomake } from '../schema';
 import { store } from '../store';
-
-const lomake = ref(new TankkausTapahtumaLomake(
-  moment(new Date()).format('YYYY-MM-DD'),
-  undefined,
-  undefined,
-  "Malmi-Hki"
-))
-
-const tallennusKaynnissa = ref(false);
-
-function tallennaTapahtuma() {
-  tallennusKaynnissa.value = true;
-  api.tallennaTankkausTapahtuma(lomake.value)
-}
 
 </script>
 
 <script lang="ts">
 
 export default {
+  data() {
+    return {
+      tallennusKaynnissa: false,
+      lomake: new TankkausTapahtumaLomake(
+        moment(new Date()).format('YYYY-MM-DD'),
+        undefined,
+        undefined,
+        "Malmi-Hki"
+      )
+    }
+  },
+  methods: {
+    tallennaTapahtuma() {
+      this.tallennusKaynnissa = true;
+      api.tallennaTankkausTapahtuma(this.lomake)
+    }
+  },
   computed: {
     latausKaynnissa() {
       return !store.tiedotLadattu;
