@@ -22,7 +22,8 @@ api.lataaTapahtumat();
 
   </header>
 
-  <div class="content">
+  <div v-if="store.virhe">kävi joku virhe</div>
+  <div v-else class="content">
     <RouterView />
   </div>
 

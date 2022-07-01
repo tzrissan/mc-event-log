@@ -11,6 +11,7 @@ class Store {
   ajossaOlevaPyora: string | undefined;
   tiedotLadattu: boolean = false;
   tallennusKaynnissa: boolean = false;
+  virhe: boolean = false;
 }
 
 export const store = reactive<Store>(new Store())
