@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { paivitaData } from './store'
-import type { ApiFuelLogEvent, TankkausTapahtumaLomake } from './schema'
+import { store, paivitaData } from './store'
+import type { ApiFuelLogEvent, TankkausTapahtumaLomake } from './schema';
 
 export const api = {
 
@@ -9,14 +9,17 @@ export const api = {
       .get("/data")
       .then((res: any) => {
         paivitaData(res.data as ApiFuelLogEvent[])
-      });
+      })
+      .catch((e: any) => store.virhe = true);
   },
 
   tallennaTankkausTapahtuma(lomake: TankkausTapahtumaLomake) {
     axios
       .post("/data", lomake)
       .then((res: any) => {
-        this.lataaTapahtumat()
-      });
+        store.tallennusKaynnissa = false;
+        this.lataaTapahtumat();
+      })
+      .catch((e: any) => store.virhe = true);
   }
 }

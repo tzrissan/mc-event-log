@@ -10,6 +10,7 @@ class Store {
   viimeisinTankkaus: Tankkaus | undefined;
   ajossaOlevaPyora: string | undefined;
   tiedotLadattu: boolean = false;
+  tallennusKaynnissa: boolean = false;
 }
 
 export const store = reactive<Store>(new Store())
@@ -33,6 +34,7 @@ export function paivitaData(tapahtumat: ApiFuelLogEvent[]): void {
     store.ajossaOlevaPyora = tankkaukset[0].pyora;
 
     store.tiedotLadattu = true;
+    store.tallennusKaynnissa = false;
 
   }
 }

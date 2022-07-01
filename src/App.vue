@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import { api } from "./api";
+import { store } from './store';
 
 api.lataaTapahtumat();
 

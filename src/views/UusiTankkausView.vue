@@ -19,7 +19,7 @@
       <input type="submit" value="Lähetä" />
     </fieldset>
 
-    <div v-if="tallennusKaynnissa">Tallennetaan....</div>
+    <div v-if="store.tallennusKaynnissa">Tallennetaan....</div>
 
   </form>
 
@@ -39,7 +39,6 @@ import { store } from '../store';
 export default {
   data() {
     return {
-      tallennusKaynnissa: false,
       lomake: new TankkausTapahtumaLomake(
         moment(new Date()).format('YYYY-MM-DD'),
         undefined,
@@ -50,7 +49,7 @@ export default {
   },
   methods: {
     tallennaTapahtuma() {
-      this.tallennusKaynnissa = true;
+      store.tallennusKaynnissa = true;
       api.tallennaTankkausTapahtuma(this.lomake)
     }
   },
@@ -59,7 +58,7 @@ export default {
       return !store.tiedotLadattu;
     },
     lomakeLukittu(): boolean {
-      return this.tallennusKaynnissa || !store.tiedotLadattu;
+      return store.tallennusKaynnissa || !store.tiedotLadattu;
     },
     minOdo(): number {
       return store.viimeisinTankkaus ? store.viimeisinTankkaus.odo : 0;
