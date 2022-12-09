@@ -14,7 +14,7 @@
     "axios": "^0.21.2",
     "chart.js": "^2.9.3",
     "lodash": "^4.17.21",
-    "terser": "^3.17.0",
+    "terser": "^4.8.1",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
     "vue-moment": "^4.1.0",
